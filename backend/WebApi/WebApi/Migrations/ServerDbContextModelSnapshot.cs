@@ -52,6 +52,10 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("City", "Region", "Street", "House")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Addresses_FullAddress");
+
                     b.ToTable("Addresses");
                 });
 
@@ -69,6 +73,10 @@ namespace WebApi.Migrations
                         .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CarBrands_Name");
 
                     b.ToTable("CarBrands");
                 });
@@ -99,6 +107,10 @@ namespace WebApi.Migrations
                     b.HasIndex("CarBrands_Id");
 
                     b.HasIndex("CarModifications_Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CarModels_Name");
 
                     b.ToTable("CarModels");
                 });
@@ -146,6 +158,9 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Engine", "EngineSize", "Transmission", "Drive", "Body", "YearStart", "YearEnd")
+                        .HasDatabaseName("IX_CarModifications_FullModification");
+
                     b.ToTable("CarModifications");
                 });
 
@@ -163,6 +178,10 @@ namespace WebApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Categories_Name");
 
                     b.ToTable("Categories");
                 });
@@ -210,6 +229,21 @@ namespace WebApi.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Clients_Email");
+
+                    b.HasIndex("LoginClient")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Clients_Login");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Clients_PhoneNumber");
+
+                    b.HasIndex("SecondName", "FirstName", "SurName")
+                        .HasDatabaseName("IX_Clients_FullName");
 
                     b.ToTable("Clients");
                 });
@@ -263,6 +297,24 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Employees_Email");
+
+                    b.HasIndex("LoginEmployee")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Employees_Login");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Employees_PhoneNumber");
+
+                    b.HasIndex("Position")
+                        .HasDatabaseName("IX_Employees_Position");
+
+                    b.HasIndex("SecondName", "FirstName", "SurName")
+                        .HasDatabaseName("IX_Employees_FullName");
+
                     b.ToTable("Employees");
                 });
 
@@ -280,6 +332,10 @@ namespace WebApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Manufacturers_Name");
 
                     b.ToTable("Manufacturers");
                 });
@@ -310,7 +366,13 @@ namespace WebApi.Migrations
 
                     b.HasIndex("Orders_Id");
 
+                    b.HasIndex("PriceAtMoment")
+                        .HasDatabaseName("IX_OrderItems_PriceAtMoment");
+
                     b.HasIndex("Products_Id");
+
+                    b.HasIndex("Quantity")
+                        .HasDatabaseName("IX_OrderItems_Quantity");
 
                     b.ToTable("OrderItems");
                 });
@@ -344,6 +406,12 @@ namespace WebApi.Migrations
                     b.HasIndex("Clients_Id");
 
                     b.HasIndex("Employees_Id");
+
+                    b.HasIndex("OrderDate")
+                        .HasDatabaseName("IX_Orders_OrderDate");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Orders_Status");
 
                     b.ToTable("Orders");
                 });
@@ -412,6 +480,16 @@ namespace WebApi.Migrations
 
                     b.HasIndex("Manufacturers_Id");
 
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Products_Name");
+
+                    b.HasIndex("PartNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Products_PartNumber");
+
+                    b.HasIndex("Price")
+                        .HasDatabaseName("IX_Products_Price");
+
                     b.ToTable("Products");
                 });
 
@@ -437,6 +515,9 @@ namespace WebApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Products_Id");
+
+                    b.HasIndex("Quantity")
+                        .HasDatabaseName("IX_Stocks_Qantity");
 
                     b.HasIndex("Warehouses_Id");
 
@@ -497,6 +578,16 @@ namespace WebApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Warehouses_IsActive");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("IX_Warehouses_Type");
+
+                    b.HasIndex("Code", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Warehouses_CodeName");
 
                     b.ToTable("Warehouses");
                 });
