@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-string? connectionString = builder.Configuration.GetConnectionString("ConnectionStringDatabase");
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ServerDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddCors(options =>
