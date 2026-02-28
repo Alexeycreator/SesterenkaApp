@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Models.DataBase;
 
@@ -21,6 +22,11 @@ public sealed class StocksModel
     [ForeignKey("Warehouses")]
     public int? Warehouses_Id { get; set; }
 
-    [JsonIgnore] public ProductsModel? Products { get; set; }
-    [JsonIgnore] public WarehousesModel? Warehouses { get; set; }
+    [JsonIgnore]
+    [DeleteBehavior(DeleteBehavior.Restrict)]
+    public ProductsModel? Products { get; set; }
+
+    [JsonIgnore]
+    [DeleteBehavior(DeleteBehavior.Restrict)]
+    public WarehousesModel? Warehouses { get; set; }
 }

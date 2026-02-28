@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Models.DataBase;
 
@@ -28,8 +29,13 @@ public sealed class ProductsModel
     [ForeignKey("Manufacturers")]
     public int? Manufacturers_Id { get; set; }
 
-    [JsonIgnore] public CategoriesModel? Categories { get; set; }
-    [JsonIgnore] public ManufacturersModel? Manufacturers { get; set; }
+    [JsonIgnore]
+    [DeleteBehavior(DeleteBehavior.SetNull)]
+    public CategoriesModel? Categories { get; set; }
+
+    [JsonIgnore]
+    [DeleteBehavior(DeleteBehavior.SetNull)]
+    public ManufacturersModel? Manufacturers { get; set; }
 
     [JsonIgnore] public ICollection<ProductCarApplicabilityModel>? ProductCarApplicability { get; set; }
     [JsonIgnore] public ICollection<OrderItemsModel>? OrderItems { get; set; }
