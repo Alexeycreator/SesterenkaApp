@@ -12,6 +12,9 @@
           "Microsoft.EntityFrameworkCore.Design": "9.0.12",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.12",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.12",
+          "NLog": "6.1.0",
+          "NLog.Config": "4.7.15",
+          "NLog.Schema": "6.1.0",
           "Swashbuckle.AspNetCore": "10.1.1",
           "Swashbuckle.AspNetCore.Swagger": "10.1.1",
           "Swashbuckle.AspNetCore.SwaggerGen": "10.1.1",
@@ -755,6 +758,21 @@
           }
         }
       },
+      "NLog/6.1.0": {
+        "runtime": {
+          "lib/netstandard2.1/NLog.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.1.0.4914"
+          }
+        }
+      },
+      "NLog.Config/4.7.15": {
+        "dependencies": {
+          "NLog": "6.1.0",
+          "NLog.Schema": "6.1.0"
+        }
+      },
+      "NLog.Schema/6.1.0": {},
       "Swashbuckle.AspNetCore/10.1.1": {
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "9.0.0",
@@ -916,14 +934,7 @@
           }
         }
       },
-      "System.Formats.Asn1/9.0.12": {
-        "runtime": {
-          "lib/net9.0/System.Formats.Asn1.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.1225.60609"
-          }
-        }
-      },
+      "System.Formats.Asn1/9.0.12": {},
       "System.IdentityModel.Tokens.Jwt/6.35.0": {
         "dependencies": {
           "Microsoft.IdentityModel.JsonWebTokens": "6.35.0",
@@ -1034,14 +1045,7 @@
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
-      "System.Text.Json/9.0.12": {
-        "runtime": {
-          "lib/net9.0/System.Text.Json.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.1225.60609"
-          }
-        }
-      },
+      "System.Text.Json/9.0.12": {},
       "System.Threading.Channels/7.0.0": {},
       "System.Threading.Tasks.Extensions/4.5.4": {},
       "System.Windows.Extensions/6.0.0": {
@@ -1399,6 +1403,27 @@
       "sha512": "sha512-YqueG52R/Xej4VVbKuRIodjiAhV0HR/XVbLbNrJhCZnzjnSjgMJ/dCdV0akQQxavX6hp/LC6rqLGLcXeQYU7XA==",
       "path": "mono.texttemplating/3.0.0",
       "hashPath": "mono.texttemplating.3.0.0.nupkg.sha512"
+    },
+    "NLog/6.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-K4UdxS4fuJeCM0sm+JTXWoJgOtcXX7X5kvE94bR07UB8JOB6A2+ski7q1tf2qdv+N0H3gsoWtteScJCHa3+zpw==",
+      "path": "nlog/6.1.0",
+      "hashPath": "nlog.6.1.0.nupkg.sha512"
+    },
+    "NLog.Config/4.7.15": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-njc2NvwgAzEuH609TGO4yqpokcxXFdypHwG3I8hyLYIE4pr+j4KJB4ZhsyODVwkP/n2F2V4uJ24VW4icNyJMcA==",
+      "path": "nlog.config/4.7.15",
+      "hashPath": "nlog.config.4.7.15.nupkg.sha512"
+    },
+    "NLog.Schema/6.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xCUqI2Cf9INKY8Eu6MA2sIbSg6jsdlg60JQYeBWcOecvBCy3oo8BCGWcjjhoazs2gGgLSTJ3bVgOUddw21kRqw==",
+      "path": "nlog.schema/6.1.0",
+      "hashPath": "nlog.schema.6.1.0.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/10.1.1": {
       "type": "package",
