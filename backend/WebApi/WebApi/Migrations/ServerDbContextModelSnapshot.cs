@@ -109,7 +109,6 @@ namespace WebApi.Migrations
                     b.HasIndex("CarModifications_Id");
 
                     b.HasIndex("Name")
-                        .IsUnique()
                         .HasDatabaseName("IX_CarModels_Name");
 
                     b.ToTable("CarModels");

@@ -41,8 +41,7 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
             .IsUnique();
 
         builder.Entity<CarModelsModel>().HasIndex(cm => cm.Name)
-            .HasDatabaseName("IX_CarModels_Name")
-            .IsUnique();
+            .HasDatabaseName("IX_CarModels_Name");
 
         builder.Entity<CarBrandsModel>().HasIndex(cb => cb.Name)
             .HasDatabaseName("IX_CarBrands_Name")
