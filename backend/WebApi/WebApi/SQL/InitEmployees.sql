@@ -1,0 +1,17 @@
+INSERT INTO Employees (SecondName, FirstName, SurName, PhoneNumber, Email, LoginEmployee, PasswordEmployee, Position)
+VALUES ('Соколов', 'Алексей', 'Викторович', '+79260001122', 'sokolov@autoparts.ru', 'sokolov', 'pass123',
+        'Менеджер по продажам'),
+       ('Морозов', 'Дмитрий', 'Сергеевич', '+79160002233', 'morozov@autoparts.ru', 'morozov', 'pass123', 'Кладовщик'),
+       ('Васильев', 'Игорь', 'Николаевич', '+79263334455', 'vasiliev@autoparts.ru', 'vasiliev', 'pass123',
+        'Старший менеджер'),
+       ('Новиков', 'Павел', 'Андреевич', '+79164445566', 'novikov@autoparts.ru', 'novikov', 'pass123', 'Логист'),
+       ('Зайцев', 'Роман', 'Олегович', '+79265556677', 'zaytsev@autoparts.ru', 'zaytsev', 'pass123',
+        'Продавец-консультант'),
+       ('Павлов', 'Евгений', 'Владимирович', '+79166667788', 'pavlov@autoparts.ru', 'pavlov', 'pass123', 'Закупщик'),
+       ('Андреев', 'Артем', 'Сергеевич', '+79267778899', 'andreev@autoparts.ru', 'andreev', 'pass123',
+        'Продавец-консультант'),
+       ('Николаев', 'Максим', 'Денисович', '+79168889900', 'nikolaev@autoparts.ru', 'nikolaev', 'pass123', 'Кладовщик'),
+       ('Степанов', 'Виктор', 'Михайлович', '+79260002233', 'stepanov@autoparts.ru', 'stepanov', 'pass123',
+        'Менеджер по продажам'),
+       ('Сергеев', 'Олег', 'Петрович', '+79160003344', 'sergeev@autoparts.ru', 'sergeev', 'pass123',
+        'Директор магазина');
