@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using WebApi.Methods;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,11 @@ builder.Services.AddSwaggerGen(c =>
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ServerDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddHostedService<DatabaseInitializerBackgroundService>(provaider =>
+    new DatabaseInitializerBackgroundService(connectionString));
+builder.Services.AddHostedService<DatabaseBackupBackgroundService>(provaider =>
+    new DatabaseBackupBackgroundService(connectionString));
 
 builder.Services.AddCors(options =>
 {
