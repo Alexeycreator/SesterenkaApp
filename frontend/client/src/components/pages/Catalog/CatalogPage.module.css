@@ -45,6 +45,18 @@
     border: 2px solid transparent;
 }
 
+/* Эффект при наведении на карточку категории (кроме выбранной) */
+.categoryCard:hover:not(.selected) {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Эффект при наведении на карточку товара */
+.productCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
 /* Выбранная карточка категории */
 .selected {
     transform: scale(1.02);
