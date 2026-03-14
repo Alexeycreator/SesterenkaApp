@@ -14,7 +14,7 @@ public sealed class AddressesModel
     [Required] [MaxLength(100)] public string Region { get; set; }
     [Required] [MaxLength(100)] public string City { get; set; }
     [Required] [MaxLength(100)] public string Street { get; set; }
-    [Required] [MaxLength(10)] public string House { get; set; }
+   [MaxLength(10)] public string? House { get; set; }
 
     [JsonIgnore] public ICollection<WarehousesAddressesModel>? WarehousesAddresses { get; set; }
 }
