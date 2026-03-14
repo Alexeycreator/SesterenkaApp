@@ -16,21 +16,13 @@ public sealed class OrdersModel
 
     [Required] [MaxLength(25)] public string Status { get; set; } = "Выдан";
 
-    [Column("Clients_Id")]
-    [ForeignKey("Clients")]
-    public int? Clients_Id { get; set; }
-
-    [Column("Employees_Id")]
-    [ForeignKey("Employees")]
-    public int? Employees_Id { get; set; }
+    [Column("Users_Id")]
+    [ForeignKey("Users")]
+    public int? Users_Id { get; set; }
 
     [JsonIgnore]
-    [DeleteBehavior(DeleteBehavior.Cascade)]
-    public ClientsModel? Clients { get; set; }
-
-    [JsonIgnore]
-    [DeleteBehavior(DeleteBehavior.SetNull)]
-    public EmployeesModel? Employees { get; set; }
+    [DeleteBehavior(DeleteBehavior.Restrict)]
+    public UsersModel? Users { get; set; }
 
     [JsonIgnore] public ICollection<OrderItemsModel>? OrderItems { get; set; }
 }
