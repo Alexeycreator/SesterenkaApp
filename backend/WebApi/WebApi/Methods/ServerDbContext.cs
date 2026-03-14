@@ -5,13 +5,12 @@ namespace WebApi.Methods;
 
 public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) : DbContext(options)
 {
-    public DbSet<ClientsModel> Clients { get; set; }
+    public DbSet<UsersModel> Users { get; set; }
     public DbSet<AddressesModel> Addresses { get; set; }
     public DbSet<CarModelsModel> CarModels { get; set; }
     public DbSet<CarBrandsModel> CarBrands { get; set; }
     public DbSet<CarModificationsModel> CarModifications { get; set; }
     public DbSet<CategoriesModel> Categories { get; set; }
-    public DbSet<EmployeesModel> Employees { get; set; }
     public DbSet<ManufacturersModel> Manufacturers { get; set; }
     public DbSet<OrdersModel> Orders { get; set; }
     public DbSet<OrderItemsModel> OrderItems { get; set; }
@@ -24,15 +23,15 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.Entity<ClientsModel>().HasIndex(c => new { c.SecondName, c.FirstName, c.SurName })
+        builder.Entity<UsersModel>().HasIndex(c => new { c.SecondName, c.FirstName, c.SurName })
             .HasDatabaseName("IX_Clients_FullName");
-        builder.Entity<ClientsModel>().HasIndex(c => c.PhoneNumber)
+        builder.Entity<UsersModel>().HasIndex(c => c.PhoneNumber)
             .HasDatabaseName("IX_Clients_PhoneNumber")
             .IsUnique();
-        builder.Entity<ClientsModel>().HasIndex(c => c.Email)
+        builder.Entity<UsersModel>().HasIndex(c => c.Email)
             .HasDatabaseName("IX_Clients_Email")
             .IsUnique();
-        builder.Entity<ClientsModel>().HasIndex(c => c.LoginClient)
+        builder.Entity<UsersModel>().HasIndex(c => c.Login)
             .HasDatabaseName("IX_Clients_Login")
             .IsUnique();
 
@@ -56,20 +55,6 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
         builder.Entity<CategoriesModel>().HasIndex(cat => cat.Name)
             .HasDatabaseName("IX_Categories_Name")
             .IsUnique();
-
-        builder.Entity<EmployeesModel>().HasIndex(e => new { e.SecondName, e.FirstName, e.SurName })
-            .HasDatabaseName("IX_Employees_FullName");
-        builder.Entity<EmployeesModel>().HasIndex(e => e.PhoneNumber)
-            .HasDatabaseName("IX_Employees_PhoneNumber")
-            .IsUnique();
-        builder.Entity<EmployeesModel>().HasIndex(e => e.LoginEmployee)
-            .HasDatabaseName("IX_Employees_Login")
-            .IsUnique();
-        builder.Entity<EmployeesModel>().HasIndex(e => e.Email)
-            .HasDatabaseName("IX_Employees_Email")
-            .IsUnique();
-        builder.Entity<EmployeesModel>().HasIndex(e => e.Position)
-            .HasDatabaseName("IX_Employees_Position");
 
         builder.Entity<ManufacturersModel>().HasIndex(m => m.Name)
             .HasDatabaseName("IX_Manufacturers_Name")

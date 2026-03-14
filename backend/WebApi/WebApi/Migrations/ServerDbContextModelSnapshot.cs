@@ -36,7 +36,6 @@ namespace WebApi.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("House")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -54,7 +53,8 @@ namespace WebApi.Migrations
 
                     b.HasIndex("City", "Region", "Street", "House")
                         .IsUnique()
-                        .HasDatabaseName("IX_Addresses_FullAddress");
+                        .HasDatabaseName("IX_Addresses_FullAddress")
+                        .HasFilter("[House] IS NOT NULL");
 
                     b.ToTable("Addresses");
                 });
@@ -185,138 +185,6 @@ namespace WebApi.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("WebApi.Models.DataBase.ClientsModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LoginClient")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PasswordClient")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SecondName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SurName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Clients_Email");
-
-                    b.HasIndex("LoginClient")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Clients_Login");
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Clients_PhoneNumber");
-
-                    b.HasIndex("SecondName", "FirstName", "SurName")
-                        .HasDatabaseName("IX_Clients_FullName");
-
-                    b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("WebApi.Models.DataBase.EmployeesModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LoginEmployee")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PasswordEmployee")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("SecondName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SurName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Employees_Email");
-
-                    b.HasIndex("LoginEmployee")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Employees_Login");
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Employees_PhoneNumber");
-
-                    b.HasIndex("Position")
-                        .HasDatabaseName("IX_Employees_Position");
-
-                    b.HasIndex("SecondName", "FirstName", "SurName")
-                        .HasDatabaseName("IX_Employees_FullName");
-
-                    b.ToTable("Employees");
-                });
-
             modelBuilder.Entity("WebApi.Models.DataBase.ManufacturersModel", b =>
                 {
                     b.Property<int>("Id")
@@ -384,14 +252,6 @@ namespace WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Clients_Id")
-                        .HasColumnType("int")
-                        .HasColumnName("Clients_Id");
-
-                    b.Property<int?>("Employees_Id")
-                        .HasColumnType("int")
-                        .HasColumnName("Employees_Id");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -400,17 +260,19 @@ namespace WebApi.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<int?>("Users_Id")
+                        .HasColumnType("int")
+                        .HasColumnName("Users_Id");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("Clients_Id");
-
-                    b.HasIndex("Employees_Id");
 
                     b.HasIndex("OrderDate")
                         .HasDatabaseName("IX_Orders_OrderDate");
 
                     b.HasIndex("Status")
                         .HasDatabaseName("IX_Orders_Status");
+
+                    b.HasIndex("Users_Id");
 
                     b.ToTable("Orders");
                 });
@@ -523,6 +385,108 @@ namespace WebApi.Migrations
                     b.ToTable("Stocks");
                 });
 
+            modelBuilder.Entity("WebApi.Models.DataBase.UsersModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("Birthday")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LockoutEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("LoginAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Position")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("SecondName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SurName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Clients_Email");
+
+                    b.HasIndex("Login")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Clients_Login");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Clients_PhoneNumber");
+
+                    b.HasIndex("SecondName", "FirstName", "SurName")
+                        .HasDatabaseName("IX_Clients_FullName");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("WebApi.Models.DataBase.WarehousesAddressesModel", b =>
                 {
                     b.Property<int>("Id")
@@ -627,19 +591,12 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.DataBase.OrdersModel", b =>
                 {
-                    b.HasOne("WebApi.Models.DataBase.ClientsModel", "Clients")
+                    b.HasOne("WebApi.Models.DataBase.UsersModel", "Users")
                         .WithMany("Orders")
-                        .HasForeignKey("Clients_Id")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("Users_Id")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("WebApi.Models.DataBase.EmployeesModel", "Employees")
-                        .WithMany("Orders")
-                        .HasForeignKey("Employees_Id")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Clients");
-
-                    b.Navigation("Employees");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("WebApi.Models.DataBase.ProductCarApplicabilityModel", b =>
@@ -732,16 +689,6 @@ namespace WebApi.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("WebApi.Models.DataBase.ClientsModel", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("WebApi.Models.DataBase.EmployeesModel", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("WebApi.Models.DataBase.ManufacturersModel", b =>
                 {
                     b.Navigation("Products");
@@ -759,6 +706,11 @@ namespace WebApi.Migrations
                     b.Navigation("ProductCarApplicability");
 
                     b.Navigation("Stocks");
+                });
+
+            modelBuilder.Entity("WebApi.Models.DataBase.UsersModel", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("WebApi.Models.DataBase.WarehousesModel", b =>
