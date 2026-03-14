@@ -1,0 +1,183 @@
+/* Footer.module.css */
+
+/* Основной контейнер подвала */
+.footer {
+    background: linear-gradient(0deg, #8B5A2B, #C0A080);
+    color: #F5F0E5;
+    padding: 40px 20px 30px;
+    margin-top: auto;
+    border-top: 2px solid #A07850;
+    position: relative;
+    box-shadow: 0 -5px 20px rgba(139, 69, 19, 0.1);
+}
+
+/* Декоративный элемент сверху (название компании) */
+.decorativeTop {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #F5F0E5;
+    padding: 8px 30px;
+    border-radius: 30px;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    color: #8B5A2B;
+    font-family: 'Cormorant Garamond', serif;
+    border: 2px solid #B76E3C;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+/* Контейнер для сетки секций подвала */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    padding-top: 30px;
+}
+
+/* Секция подвала (О компании, Покупателям, Контакты) */
+.section {
+    /* Стили для секций */
+}
+
+/* Заголовок секции */
+.sectionTitle {
+    color: #F5F0E5;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 2px solid rgba(245, 240, 229, 0.3);
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Иконка заголовка секции */
+.sectionIcon {
+    /* Стили для иконок */
+}
+
+/* Список ссылок в секции */
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Элемент списка */
+.listItem {
+    margin-bottom: 8px;
+}
+
+/* Ссылка в списке */
+.link {
+    color: #F5F0E5;
+    font-size: 14px;
+    text-decoration: none;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+/* Элемент контакта (телефон, email, адрес) */
+.contactItem {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+/* Иконка контакта */
+.contactIcon {
+    /* Стили для иконок контактов */
+}
+
+/* Нижняя часть подвала с копирайтом и ссылками */
+.bottomSection {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(245, 240, 229, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 12px;
+    color: #F5F0E5;
+    opacity: 0.8;
+}
+
+/* Текст копирайта */
+.copyright {
+    /* Стили для копирайта */
+}
+
+/* Контейнер для ссылок в нижней части */
+.links {
+    display: flex;
+    gap: 20px;
+}
+
+/* Ссылки в нижней части (политика, условия) */
+.bottomLink {
+    color: #F5F0E5;
+    text-decoration: none;
+}
+
+/* Разделитель между ссылками */
+.separator {
+    color: #F5F0E5;
+    opacity: 0.5;
+}
+
+/* Блок с дополнительной информацией о компании */
+.companyInfo {
+    max-width: 1200px;
+    margin: 15px auto 0;
+    text-align: center;
+    font-size: 11px;
+    color: #F5F0E5;
+    opacity: 0.6;
+}
+
+/* Параграф в блоке с дополнительной информацией */
+.companyInfo p {
+    margin: 0;
+}
+
+/* ===== МЕДИА-ЗАПРОСЫ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ===== */
+@media (max-width: 768px) {
+
+    /* Декоративный элемент на мобильных */
+    .decorativeTop {
+        font-size: 18px;
+        padding: 6px 20px;
+        white-space: normal;
+        width: 90%;
+        text-align: center;
+    }
+
+    /* Сетка секций на мобильных */
+    .container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Нижняя часть на мобильных */
+    .bottomSection {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Ссылки в нижней части на мобильных */
+    .links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,276 @@
+/* CatalogPage.module.css */
+
+/* Основной контейнер страницы каталога */
+.container {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Заголовочный блок страницы (h1 и p) */
+.header {
+    margin-bottom: 30px;
+}
+
+/* Главный заголовок "Каталог товаров" */
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+/* Подзаголовок под главным заголовком */
+.subtitle {
+    font-size: 1.1rem;
+    color: #5a6b7a;
+}
+
+/* Сетка для карточек категорий */
+.categoriesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Карточка категории */
+.categoryCard {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 2px solid transparent;
+}
+
+/* Выбранная карточка категории */
+.selected {
+    transform: scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #c49b6b;
+}
+
+/* Верхняя часть карточки с иконкой */
+.categoryImage {
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: relative;
+}
+
+/* Контейнер для иконки категории */
+.categoryIcon {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 15px;
+    backdrop-filter: blur(5px);
+}
+
+/* Нижняя часть карточки с текстом */
+.categoryContent {
+    padding: 15px;
+}
+
+/* Верхняя строка в карточке (название + количество) */
+.categoryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* Название категории */
+.categoryName {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Бейдж с количеством товаров */
+.categoryCount {
+    background-color: #f0e5d5;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #8b7355;
+}
+
+/* Описание категории */
+.categoryDescription {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+/* Ссылка "Просмотреть товары" */
+.categoryLink {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #c49b6b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Заголовок блока с товарами (кнопки назад/фильтры) */
+.productsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Кнопка "Назад к категориям" */
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #2c3e50;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+/* Кнопка "Фильтры" */
+.filterButton {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #2c3e50;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+/* Сетка для карточек товаров */
+.productsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Карточка товара */
+.productCard {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Изображение товара (заглушка) */
+.productImage {
+    height: 180px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Контентная часть карточки товара */
+.productContent {
+    padding: 15px;
+}
+
+/* Бренд товара */
+.productBrand {
+    font-size: 0.85rem;
+    color: #c49b6b;
+    margin-bottom: 5px;
+}
+
+/* Название товара */
+.productName {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+/* Описание товара */
+.productDescription {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+/* Блок с рейтингом (звезды) */
+.productRating {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+
+/* Цена товара */
+.productPrice {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+/* Старая цена (зачеркнутая) */
+.oldPrice {
+    font-size: 0.9rem;
+    color: #95a5a6;
+    text-decoration: line-through;
+    margin-left: 8px;
+}
+
+/* Бейдж наличия товара */
+.stockBadge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-color: #27ae60;
+    color: white;
+}
+
+/* Бейдж "Нет в наличии" */
+.outOfStockBadge {
+    background-color: #e74c3c;
+}
+
+/* Кнопка "Добавить в корзину" */
+.addToCartButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #c49b6b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+}
+
+/* Состояние пустого списка товаров */
+.emptyState {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    margin-top: 20px;
+}
