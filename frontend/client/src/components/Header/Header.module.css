@@ -1,6 +1,6 @@
 /* Header.module.css */
 
-/* Навигационная панель */
+/* ===== НАВИГАЦИОННАЯ ПАНЕЛЬ ===== */
 .navbar {
     background: linear-gradient(90deg, #F8F0E0 0%, #F0E0D0 50%, #E8D0C0 100%);
     border-bottom: 2px solid #C0A080;
@@ -15,11 +15,12 @@
     height: 70px;
 }
 
+/* Контейнер для содержимого шапки */
 .container {
     padding: 0 20px;
 }
 
-/* Логотип */
+/* ===== ЛОГОТИП ===== */
 .logo {
     font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 28px;
@@ -38,29 +39,28 @@
     white-space: nowrap;
 }
 
-.logo:hover {
-    background: rgba(200, 160, 120, 0.15);
-}
-
-/* Кнопка бургер-меню */
+/* ===== КНОПКА БУРГЕР-МЕНЮ ===== */
 .navbarToggler {
     background-color: #C0A080;
     border: 1px solid #8B5A2B;
 }
 
+/* Иконка бургер-меню */
 .navbarTogglerIcon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%238B5A2B' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-/* Меню навигации */
+/* ===== МЕНЮ НАВИГАЦИИ ===== */
 .navMenu {
     margin-left: 20px;
 }
 
+/* Дополнительное меню для авторизованных пользователей */
 .navList {
     margin-left: 40px;
 }
 
+/* Ссылки навигации */
 .navLink {
     color: #8B5A2B;
     font-size: 16px;
@@ -73,25 +73,21 @@
     text-decoration: none;
 }
 
-.navLink:hover {
-    background-color: rgba(200, 160, 120, 0.15);
-    border-color: #C0A080;
-}
-
-/* Информация о пользователе */
+/* ===== ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ ===== */
 .userInfo {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Имя пользователя */
 .userName {
     color: #8B5A2B;
     font-size: 14px;
     font-weight: 500;
 }
 
-/* Кнопка выхода */
+/* ===== КНОПКА ВЫХОДА ===== */
 .logoutButton {
     background: #C0A080;
     color: #F8F0E0;
@@ -103,11 +99,7 @@
     transition: all 0.3s;
 }
 
-.logoutButton:hover {
-    background: #8B5A2B;
-}
-
-/* Кнопка авторизации */
+/* ===== КНОПКА АВТОРИЗАЦИИ ===== */
 .authButton {
     background: #C0A080;
     color: #F8F0E0;
@@ -124,11 +116,7 @@
     box-shadow: 0 2px 5px rgba(160, 120, 80, 0.1);
 }
 
-.authButton:hover {
-    background: #8B5A2B;
-}
-
-/* Модальное окно авторизации */
+/* ===== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ ===== */
 .authModal {
     position: absolute;
     top: 45px;
@@ -142,6 +130,7 @@
     z-index: 1000;
 }
 
+/* Заголовок модального окна авторизации */
 .authModalTitle {
     color: #8B5A2B;
     text-align: center;
@@ -151,10 +140,12 @@
     padding-bottom: 8px;
 }
 
+/* Контейнер поля формы авторизации */
 .authFormField {
     margin-bottom: 10px;
 }
 
+/* Поле ввода авторизации */
 .authInput {
     width: 100%;
     padding: 8px 12px;
@@ -166,10 +157,12 @@
     outline: none;
 }
 
+/* Поле ввода с ошибкой */
 .authInputError {
     border-color: #d32f2f;
 }
 
+/* Текст ошибки под полем */
 .authFieldError {
     color: #d32f2f;
     font-size: 12px;
@@ -177,6 +170,7 @@
     padding-left: 4px;
 }
 
+/* Общая ошибка авторизации */
 .authError {
     background-color: #ffebee;
     color: #d32f2f;
@@ -188,12 +182,14 @@
     border: 1px solid #ffcdd2;
 }
 
+/* Контейнер кнопок авторизации */
 .authButtons {
     display: flex;
     gap: 8px;
     margin-bottom: 10px;
 }
 
+/* Кнопка входа */
 .authSubmitButton {
     flex: 1;
     padding: 8px;
@@ -206,16 +202,7 @@
     transition: all 0.3s;
 }
 
-.authSubmitButton:hover:not(:disabled) {
-    background: #8B5A2B;
-}
-
-.authSubmitButton:disabled {
-    background: #999;
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
+/* Кнопка регистрации в модалке авторизации */
 .authRegisterButton {
     flex: 1;
     padding: 8px;
@@ -228,11 +215,7 @@
     transition: all 0.3s;
 }
 
-.authRegisterButton:hover {
-    background-color: #F0E0D0;
-}
-
-/* Модальное окно регистрации */
+/* ===== МОДАЛЬНОЕ ОКНО РЕГИСТРАЦИИ ===== */
 .registrationOverlay {
     position: fixed;
     top: 0;
@@ -247,6 +230,7 @@
     padding: 20px;
 }
 
+/* Контейнер модального окна регистрации */
 .registrationModal {
     background-color: #F8F0E0;
     border-radius: 30px;
@@ -260,6 +244,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+/* Кнопка закрытия модального окна */
 .closeButton {
     position: absolute;
     top: 15px;
@@ -278,10 +263,7 @@
     transition: all 0.3s;
 }
 
-.closeButton:hover {
-    background-color: rgba(183, 110, 60, 0.1);
-}
-
+/* Заголовок модального окна регистрации */
 .registrationTitle {
     text-align: center;
     color: #8B5A2B;
@@ -290,10 +272,12 @@
     margin-bottom: 20px;
 }
 
+/* Секция в форме регистрации */
 .section {
     margin-bottom: 30px;
 }
 
+/* Заголовок секции */
 .sectionTitle {
     font-size: 20px;
     color: #8B5A2B;
@@ -303,16 +287,19 @@
     padding-bottom: 10px;
 }
 
+/* Сетка для полей формы */
 .formGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
 
+/* Контейнер поля формы */
 .formField {
     /* Стили для поля формы */
 }
 
+/* Метка поля формы */
 .formLabel {
     display: block;
     color: #8B5A2B;
@@ -320,10 +307,12 @@
     margin-bottom: 5px;
 }
 
+/* Звездочка обязательного поля */
 .required {
     color: #dc3545;
 }
 
+/* Поле ввода формы */
 .formInput {
     width: 100%;
     padding: 12px;
@@ -335,23 +324,26 @@
     outline: none;
 }
 
+/* Поле ввода с ошибкой */
 .formInputError {
     border-color: #dc3545;
 }
 
+/* Текст ошибки поля */
 .fieldError {
     color: #dc3545;
     font-size: 12px;
     margin-top: 3px;
 }
 
-/* Radio группа */
+/* ===== RADIO ГРУППА ===== */
 .radioGroup {
     display: flex;
     gap: 20px;
     padding: 12px 0;
 }
 
+/* Метка radio кнопки */
 .radioLabel {
     display: flex;
     align-items: center;
@@ -359,12 +351,13 @@
     color: #8B5A2B;
 }
 
-/* Выбор даты */
+/* ===== ВЫБОР ДАТЫ ===== */
 .dateSelectGroup {
     display: flex;
     gap: 10px;
 }
 
+/* Селект для выбора даты */
 .dateSelect {
     flex: 1;
     padding: 12px;
@@ -376,11 +369,12 @@
     outline: none;
 }
 
-/* Чекбокс показа пароля */
+/* ===== ЧЕКБОКС ПОКАЗА ПАРОЛЯ ===== */
 .showPasswordCheckbox {
     margin-top: 10px;
 }
 
+/* Метка чекбокса показа пароля */
 .showPasswordLabel {
     display: flex;
     align-items: center;
@@ -389,13 +383,14 @@
     font-size: 14px;
 }
 
-/* Кнопки регистрации */
+/* ===== КНОПКИ РЕГИСТРАЦИИ ===== */
 .registrationButtons {
     display: flex;
     justify-content: center;
     gap: 20px;
 }
 
+/* Кнопка отправки формы */
 .submitButton {
     padding: 15px 50px;
     background: linear-gradient(135deg, #B76E3C, #8B5A2B);
@@ -409,11 +404,7 @@
     box-shadow: 0 5px 15px rgba(183, 110, 60, 0.3);
 }
 
-.submitButton:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(183, 110, 60, 0.4);
-}
-
+/* Кнопка отмены */
 .cancelButton {
     padding: 15px 30px;
     background: transparent;
@@ -426,40 +417,43 @@
     transition: all 0.3s;
 }
 
-.cancelButton:hover {
-    background: rgba(183, 110, 60, 0.1);
-}
-
-/* Позиционирование */
+/* ===== ПОЗИЦИОНИРОВАНИЕ ===== */
 .positionRelative {
     position: relative;
     flex-shrink: 0;
 }
 
-/* Адаптивность */
+/* ===== МЕДИА-ЗАПРОСЫ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ===== */
 @media (max-width: 768px) {
+
+    /* Логотип на мобильных */
     .logo {
         font-size: 20px;
         padding: 5px 10px;
     }
 
+    /* Меню навигации на мобильных */
     .navMenu {
         margin-left: 0;
     }
 
+    /* Модальное окно на мобильных */
     .registrationModal {
         padding: 20px;
     }
 
+    /* Сетка формы на мобильных */
     .formGrid {
         grid-template-columns: 1fr;
     }
 
+    /* Кнопки регистрации на мобильных */
     .registrationButtons {
         flex-direction: column;
         gap: 10px;
     }
 
+    /* Кнопки на мобильных */
     .submitButton,
     .cancelButton {
         width: 100%;
