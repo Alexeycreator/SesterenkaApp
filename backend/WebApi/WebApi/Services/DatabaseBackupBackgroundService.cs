@@ -10,7 +10,7 @@ public sealed class DatabaseBackupBackgroundService : BackgroundService
     private string backupPath;
     private string databaseName;
     private readonly string? connectionString;
-    private readonly string backupDateTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+    private readonly string backupDateTime = DateTime.Now.ToString("yyyy-MM-dd");
     private string typePath;
     private string defaultBackupsPath;
 
@@ -102,10 +102,24 @@ public sealed class DatabaseBackupBackgroundService : BackgroundService
 
     private async Task ExecutingBackupCommand(SqlConnection connection, string backupDatabasePath, string typeSavePath)
     {
+        if (File.Exists(backupDatabasePath))
+        {
+            try
+            {
+                File.Delete(backupDatabasePath);
+                loggerDatabaseBackupBackgroundService.Info($"Удален существующий файл: {backupDatabasePath}");
+            }
+            catch (Exception ex)
+            {
+                loggerDatabaseBackupBackgroundService.Error(ex,
+                    $"Не удалось удалить существующий файл. Возможно, файл заблокирован SQL Server.");
+            }
+        }
+
         var command = new SqlCommand($@"
                     BACKUP DATABASE [{databaseName}] 
                     TO DISK = N'{backupDatabasePath}' 
-                    WITH FORMAT, 
+                    WITH INIT, FORMAT,
                          STATS = 10", connection);
 
         await command.ExecuteNonQueryAsync();

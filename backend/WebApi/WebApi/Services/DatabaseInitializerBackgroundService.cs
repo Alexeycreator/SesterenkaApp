@@ -79,8 +79,7 @@ public sealed class DatabaseInitializerBackgroundService : BackgroundService
                 { "WarehousesAddresses", "SQL/InitWarehousesAddresses.sql" },
 
                 // Пользователи
-                { "Clients", "SQL/InitClients.sql" },
-                { "Employees", "SQL/InitEmployees.sql" },
+                { "Users", "SQL/InitUsers.sql" },
 
                 // Заказы и связанные данные
                 { "Orders", "SQL/InitOrders.sql" },
