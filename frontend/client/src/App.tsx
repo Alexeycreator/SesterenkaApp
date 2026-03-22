@@ -15,8 +15,8 @@ import {
   SaleItemsPage,
 } from './components/pages/Index';
 
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
 
 import './App.css';
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
@@ -56,15 +56,18 @@ function App() {
               <Route path='/news' element={<NewsPage />} />
               <Route path='/information' element={<InformationPage />} />
               <Route path='/help' element={<HelpPage />} />
+
               <Route path='/catalog' element={<CatalogPage />} />
-              {/* описать пути для фильтров, например /catalog/фильтра/масляный, салонный и тд и для других запчастей также */}
-              <Route path='/lk/:id' element={<AccountPage />} />
-              <Route path='/basket/:id' element={<BasketPage />} />
+
+              <Route path='/lk' element={<AccountPage />} />
+              <Route path='/basket' element={<BasketPage />} />
+
               <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
               <Route path='/terms_of_use' element={<TermsOfUsePage />} />
               <Route path='/sale_items' element={<SaleItemsPage />} />
             </Routes>
           </div>
+          <div style={{ height: '100px' }}></div>
           <Footer />
         </div>
       </AuthProvider>
