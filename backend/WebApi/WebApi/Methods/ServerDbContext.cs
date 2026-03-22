@@ -19,6 +19,7 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
     public DbSet<StocksModel> Stocks { get; set; }
     public DbSet<WarehousesModel> Warehouses { get; set; }
     public DbSet<WarehousesAddressesModel> WarehousesAddresses { get; set; }
+    public DbSet<InformationsModel> Informations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

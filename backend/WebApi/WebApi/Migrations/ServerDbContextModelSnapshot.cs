@@ -39,6 +39,9 @@ namespace WebApi.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<bool>("IsShop")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Region")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -171,6 +174,16 @@ namespace WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -183,6 +196,39 @@ namespace WebApi.Migrations
                         .HasDatabaseName("IX_Categories_Name");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("WebApi.Models.DataBase.InformationsModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AboutUs")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int?>("Addresses_Id")
+                        .HasColumnType("int")
+                        .HasColumnName("Addresses_Id");
+
+                    b.Property<string>("Questions")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("Users_Id")
+                        .HasColumnType("int")
+                        .HasColumnName("Users_Id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Addresses_Id");
+
+                    b.HasIndex("Users_Id");
+
+                    b.ToTable("Informations");
                 });
 
             modelBuilder.Entity("WebApi.Models.DataBase.ManufacturersModel", b =>
@@ -317,6 +363,11 @@ namespace WebApi.Migrations
                     b.Property<string>("Details")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("Manufacturers_Id")
                         .HasColumnType("int")
@@ -572,6 +623,23 @@ namespace WebApi.Migrations
                     b.Navigation("CarModifications");
                 });
 
+            modelBuilder.Entity("WebApi.Models.DataBase.InformationsModel", b =>
+                {
+                    b.HasOne("WebApi.Models.DataBase.AddressesModel", "Addresses")
+                        .WithMany("Informations")
+                        .HasForeignKey("Addresses_Id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WebApi.Models.DataBase.UsersModel", "Users")
+                        .WithMany("Informations")
+                        .HasForeignKey("Users_Id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("WebApi.Models.DataBase.OrderItemsModel", b =>
                 {
                     b.HasOne("WebApi.Models.DataBase.OrdersModel", "Orders")
@@ -669,6 +737,8 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.DataBase.AddressesModel", b =>
                 {
+                    b.Navigation("Informations");
+
                     b.Navigation("WarehousesAddresses");
                 });
 
@@ -710,6 +780,8 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.DataBase.UsersModel", b =>
                 {
+                    b.Navigation("Informations");
+
                     b.Navigation("Orders");
                 });
 
