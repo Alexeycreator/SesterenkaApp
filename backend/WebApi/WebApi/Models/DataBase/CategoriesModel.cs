@@ -12,6 +12,8 @@ public sealed class CategoriesModel
     public int Id { get; set; }
 
     [Required] [MaxLength(50)] public string Name { get; set; }
+    [Required] [MaxLength(25)] public string Icon { get; set; } = string.Empty;
+    [Required] [MaxLength(100)] public string Description { get; set; } = string.Empty;
 
     [JsonIgnore] public ICollection<ProductsModel>? Products { get; set; }
 }
