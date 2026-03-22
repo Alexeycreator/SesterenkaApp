@@ -47,4 +47,6 @@ public sealed class UsersModel
     public DateTime? LastLoginAt { get; set; }
     public int? LoginAttempts { get; set; } = 0;
     public DateTime? LockoutEnd { get; set; }
+
+    [JsonIgnore] public ICollection<InformationsModel>? Informations { get; set; }
 }
