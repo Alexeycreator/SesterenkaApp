@@ -20,6 +20,7 @@ public sealed class ProductsModel
     public double Price { get; set; }
 
     [MaxLength(2000)] public string? Details { get; set; }
+    [MaxLength(500)] public string Image { get; set; } = string.Empty;
 
     [Column("Categories_Id")]
     [ForeignKey("Categories")]
