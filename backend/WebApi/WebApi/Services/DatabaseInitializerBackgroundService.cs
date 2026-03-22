@@ -89,7 +89,10 @@ public sealed class DatabaseInitializerBackgroundService : BackgroundService
                 { "ProductCarApplicability", "SQL/InitProductCarApplicability.sql" },
 
                 // Остатки
-                { "Stocks", "SQL/InitStocks.sql" }
+                { "Stocks", "SQL/InitStocks.sql" },
+                
+                // Информация о компании
+                {"Informations", "SQL/InitInformations.sql"}
             };
 
             foreach (var (tableName, scriptPath) in tableScripts)
