@@ -1,0 +1,467 @@
+/* NewsPage.module.css */
+
+/* Основной контейнер страницы */
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+}
+
+/* Заголовок страницы */
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+}
+
+/* Подзаголовок страницы */
+.subtitle {
+    font-size: 1.1rem;
+    color: #5a6b7a;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Поле поиска */
+.searchInput {
+    border: 2px solid #D2B48C;
+    border-radius: 10px 0 0 10px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #FFF8F0;
+    color: #8B5A2B;
+}
+
+.searchInput:focus {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
+    outline: none;
+    background-color: white;
+}
+
+/* Кнопка очистки поиска */
+.clearButton {
+    background-color: #f8f9fa;
+    border: 2px solid #D2B48C;
+    border-left: none;
+    color: #8B5A2B;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.clearButton:hover {
+    background-color: #e9ecef;
+    color: #5a3e2b;
+}
+
+/* Кнопка поиска */
+.searchButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: #F8F0E0;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.searchButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Кнопка фильтра (неактивная) */
+.filterButton {
+    background: transparent;
+    border: 1px solid #c49b6b;
+    color: #8B5A2B;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    padding: 8px 15px;
+}
+
+.filterButton:hover {
+    background: rgba(196, 155, 107, 0.1);
+    border-color: #8B5A2B;
+    color: #8B5A2B;
+    transform: translateY(-2px);
+}
+
+/* Активный фильтр */
+.activeFilter {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 1px solid #8B5A2B;
+    color: #F8F0E0;
+    font-weight: 500;
+    padding: 8px 15px;
+}
+
+.activeFilter:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    color: #F8F0E0;
+}
+
+/* Счетчик категории */
+.categoryCount {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Карточка новости - основной стиль */
+.newsCard {
+    border: 2px solid transparent;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.5s ease forwards;
+    cursor: pointer;
+}
+
+/* Эффект при наведении на карточку - поднятие вверх */
+.newsCard:hover {
+    transform: translateY(-8px);
+    /* Поднимаем карточку вверх */
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+    /* Усиливаем тень */
+    border-color: #c49b6b;
+    /* Добавляем золотистую рамку */
+}
+
+/* Обертка для изображения */
+.imageWrapper {
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+}
+
+/* Изображение карточки */
+.cardImage {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    /* Плавное увеличение */
+}
+
+/* Эффект увеличения изображения при наведении на карточку */
+.newsCard:hover .cardImage {
+    transform: scale(1.1);
+    /* Увеличиваем изображение */
+}
+
+/* Бейдж "Популярное" */
+.featuredBadge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+/* Эффект для бейджа при наведении */
+.newsCard:hover .featuredBadge {
+    transform: scale(1.05);
+    /* Немного увеличиваем бейдж */
+}
+
+/* Тело карточки */
+.cardBody {
+    padding: 20px;
+    transition: background-color 0.3s ease;
+}
+
+/* Легкое изменение фона при наведении */
+.newsCard:hover .cardBody {
+    background-color: #fffaf5;
+    /* Очень светлый бежевый оттенок */
+}
+
+/* Бейдж категории */
+.categoryBadge {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    color: #F8F0E0;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid #8B5A2B;
+    transition: all 0.3s ease;
+}
+
+/* Эффект для бейджа категории при наведении */
+.newsCard:hover .categoryBadge {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: scale(1.02);
+}
+
+/* Дата публикации */
+.dateText {
+    color: #95a5a6;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+/* Затемнение даты при наведении */
+.newsCard:hover .dateText {
+    color: #7f8c8d;
+}
+
+/* Заголовок новости */
+.cardTitle {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 15px 0 10px;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+/* Изменение цвета заголовка при наведении */
+.newsCard:hover .cardTitle {
+    color: #8B5A2B;
+    /* Коричневый цвет */
+}
+
+/* Текст новости */
+.cardText {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+/* Информация об авторе */
+.authorInfo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.authorName {
+    color: #8B5A2B;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* Кнопка "Читать далее" */
+.readMoreBtn {
+    color: #c49b6b;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Эффект для кнопки при наведении на карточку */
+.newsCard:hover .readMoreBtn {
+    color: #8B5A2B;
+    transform: translateX(8px);
+    /* Увеличиваем сдвиг */
+}
+
+/* Добавляем подчеркивание для кнопки */
+.readMoreBtn::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #8B5A2B;
+    transition: width 0.3s ease;
+}
+
+/* Появление подчеркивания при наведении на карточку */
+.newsCard:hover .readMoreBtn::after {
+    width: 100%;
+}
+
+/* Футер карточки */
+.cardFooter {
+    background-color: white;
+    border-top: 1px solid rgba(196, 155, 107, 0.2);
+    padding: 15px 20px;
+    transition: all 0.3s ease;
+}
+
+/* Изменение футера при наведении */
+.newsCard:hover .cardFooter {
+    border-top-color: #c49b6b;
+    background-color: #fffaf5;
+}
+
+/* Статистика (время, просмотры, комментарии) */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    color: #95a5a6;
+    font-size: 0.85rem;
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s ease;
+}
+
+/* Изменение цвета статистики при наведении */
+.newsCard:hover .statItem {
+    color: #8B5A2B;
+}
+
+/* Состояние "нет результатов" */
+.noResults {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.5s ease;
+}
+
+.noResults h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.noResults p {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+/* Кнопка сброса фильтров */
+.resetButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: #F8F0E0;
+    padding: 10px 30px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.resetButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Анимация появления карточек */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Задержки анимации для карточек */
+.newsCard:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.newsCard:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.newsCard:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.newsCard:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.newsCard:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.newsCard:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+/* Информация о результатах поиска */
+.resultsInfo {
+    color: #5a6b7a;
+    font-size: 1rem;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(196, 155, 107, 0.3);
+}
+
+.resultsInfo strong {
+    color: #8B5A2B;
+    font-weight: 600;
+}
+
+/* Адаптивность для планшетов */
+@media (max-width: 992px) {
+    .title {
+        font-size: 2.2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .pageContainer {
+        padding-top: 80px;
+    }
+
+    .title {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+        text-align: center;
+    }
+
+    .stats {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    /* Уменьшаем эффект поднятия на мобильных */
+    .newsCard:hover {
+        transform: translateY(-4px);
+    }
+}
+
+/* Адаптивность для маленьких мобильных */
+@media (max-width: 576px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .cardTitle {
+        font-size: 1.1rem;
+    }
+}

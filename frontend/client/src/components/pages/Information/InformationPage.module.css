@@ -1,0 +1,239 @@
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #5a6b7a;
+    text-align: center;
+}
+
+.sectionTitle {
+    font-size: 2rem;
+    color: #8B5A2B;
+    margin-bottom: 30px;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 2px solid #D2B48C;
+    padding-bottom: 10px;
+}
+
+/* Информационный блок */
+.infoBlock {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid #D2B48C;
+}
+
+.companyDescription {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.companyMission {
+    color: #8B5A2B;
+    font-size: 1.2rem;
+    font-style: italic;
+    padding: 20px;
+    background: rgba(196, 155, 107, 0.1);
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.valuesTitle {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.valuesGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.valueItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 15px;
+    background: white;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.valueItem:hover {
+    transform: translateX(10px);
+}
+
+.valueDot {
+    color: #c49b6b;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.valueText {
+    color: #34495e;
+    font-size: 1rem;
+}
+
+/* Карточки команды */
+.teamCard {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.teamCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.teamIcon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.teamName {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.teamPosition {
+    color: #c49b6b;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.teamDescription {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Карточки магазинов */
+.storeCard {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.storeCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.storeCity {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #D2B48C;
+}
+
+.storeAddress,
+.storePhone,
+.storeSchedule,
+.storeWeekend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+.storeIcon {
+    color: #c49b6b;
+    font-size: 1.1rem;
+    width: 20px;
+}
+
+.storeFeatures {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.storeFeature {
+    background: rgba(196, 155, 107, 0.1);
+    color: #8B5A2B;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    border: 1px solid #D2B48C;
+}
+
+/* Дополнительная информация */
+.extraInfo {
+    background: linear-gradient(135deg, #c49b6b20, #b38b5b20);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    border: 2px dashed #c49b6b;
+}
+
+.extraTitle {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.extraText {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .sectionTitle {
+        font-size: 1.5rem;
+    }
+
+    .teamName {
+        font-size: 1.1rem;
+    }
+
+    .storeCity {
+        font-size: 1.2rem;
+    }
+}

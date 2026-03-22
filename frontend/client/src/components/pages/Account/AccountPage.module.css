@@ -1,0 +1,461 @@
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+    padding-top: 90px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #5a6b7a;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Вкладки */
+.accountTabs {
+    border-bottom: 2px solid #D2B48C;
+    margin-bottom: 30px;
+}
+
+.tabLink {
+    color: #8B5A2B;
+    font-weight: 500;
+    padding: 10px 20px;
+    border: none !important;
+    transition: all 0.3s ease;
+}
+
+.tabLink:hover {
+    color: #5a3e2b;
+    background: rgba(196, 155, 107, 0.1);
+}
+
+.tabLink.active {
+    color: #8B5A2B !important;
+    background: transparent !important;
+    border-bottom: 3px solid #c49b6b !important;
+}
+
+/* Карточка контента */
+.contentCard {
+    border: 2px solid #D2B48C;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    color: #8B5A2B;
+    font-size: 1.5rem;
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* Профиль */
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #D2B48C;
+}
+
+.editButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.editButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.profileInfo {
+    margin-bottom: 25px;
+}
+
+.infoRow {
+    display: flex;
+    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #D2B48C;
+}
+
+.infoLabel {
+    width: 150px;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.infoValue {
+    flex: 1;
+    color: #2c3e50;
+}
+
+/* Форма редактирования */
+.formLabel {
+    color: #8B5A2B;
+    font-weight: 500;
+}
+
+.formInput {
+    border: 2px solid #D2B48C;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #FFF8F0;
+    color: #8B5A2B;
+}
+
+.formInput:focus {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
+    outline: none;
+    background-color: white;
+}
+
+.saveButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 10px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.saveButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+/* Статистика */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.statCard {
+    background: linear-gradient(135deg, #c49b6b10, #b38b5b10);
+    border: 2px solid #D2B48C;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.statValue {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.statLabel {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Заказы */
+.ordersList {
+    margin-top: 20px;
+}
+
+.orderItem {
+    border: 2px solid #D2B48C;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.orderItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.orderHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #D2B48C;
+}
+
+.orderId {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.orderDate {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.orderDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.orderInfo {
+    display: flex;
+    gap: 20px;
+    color: #2c3e50;
+}
+
+.orderAddress {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.orderDetailsBtn {
+    color: #c49b6b;
+    text-decoration: none;
+    padding: 0;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.orderDetailsBtn:hover {
+    color: #8B5A2B;
+    transform: translateX(5px);
+}
+
+/* Статусы заказов */
+.statusCompleted,
+.statusDelivered {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.statusProcessing {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.statusCancelled {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Адреса */
+.addressesHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #D2B48C;
+}
+
+.addAddressButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.addAddressButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.addressItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #D2B48C;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.addressItem:hover {
+    background: rgba(196, 155, 107, 0.05);
+}
+
+.addressType {
+    color: #8B5A2B;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.addressText {
+    color: #2c3e50;
+}
+
+.addressActions {
+    display: flex;
+    gap: 10px;
+}
+
+.addressEditBtn,
+.addressDeleteBtn {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    border: 2px solid #D2B48C;
+    border-radius: 8px;
+    background: transparent;
+    color: #8B5A2B;
+    transition: all 0.3s ease;
+}
+
+.addressEditBtn:hover {
+    background: #c49b6b;
+    color: white;
+    border-color: #8B5A2B;
+}
+
+.addressDeleteBtn:hover {
+    background: #e74c3c;
+    color: white;
+    border-color: #c0392b;
+}
+
+/* Настройки */
+.settingsSection {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #D2B48C;
+}
+
+.settingsSection:last-child {
+    border-bottom: none;
+}
+
+.settingsSubtitle {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.settingCheckbox {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.settingCheckbox input:checked {
+    background-color: #c49b6b;
+    border-color: #c49b6b;
+}
+
+.changePasswordButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 10px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.changePasswordButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.deleteWarning {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.deleteAccountButton {
+    background: transparent;
+    border: 2px solid #e74c3c;
+    color: #e74c3c;
+    font-weight: 500;
+    padding: 8px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.deleteAccountButton:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .profileHeader {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .infoRow {
+        flex-direction: column;
+    }
+
+    .infoLabel {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .orderHeader {
+        flex-wrap: wrap;
+    }
+
+    .orderDetails {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .addressItem {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .addressesHeader {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

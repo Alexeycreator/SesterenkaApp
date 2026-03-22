@@ -1,0 +1,202 @@
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #5a6b7a;
+    text-align: center;
+}
+
+.sectionTitle {
+    font-size: 2rem;
+    color: #8B5A2B;
+    margin-bottom: 30px;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 2px solid #D2B48C;
+    padding-bottom: 10px;
+}
+
+/* Карточки поддержки */
+.supportCard {
+    background: white;
+    border-radius: 15px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.supportCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.supportIcon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.supportTitle {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.supportContent {
+    color: #8B5A2B;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.supportDescription {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Элементы FAQ */
+.faqItem {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border-left: 4px solid #c49b6b;
+    height: 100%;
+}
+
+.faqItem:hover {
+    transform: translateX(5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.faqQuestion {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.faqAnswer {
+    color: #7f8c8d;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Информация о возврате */
+.returnInfo {
+    background: linear-gradient(135deg, #c49b6b20, #b38b5b20);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    border: 2px dashed #c49b6b;
+}
+
+.returnText {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Карточки шагов возврата */
+.stepCard {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.stepCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.stepNumber {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0 auto 15px;
+}
+
+.stepTitle {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.stepDescription {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Дополнительная информация */
+.additionalInfo {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid #c49b6b;
+}
+
+.additionalTitle {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.additionalText {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+    
+    .sectionTitle {
+        font-size: 1.5rem;
+    }
+    
+    .faqQuestion {
+        font-size: 1.1rem;
+    }
+}

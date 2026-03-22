@@ -1,0 +1,318 @@
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Hero секция */
+.heroSection {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.heroTitle {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.heroSubtitle {
+    font-size: 1.5rem;
+    color: #8B5A2B;
+    margin-bottom: 20px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.heroDescription {
+    font-size: 1.2rem;
+    color: #5a6b7a;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.heroButtons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.primaryButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.primaryButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    color: white;
+}
+
+.secondaryButton {
+    background: transparent;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+    background: rgba(196, 155, 107, 0.1);
+    transform: translateY(-2px);
+    border-color: #8B5A2B;
+    color: #5a3e2b;
+}
+
+/* Заголовки секций */
+.sectionTitle {
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+    border-bottom: 2px solid #D2B48C;
+    padding-bottom: 15px;
+}
+
+/* Категории */
+.categoryLink {
+    text-decoration: none;
+    display: block;
+}
+
+.categoryItem {
+    background: white;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.categoryItem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.categoryIcon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.categoryName {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Преимущества */
+.advantageCard {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.advantageCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.advantageIcon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.advantageTitle {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.advantageDescription {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Новости */
+.newsCard {
+    border: 2px solid transparent;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.newsCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.newsDate {
+    color: #95a5a6;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.newsTitle {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.newsText {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.newsLink {
+    color: #c49b6b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.newsLink:hover {
+    color: #8B5A2B;
+    transform: translateX(5px);
+}
+
+/* Отзывы */
+.testimonialCard {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.testimonialCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.testimonialRating {
+    margin-bottom: 15px;
+}
+
+.star {
+    color: #f1c40f;
+    font-size: 1.2rem;
+    margin-right: 3px;
+}
+
+.testimonialText {
+    color: #2c3e50;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.testimonialAuthor {
+    color: #8B5A2B;
+    font-weight: 500;
+    text-align: right;
+}
+
+/* CTA секция */
+.ctaSection {
+    background: linear-gradient(135deg, #c49b6b20, #b38b5b20);
+    border-radius: 20px;
+    padding: 50px;
+    text-align: center;
+    border: 2px dashed #c49b6b;
+}
+
+.ctaTitle {
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.ctaText {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.ctaButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.ctaButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: 2.5rem;
+    }
+    
+    .heroSubtitle {
+        font-size: 1.2rem;
+    }
+    
+    .heroButtons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .sectionTitle {
+        font-size: 1.8rem;
+    }
+    
+    .ctaSection {
+        padding: 30px;
+    }
+    
+    .ctaTitle {
+        font-size: 1.5rem;
+    }
+}
