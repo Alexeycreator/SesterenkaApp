@@ -1,5 +1,3 @@
-/* CatalogPage.module.css */
-
 /* Основной контейнер страницы каталога */
 .container {
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
@@ -10,6 +8,7 @@
 /* Заголовочный блок страницы (h1 и p) */
 .header {
     margin-bottom: 30px;
+    text-align: center;
 }
 
 /* Главный заголовок "Каталог товаров" */
@@ -18,12 +17,14 @@
     font-weight: bold;
     color: #2c3e50;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 /* Подзаголовок под главным заголовком */
 .subtitle {
     font-size: 1.1rem;
     color: #5a6b7a;
+    text-align: center;
 }
 
 /* Сетка для карточек категорий */
@@ -41,20 +42,19 @@
     overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid transparent;
 }
 
-/* Эффект при наведении на карточку категории (кроме выбранной) */
-.categoryCard:hover:not(.selected) {
+.categoryCard:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
 }
 
-/* Эффект при наведении на карточку товара */
-.productCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.categoryCardBody {
+    padding: 20px;
+    text-align: center;
 }
 
 /* Выбранная карточка категории */
@@ -83,6 +83,11 @@
     backdrop-filter: blur(5px);
 }
 
+.categoryIconLarge {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
 /* Нижняя часть карточки с текстом */
 .categoryContent {
     padding: 15px;
@@ -97,10 +102,15 @@
 }
 
 /* Название категории */
-.categoryName {
+.categoryName,
+.categoryTitle {
     font-size: 1.2rem;
     font-weight: 600;
     color: #2c3e50;
+}
+
+.categoryTitle {
+    margin-bottom: 10px;
 }
 
 /* Бейдж с количеством товаров */
@@ -110,6 +120,14 @@
     border-radius: 12px;
     font-size: 0.85rem;
     color: #8b7355;
+}
+
+.productCount {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    color: white;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 12px;
 }
 
 /* Описание категории */
@@ -129,6 +147,13 @@
     font-weight: 500;
 }
 
+.categoryFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
 /* Заголовок блока с товарами (кнопки назад/фильтры) */
 .productsHeader {
     display: flex;
@@ -137,19 +162,34 @@
     margin-bottom: 20px;
 }
 
-/* Кнопка "Назад к категориям" */
+/* Кнопка "Назад к категориям" - исправленная под стиль сайта */
 .backButton {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 8px 16px;
-    background-color: white;
-    border: none;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
     border-radius: 8px;
-    cursor: pointer;
-    color: #2c3e50;
+    color: white;
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(139, 90, 43, 0.2);
+}
+
+.backButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    border-color: #5a3e2b;
+    color: white;
+}
+
+.backButton:active {
+    transform: translateY(0);
 }
 
 /* Кнопка "Фильтры" */
@@ -159,12 +199,18 @@
     gap: 5px;
     padding: 8px 16px;
     background-color: white;
-    border: none;
+    border: 2px solid #c49b6b;
     border-radius: 8px;
     cursor: pointer;
-    color: #2c3e50;
+    color: #8B5A2B;
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    transition: all 0.3s ease;
+}
+
+.filterButton:hover {
+    background-color: #f0e5d5;
+    border-color: #8B5A2B;
+    transform: translateY(-2px);
 }
 
 /* Сетка для карточек товаров */
@@ -181,23 +227,37 @@
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.productCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.productCard:hover .productImage {
+    transform: scale(1.1);
+}
+
+.productImageWrapper {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
 }
 
 /* Изображение товара (заглушка) */
 .productImage {
-    height: 180px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
 }
 
 /* Контентная часть карточки товара */
-.productContent {
+.productCardBody {
     padding: 15px;
 }
 
@@ -205,15 +265,30 @@
 .productBrand {
     font-size: 0.85rem;
     color: #c49b6b;
+    font-weight: 500;
     margin-bottom: 5px;
 }
 
 /* Название товара */
+.productCardTitle {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
 .productName {
     font-size: 1.1rem;
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 8px;
+}
+
+.productArticle {
+    color: #95a5a6;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
 }
 
 /* Описание товара */
@@ -229,6 +304,18 @@
     align-items: center;
     gap: 2px;
     margin-bottom: 10px;
+}
+
+.star {
+    color: #f1c40f;
+    font-size: 1rem;
+    margin-right: 2px;
+}
+
+.ratingValue {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    margin-left: 5px;
 }
 
 /* Цена товара */
@@ -263,6 +350,25 @@
     background-color: #e74c3c;
 }
 
+/* Кнопка "Подробнее" в карточке товара */
+.viewProductButton {
+    width: 100%;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.viewProductButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
 /* Кнопка "Добавить в корзину" */
 .addToCartButton {
     width: 100%;
@@ -285,4 +391,568 @@
     background: white;
     border-radius: 15px;
     margin-top: 20px;
+}
+
+/* Фильтры */
+.filtersCard {
+    border: 2px solid #D2B48C;
+    border-radius: 15px;
+    background: white;
+    position: sticky;
+    top: 90px;
+}
+
+.filtersTitle {
+    color: #8B5A2B;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 2px solid #D2B48C;
+    padding-bottom: 10px;
+}
+
+.filterCheckbox {
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.filterCheckbox input:checked {
+    background-color: #c49b6b;
+    border-color: #c49b6b;
+}
+
+.priceInput {
+    border: 2px solid #D2B48C;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.priceInput:focus {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
+}
+
+.priceRangeInfo {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+/* Кнопка применения фильтра цены */
+.applyPriceButton {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.applyPriceButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Кнопка сброса фильтров */
+.resetFiltersButton {
+    width: 100%;
+    margin-top: 15px;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    background: transparent;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.resetFiltersButton:hover {
+    background-color: #c49b6b;
+    color: white;
+    border-color: #8B5A2B;
+}
+
+/* Кнопка сброса в пустом состоянии */
+.resetButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    padding: 10px 30px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.resetButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Кнопка поиска */
+.searchButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 0 8px 8px 0;
+}
+
+.searchButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Поле поиска */
+.searchInput {
+    border: 2px solid #D2B48C;
+    border-radius: 8px 0 0 8px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #FFF8F0;
+    color: #8B5A2B;
+}
+
+.searchInput:focus {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
+    outline: none;
+    background-color: white;
+}
+
+/* Кнопка очистки поиска */
+.clearButton {
+    background-color: #f8f9fa;
+    border: 2px solid #D2B48C;
+    border-left: none;
+    border-right: none;
+    color: #8B5A2B;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.clearButton:hover {
+    background-color: #e9ecef;
+    color: #5a3e2b;
+}
+
+/* Полная карточка товара */
+.fullProductCard {
+    border: 2px solid #C0A080;
+    border-radius: 20px;
+    overflow: hidden;
+    background: white;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.1);
+}
+
+.fullProductImage {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    min-height: 400px;
+}
+
+.fullProductBody {
+    padding: 30px;
+}
+
+.fullProductHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.fullProductTitle {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 15px 0 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.fullProductBrand {
+    color: #8B5A2B;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.fullProductArticle {
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(196, 155, 107, 0.2);
+}
+
+.fullProductRating {
+    margin: 15px 0;
+}
+
+.fullProductPrice {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 20px 0;
+}
+
+.fullProductDescription {
+    color: #34495e;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 20px 0;
+    padding: 15px 0;
+    border-top: 1px solid rgba(196, 155, 107, 0.2);
+    border-bottom: 1px solid rgba(196, 155, 107, 0.2);
+}
+
+.fullProductActions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.fullProductAddToCartButton {
+    flex: 2;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 15px 20px;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.fullProductAddToCartButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+.fullProductBuyButton {
+    flex: 1;
+    background: transparent;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 15px 20px;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.fullProductBuyButton:hover:not(:disabled) {
+    background: rgba(196, 155, 107, 0.1);
+    transform: translateY(-2px);
+    border-color: #8B5A2B;
+    color: #5a3e2b;
+}
+
+.fullProductAddToCartButton:disabled,
+.fullProductBuyButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #95a5a6;
+    border-color: #7f8c8d;
+}
+
+/* Бейджи наличия */
+.inStockBadge {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    font-size: 0.9rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid #1e8449;
+}
+
+.outOfStockBadge {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    font-size: 0.9rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid #a93226;
+}
+
+.inStock {
+    background-color: #27ae60;
+    color: white;
+    font-size: 1rem;
+    padding: 8px 15px;
+}
+
+.outOfStock {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 1rem;
+    padding: 8px 15px;
+}
+
+/* Модальное окно */
+.modalTitle {
+    color: #8B5A2B;
+    font-size: 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.modalBody {
+    padding: 20px;
+}
+
+.modalImage {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid #D2B48C;
+}
+
+.modalProductInfo {
+    padding: 10px;
+}
+
+.modalCategoryBadge {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    color: white;
+    font-size: 0.9rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.modalBrand {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 10px 0 5px;
+}
+
+.modalArticle {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.modalRating {
+    margin-bottom: 15px;
+}
+
+.modalStar {
+    color: #f1c40f;
+    font-size: 1.2rem;
+    margin-right: 3px;
+}
+
+.modalRatingValue {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-left: 8px;
+}
+
+.modalPrice {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 15px 0;
+}
+
+.modalOldPrice {
+    font-size: 1rem;
+    color: #95a5a6;
+    text-decoration: line-through;
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+.modalDescription {
+    color: #34495e;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+.modalStock {
+    margin: 15px 0;
+}
+
+.modalAddToCartButton {
+    width: 100%;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 12px;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.modalAddToCartButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+.modalAddToCartButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Технические характеристики */
+.specsTitle {
+    color: #8B5A2B;
+    font-size: 1.2rem;
+    margin: 20px 0 15px;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 2px solid #D2B48C;
+    padding-bottom: 8px;
+}
+
+.specsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.specItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.specKey {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin-bottom: 3px;
+}
+
+.specValue {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+/* Информация о результатах поиска */
+.resultsInfo {
+    color: #5a6b7a;
+    font-size: 1rem;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(196, 155, 107, 0.3);
+}
+
+.resultsInfo strong {
+    color: #8B5A2B;
+    font-weight: 600;
+}
+
+/* Адаптивность для фильтров */
+@media (max-width: 768px) {
+    .filtersCard {
+        position: static;
+        margin-bottom: 20px;
+    }
+
+    .specsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .fullProductBody {
+        padding: 20px;
+    }
+
+    .fullProductTitle {
+        font-size: 1.5rem;
+    }
+
+    .fullProductPrice {
+        font-size: 2rem;
+    }
+
+    .fullProductActions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .fullProductImage {
+        min-height: 300px;
+    }
+}
+
+/* Анимация появления */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.categoryCard,
+.productCard {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Задержки анимации */
+.categoryCard:nth-child(1),
+.productCard:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.categoryCard:nth-child(2),
+.productCard:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.categoryCard:nth-child(3),
+.productCard:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.categoryCard:nth-child(4),
+.productCard:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.categoryCard:nth-child(5),
+.productCard:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.categoryCard:nth-child(6),
+.productCard:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+.categoryCard:nth-child(7),
+.productCard:nth-child(7) {
+    animation-delay: 0.7s;
+}
+
+.categoryCard:nth-child(8),
+.productCard:nth-child(8) {
+    animation-delay: 0.8s;
 }
