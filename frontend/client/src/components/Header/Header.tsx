@@ -519,6 +519,14 @@ export default class Header extends Component<HeaderProps, HeaderState> {
                                         Помощь
                                     </Link>
                                 </li>
+                                <li className="nav-item">
+                                        <Link
+                                            className={`nav-link ${styles.navLink}`}
+                                            to={`/basket`}
+                                        >
+                                            Корзина
+                                        </Link>
+                                    </li>
                             </ul>
 
                             {user && (
@@ -529,14 +537,6 @@ export default class Header extends Component<HeaderProps, HeaderState> {
                                             to={`/lk/${user.id}`}
                                         >
                                             Личный кабинет
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            className={`dropdown-item ${styles.navLink}`}
-                                            to={`/basket/${user.id}`}
-                                        >
-                                            Корзина
                                         </Link>
                                     </li>
                                 </ul>
