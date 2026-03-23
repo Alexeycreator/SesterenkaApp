@@ -3,10 +3,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Badge, Button, InputGroup, Form, Modal, Accordion } from 'react-bootstrap';
 
-import { Categories, getCategories } from '../../servicesApi/CategoriesApi';
-import { Product, getProducts } from '../../servicesApi/ProductsApi';
-import { Manufacturer, getManufacturers } from '../../servicesApi/ManufacturersApi';
-import { StockWarehousesQuantity, getStockWarehousesQuantity } from '../../servicesApi/StocksApi';
+import { Categories } from '../../servicesApi/CategoriesApi';
+import { Product } from '../../servicesApi/ProductsApi';
+import { Manufacturer } from '../../servicesApi/ManufacturersApi';
+import { StockWarehousesQuantity } from '../../servicesApi/StocksApi';
+import { Catalog, getCatalogData } from '../../servicesApi/CatalogApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './CatalogPage.module.css';
 
@@ -206,25 +208,22 @@ const CatalogPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
     const navigate = useNavigate();
 
+    // состояние данных страницы
+    const [catalogData, setCatalogData] = useState<Catalog | null>();
+    const [loadingCatalogData, setLoadingCatalogData] = useState(true);
+    const [errorCatalogData, setErrorCatalogData] = useState<string | null>(null);
+
     // состояние категорий
     const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
-    const [loadingCategories, setLoadingCategories] = useState(true);
-    const [errorCategories, setErrorCategories] = useState<string | null>(null);
 
     // состояние товаров
     const [productData, setProductData] = useState<Product[]>([]);
-    const [loadingProduct, setLoadingProduct] = useState(true);
-    const [errorProduct, setErrorProduct] = useState<string | null>(null);
 
     // состояние брэндов товаров
     const [manufacturerData, setManufacturerData] = useState<Manufacturer[]>([]);
-    const [loadingManufacturer, setLoadingManufacturer] = useState(true);
-    const [errorManufacturer, setErrorManufacturer] = useState<string | null>(null);
 
     // состояние остатков на складе
     const [stockWarehousesQuantityData, setStockWarehousesQuantityData] = useState<StockWarehousesQuantity[]>([]);
-    const [loadingStockWarehousesQuantity, setLoadingStockWarehousesQuantity] = useState(true);
-    const [errorStockWarehousesQuantity, setErrorStockWarehousesQuantity] = useState<string | null>(null);
 
     // состояния фильтров и поиска
     const [searchParams, setSearchParams] = useSearchParams();
@@ -239,114 +238,53 @@ const CatalogPage = () => {
     const [tempMinPrice, setTempMinPrice] = useState<number>(filters.minPrice);
     const [tempMaxPrice, setTempMaxPrice] = useState<number>(filters.maxPrice);
 
-    // получение категорий
-    const fetchCategories = async () => {
+    // получение данных для страницы
+    const fetchCatalogData = async () => {
         try {
-            setLoadingCategories(true);
-            const categories = await getCategories();
-            setCategoriesData(categories);
+            setLoadingCatalogData(true);
+            const catalogData = await getCatalogData();
+            setCatalogData(catalogData);
+            if (catalogData != null) {
+                fillingCatalogData(catalogData);
+            }
+            else {
+                console.log('Данные для страницы каталога пустые!');
+            }
         }
         catch (err: any) {
             console.error('Ошибка загрузки страницы категории товаров:', err);
             if (err.code === 'ERR_BAD_REQUEST') {
                 if (err.response?.status === 404) {
                     const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorCategories(serverMessage);
+                    setErrorCatalogData(serverMessage);
                     navigate('/404', { replace: true });
                 } else {
-                    setErrorCategories(err.response?.data?.message || 'Ошибка загрузки данных');
+                    setErrorCatalogData(err.response?.data?.message || 'Ошибка загрузки данных');
                 }
             } else {
-                setErrorCategories('Ошибка соединения с сервером');
+                setErrorCatalogData('Ошибка соединения с сервером');
             }
+        }
+        finally {
+            setLoadingCatalogData(false);
         }
     };
 
-    // получение товаров
-    const fetchProducts = async () => {
-        try {
-            setLoadingProduct(true);
-            const product = await getProducts();
-            setProductData(product);
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки страницы товаров выбранной категории:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorCategories(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setErrorCategories(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setErrorCategories('Ошибка соединения с сервером');
-            }
-        }
-    };
-
-    // получение брэндов товаров
-    const fetchManufacturers = async () => {
-        try {
-            setLoadingManufacturer(true);
-            const manufacturer = await getManufacturers();
-            setManufacturerData(manufacturer);
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки страницы конкретного товара:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorManufacturer(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setErrorManufacturer(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setErrorManufacturer('Ошибка соединения с сервером');
-            }
-        }
-    };
-
-    // получение остатков на складах
-    const fetchStocks = async () => {
-        try {
-            setLoadingStockWarehousesQuantity(true);
-            const stockWarehousesQuantity = await getStockWarehousesQuantity();
-            setStockWarehousesQuantityData(stockWarehousesQuantity);
-            console.log(stockWarehousesQuantity);
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки остатков на складах:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorStockWarehousesQuantity(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setErrorStockWarehousesQuantity(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setErrorStockWarehousesQuantity('Ошибка соединения с сервером');
-            }
-        }
+    // извлечение данных из объекта
+    const fillingCatalogData = (data: Catalog) => {
+        const allCategories = data?.categories;
+        const allProducts = data?.products;
+        const allStocks = data?.stocks;
+        const allManufacturers = data?.manufacturers;
+        setCategoriesData(allCategories);
+        setProductData(allProducts);
+        setStockWarehousesQuantityData(allStocks);
+        setManufacturerData(allManufacturers);
     };
 
     // хуки
     useEffect(() => {
-        fetchCategories();
-    }, []);
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    useEffect(() => {
-        fetchManufacturers();
-    }, []);
-
-    useEffect(() => {
-        fetchStocks();
+        fetchCatalogData();
     }, []);
 
     useEffect(() => {
@@ -601,6 +539,10 @@ const CatalogPage = () => {
         return productData;
     };
 
+    if (loadingCatalogData) {
+        return <LoadingSpinner />;
+    }
+
     // Если выбран конкретный товар, показываем его полное описание
     if (selectedProduct) {
         return (
@@ -674,6 +616,7 @@ const CatalogPage = () => {
                                                             if (isInStock) {
                                                                 // Логика добавления в корзину
                                                                 // addToCart(selectedProduct.id);
+                                                                navigate('/basket');
                                                             }
                                                         }}
                                                     >
