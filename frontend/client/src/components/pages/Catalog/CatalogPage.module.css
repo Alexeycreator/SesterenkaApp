@@ -865,52 +865,6 @@
     font-weight: 600;
 }
 
-/* Адаптивность для фильтров */
-@media (max-width: 768px) {
-    .filtersCard {
-        position: static;
-        margin-bottom: 20px;
-    }
-
-    .specsGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .fullProductBody {
-        padding: 20px;
-    }
-
-    .fullProductTitle {
-        font-size: 1.5rem;
-    }
-
-    .fullProductPrice {
-        font-size: 2rem;
-    }
-
-    .fullProductActions {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .fullProductImage {
-        min-height: 300px;
-    }
-}
-
-/* Анимация появления */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .categoryCard,
 .productCard {
     animation: fadeInUp 0.5s ease forwards;
@@ -955,4 +909,50 @@
 .categoryCard:nth-child(8),
 .productCard:nth-child(8) {
     animation-delay: 0.8s;
+}
+
+/* Адаптивность для фильтров */
+@media (max-width: 768px) {
+    .filtersCard {
+        position: static;
+        margin-bottom: 20px;
+    }
+
+    .specsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .fullProductBody {
+        padding: 20px;
+    }
+
+    .fullProductTitle {
+        font-size: 1.5rem;
+    }
+
+    .fullProductPrice {
+        font-size: 2rem;
+    }
+
+    .fullProductActions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .fullProductImage {
+        min-height: 300px;
+    }
+}
+
+/* Анимация появления */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
