@@ -85,4 +85,36 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
             return StatusCode(500, new { message = "Ошибка получения остатков по складам", error = ex.Message });
         }
     }
+    
+    [HttpGet("catalog-data")]
+    public async Task<IActionResult> GetCatalogData()
+    {
+        var products = await dbContext.Products.ToListAsync();
+        var categories = await dbContext.Categories.ToListAsync();
+        var manufacturers = await dbContext.Manufacturers.ToListAsync();
+        var stocks = await dbContext.Stocks
+            .Where(s => s.Warehouses_Id.HasValue && s.Products_Id.HasValue)
+            .Include(s => s.Warehouses) // если есть навигационное свойство
+            .GroupBy(s => s.Products_Id.Value)
+            .Select(g => new ProductStockWarehousesDto
+            {
+                ProductId = g.Key,
+                Warehouses = g.Select(s => new WarehouseStockDto
+                {
+                    WarehouseId = s.Warehouses_Id.Value,
+                    WarehouseName = s.Warehouses != null ? s.Warehouses.Name : "Неизвестно",
+                    //WarehouseAddress = s.Warehouses != null ? s.Warehouses. : "Адрес не указан",
+                    Quantity = s.Quantity
+                }).ToList()
+            })
+            .ToListAsync();
+    
+        return Ok(new
+        {
+            products,
+            categories,
+            manufacturers,
+            stocks
+        });
+    }
 }
