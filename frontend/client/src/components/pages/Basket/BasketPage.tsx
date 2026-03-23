@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button, Form, Table, Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import LoadingSpinner from '../../LoadingSpinner';
+import { getOrderItemData, OrderItem, OrderItemDto } from '../../servicesApi/OrderItemsApi';
+
 import styles from './BasketPage.module.css';
 
 interface CartItem {
@@ -17,6 +21,9 @@ interface CartItem {
 }
 
 const BasketPage = () => {
+    const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
+    const navigate = useNavigate();
+
     const [cartItems, setCartItems] = useState<CartItem[]>([
         {
             id: 1,
@@ -54,18 +61,64 @@ const BasketPage = () => {
         }
     ]);
 
+    // состояние корзины
+    const [orderItemData, setOrderItemData] = useState<OrderItem | null>(null);
+    const [loadingOrderItem, setLoadingOrderItem] = useState(true);
+    const [errorOrderItem, setErrorOrderItem] = useState<string | null>(null);
+
+    // состояние товаров
+    const [productData, setProductData] = useState<OrderItemDto[]>([]);
+
     const [promoCode, setPromoCode] = useState('');
     const [promoApplied, setPromoApplied] = useState(false);
     const [promoDiscount, setPromoDiscount] = useState(0);
 
-    const updateQuantity = (id: number, newQuantity: number) => {
-        if (newQuantity < 1) return;
-        setCartItems(items =>
-            items.map(item =>
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            )
-        );
+    // получение позиций корзины
+    const fetchOrderItem = async () => {
+        try {
+            setLoadingOrderItem(true);
+            const orderItem = await getOrderItemData();
+            setOrderItemData(orderItem);
+            console.log(orderItem);
+            if (orderItem != null) {
+                const products = orderItem.items;
+                setProductData(products);
+                console.log(products);
+            }
+        }
+        catch (err: any) {
+            console.error('Ошибка загрузки данных корзины:', err);
+            if (err.code === 'ERR_BAD_REQUEST') {
+                if (err.response?.status === 404) {
+                    const serverMessage = err.response.data?.message || 'Информация не найдена';
+                    setErrorOrderItem(serverMessage);
+                    navigate('/404', { replace: true });
+                } else {
+                    setErrorOrderItem(err.response?.data?.message || 'Ошибка загрузки данных');
+                }
+            } else {
+                setErrorOrderItem('Ошибка соединения с сервером');
+            }
+        }
+        finally {
+            setLoadingOrderItem(false);
+        }
     };
+
+    // хуки
+    useEffect(() => {
+        fetchOrderItem();
+    }, []);
+
+    // функция обновления количества одного товара
+    // const updateQuantity = (id: number, newQuantity: number) => {
+    //     if (newQuantity < 1) return;
+    //     setBasketData(items =>
+    //         items.map(item =>
+    //             item.id === id ? { ...item, quantity: newQuantity } : item
+    //         )
+    //     );
+    // };
 
     const removeItem = (id: number) => {
         setCartItems(items => items.filter(item => item.id !== id));
@@ -83,8 +136,11 @@ const BasketPage = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const discount = promoApplied ? subtotal * (promoDiscount / 100) : 0;
     const deliveryCost = 300;
-    const total = subtotal - discount + deliveryCost;
+    const total = (orderItemData?.totalAmount || 0) - (discount || 0) + (deliveryCost || 0);
 
+    if (loadingOrderItem) {
+        return <LoadingSpinner />
+    }
     return (
         <Container fluid className={styles.pageContainer}>
             {/* Заголовок */}
@@ -92,7 +148,7 @@ const BasketPage = () => {
                 <Col>
                     <h1 className={styles.title}>Корзина</h1>
                     <p className={styles.subtitle}>
-                        {cartItems.length} {cartItems.length === 1 ? 'товар' : 'товаров'} в корзине
+                        {/* {orderItemData?.products.length} {orderItemData?.products.length === 1 ? 'товар' : 'товаров'} в корзине */}
                     </p>
                 </Col>
             </Row>
@@ -122,41 +178,44 @@ const BasketPage = () => {
                     <Row>
                         <Col lg={8}>
                             <div className={styles.cartItems}>
-                                {cartItems.map((item) => (
+                                {productData?.map((item) => (
                                     <div key={item.id} className={styles.cartItem}>
                                         <div className={styles.itemImage}>
-                                            <img src={item.image} alt={item.name} />
+                                            <img
+                                                src={`${api}/${item.imageProduct}`}
+                                                alt={item.nameProducts}
+                                                onError={(e) => {
+                                                    e.currentTarget.src = '/placeholder.jpg';
+                                                }}
+                                            />
                                         </div>
                                         <div className={styles.itemInfo}>
-                                            <div className={styles.itemCategory}>{item.category}</div>
-                                            <h3 className={styles.itemName}>{item.name}</h3>
-                                            <div className={styles.itemBrand}>{item.brand}</div>
-                                            <div className={styles.itemArticle}>Арт: {item.articleNumber}</div>
+                                            <div className={styles.itemCategory}>{item.nameCategories}</div>
+                                            <h3 className={styles.itemName}>{item.nameProducts}</h3>
+                                            <div className={styles.itemBrand}>{item.nameManufacturers}</div>
+                                            <div className={styles.itemArticle}>Арт: {item.partNumber}</div>
                                         </div>
                                         <div className={styles.itemPrice}>
-                                            <div className={styles.currentPrice}>{item.price} ₽</div>
-                                            {item.oldPrice && (
-                                                <div className={styles.oldPrice}>{item.oldPrice} ₽</div>
-                                            )}
+                                            <div className={styles.currentPrice}>{item.priceAtMoment} ₽</div>
                                         </div>
                                         <div className={styles.itemQuantity}>
                                             <Button
                                                 className={styles.quantityBtn}
-                                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                //onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                                 disabled={item.quantity <= 1}
                                             >
-                                                −
+                                                -
                                             </Button>
                                             <span className={styles.quantityValue}>{item.quantity}</span>
                                             <Button
                                                 className={styles.quantityBtn}
-                                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                            //onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                             >
                                                 +
                                             </Button>
                                         </div>
                                         <div className={styles.itemTotal}>
-                                            {item.price * item.quantity} ₽
+                                            {item.totalPrice} ₽
                                         </div>
                                         <Button
                                             className={styles.removeBtn}
@@ -174,24 +233,20 @@ const BasketPage = () => {
                             <Card className={styles.orderSummary}>
                                 <Card.Body>
                                     <h3 className={styles.summaryTitle}>Ваш заказ</h3>
-                                    
                                     <div className={styles.summaryRow}>
-                                        <span>Товары ({cartItems.length} шт.)</span>
-                                        <span>{subtotal} ₽</span>
+                                        <span>Товары ({productData.length} шт.)</span>
+                                        <span>{orderItemData?.totalAmount} ₽</span>
                                     </div>
-                                    
                                     <div className={styles.summaryRow}>
-                                        <span>Доставка</span>
+                                        <span>Доставка (нет в БД)</span>
                                         <span>{deliveryCost} ₽</span>
                                     </div>
-                                    
                                     {promoApplied && (
                                         <div className={styles.summaryRow}>
                                             <span>Скидка ({promoDiscount}%)</span>
                                             <span className={styles.discountAmount}>-{discount} ₽</span>
                                         </div>
                                     )}
-                                    
                                     <div className={styles.summaryRow}>
                                         <span>Итого</span>
                                         <span className={styles.totalAmount}>{total} ₽</span>
