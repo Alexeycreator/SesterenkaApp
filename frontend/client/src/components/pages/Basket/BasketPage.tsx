@@ -6,6 +6,8 @@ import LoadingSpinner from '../../LoadingSpinner';
 import { getOrderItemData, OrderItem, OrderItemDto } from '../../servicesApi/OrderItemsApi';
 
 import styles from './BasketPage.module.css';
+import { deleteOrderItem } from '../../servicesApi/BasketApi';
+import { getProducts, Product } from '../../servicesApi/ProductsApi';
 
 interface CartItem {
     id: number;
@@ -68,6 +70,7 @@ const BasketPage = () => {
 
     // состояние товаров
     const [productData, setProductData] = useState<OrderItemDto[]>([]);
+    const [productIdData, setProductIdData] = useState<Product[]>([]);
 
     const [promoCode, setPromoCode] = useState('');
     const [promoApplied, setPromoApplied] = useState(false);
@@ -79,11 +82,9 @@ const BasketPage = () => {
             setLoadingOrderItem(true);
             const orderItem = await getOrderItemData();
             setOrderItemData(orderItem);
-            console.log(orderItem);
             if (orderItem != null) {
                 const products = orderItem.items;
                 setProductData(products);
-                console.log(products);
             }
         }
         catch (err: any) {
@@ -105,9 +106,38 @@ const BasketPage = () => {
         }
     };
 
+    const fetchProductIdData = async () => {
+        try {
+            setLoadingOrderItem(true);
+            const products = await getProducts();
+            setProductIdData(products);
+        }
+        catch (err: any) {
+            console.error('Ошибка загрузки данных товара:', err);
+            if (err.code === 'ERR_BAD_REQUEST') {
+                if (err.response?.status === 404) {
+                    const serverMessage = err.response.data?.message || 'Информация не найдена';
+                    setErrorOrderItem(serverMessage);
+                    navigate('/404', { replace: true });
+                } else {
+                    setErrorOrderItem(err.response?.data?.message || 'Ошибка загрузки данных');
+                }
+            } else {
+                setErrorOrderItem('Ошибка соединения с сервером');
+            }
+        }
+        finally {
+            setLoadingOrderItem(false);
+        }
+    }
+
     // хуки
     useEffect(() => {
         fetchOrderItem();
+    }, []);
+
+    useEffect(() => {
+        fetchProductIdData();
     }, []);
 
     // функция обновления количества одного товара
@@ -120,8 +150,51 @@ const BasketPage = () => {
     //     );
     // };
 
-    const removeItem = (id: number) => {
-        setCartItems(items => items.filter(item => item.id !== id));
+    // метод для поиска товара
+    const findProduct = (partNumber: string) => {
+        try {
+            const product = productIdData.find((p) => p.partNumber === partNumber);
+            if (product) {
+                return product.id;
+            } else {
+                console.warn('Товар с артикулом: ', partNumber, ' не найден');
+                return null;
+            }
+        }
+        catch (error: any) {
+            console.error(error);
+        }
+    };
+
+    // метод удаления товара из корзины
+    const removeItem = async (partNumber: string) => {
+        try {
+            setLoadingOrderItem(true);
+            const id = findProduct(partNumber);
+            if (id != null) {
+                await deleteOrderItem(id);
+            }
+
+            // Обновляем корзину после удаления
+            await fetchOrderItem();
+
+        } catch (error: any) {
+            console.error('Ошибка удаления:', error);
+
+            // Показываем сообщение об ошибке пользователю
+            if (error.serverMessage) {
+                console.error(error.serverMessage);
+            } else if (error.message) {
+                console.error(error.message);
+            } else {
+                console.error('Не удалось удалить товар из корзины');
+            }
+            if (error.statusCode === 404) {
+                await fetchOrderItem();
+            }
+        } finally {
+            setLoadingOrderItem(false);
+        }
     };
 
     const applyPromoCode = () => {
@@ -219,7 +292,7 @@ const BasketPage = () => {
                                         </div>
                                         <Button
                                             className={styles.removeBtn}
-                                            onClick={() => removeItem(item.id)}
+                                            onClick={() => removeItem(item.partNumber)}
                                         >
                                             ✕
                                         </Button>

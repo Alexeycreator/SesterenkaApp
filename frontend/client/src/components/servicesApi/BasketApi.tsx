@@ -46,6 +46,46 @@ export const getCatalogData = async (): Promise<Basket> => {
     }
 };
 
+export const deleteOrderItem = async (id: number): Promise<void> => {
+    try {
+        await api.delete(`/OrderItems/${id}`);
+    }
+    catch (error: any) {
+        if (error.response) {
+            // Сервер ответил с ошибкой (4xx, 5xx)
+            console.error('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            // Извлекаем сообщение от сервера
+            const serverMessage = error.response.data?.message ||
+                error.response.data?.title ||
+                'Неизвестная ошибка';
+
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                ...error,
+                serverMessage: serverMessage,
+                statusCode: error.response.status,
+                data: error.response.data
+            };
+        } else if (error.request) {
+            // Запрос был отправлен, но нет ответа
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                message: 'Нет ответа от сервера',
+                isNetworkError: true
+            };
+        } else {
+            // Ошибка при настройке запроса
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                message: error.message,
+                isSetupError: true
+            };
+        }
+    }
+};
+
 // export const getCatalogDataById = async (id: number): Promise<Basket> => {
 //     try {
 //         const response = await api.get<Basket>(`/OrderItems/basket-data/${id}`);

@@ -552,11 +552,11 @@ const CatalogPage = () => {
 
             // Показываем сообщение об ошибке от сервера
             if (error.serverMessage) {
-                console.log(error.serverMessage);
+                console.error(error.serverMessage);
             } else if (error.message) {
-                console.log(error.message);
+                console.error(error.message);
             } else {
-                console.log('Не удалось добавить товар в корзину');
+                console.error('Не удалось добавить товар в корзину');
             }
         } finally {
             setLoadingCatalogData(false);

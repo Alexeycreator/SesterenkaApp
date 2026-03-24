@@ -62,7 +62,7 @@ export const addToOrderItem = async (product_Id: number, quantity: number = 1): 
     catch (error: any) {
         if (error.response) {
             // Сервер ответил с ошибкой (4xx, 5xx)
-            console.log('Ошибка ответа:', error.response.data);
+            console.error('Ошибка ответа:', error.response.data);
             console.log('Статус:', error.response.status);
 
             // Извлекаем сообщение от сервера
