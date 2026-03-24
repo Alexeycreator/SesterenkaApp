@@ -95,7 +95,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddToOrderItems([FromBody] AddToOrderItemsDto request)
+    public async Task<IActionResult> AddToOrderItems([FromBody] AddToOrderItemsDto? request)
     {
         try
         {
@@ -104,24 +104,32 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                 return BadRequest();
             }
 
-            var product = dbContext.Products.FindAsync(request.Product_Id);
-            if (product.Result == null)
+            var product = await dbContext.Products.FindAsync(request.Product_Id);
+            if (product == null)
             {
                 return NotFound();
             }
 
-            if (product.Result != null)
+            var existOrderItem =
+                await dbContext.OrderItems.FirstOrDefaultAsync(oi => oi.Products_Id == request.Product_Id);
+            if (existOrderItem != null)
+            {
+                existOrderItem.Quantity += request.Quantity;
+                dbContext.OrderItems.Update(existOrderItem);
+            }
+            else
             {
                 var orderItem = new OrderItemsModel
                 {
                     Quantity = request.Quantity,
-                    PriceAtMoment = product.Result.Price,
+                    PriceAtMoment = product.Price,
                     //Orders_Id = cart.Id,
                     Products_Id = request.Product_Id
                 };
                 dbContext.OrderItems.Add(orderItem);
-                await dbContext.SaveChangesAsync();
             }
+
+            await dbContext.SaveChangesAsync();
 
             return Ok();
         }
@@ -133,5 +141,26 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         {
             return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrderItem(int id)
+    {
+        var orderItem = await dbContext.OrderItems.FirstOrDefaultAsync(o => o.Products_Id == id);
+        if (orderItem == null)
+        {
+            return NotFound();
+        }
+
+        dbContext.OrderItems.Remove(orderItem);
+        await dbContext.SaveChangesAsync();
+        var anyItems = await dbContext.OrderItems.AnyAsync();
+        if (!anyItems)
+        {
+            await dbContext.Database.ExecuteSqlRawAsync(
+                "DBCC CHECKIDENT ('OrderItems', RESEED, 0)");
+        }
+
+        return Ok();
     }
 }
