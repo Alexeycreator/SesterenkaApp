@@ -143,8 +143,8 @@ const BasketPage = () => {
     // функция обновления количества одного товара
     // const updateQuantity = (id: number, newQuantity: number) => {
     //     if (newQuantity < 1) return;
-    //     setBasketData(items =>
-    //         items.map(item =>
+    //     setOrderItemData(items =>
+    //         items?.map(item =>
     //             item.id === id ? { ...item, quantity: newQuantity } : item
     //         )
     //     );
@@ -274,7 +274,7 @@ const BasketPage = () => {
                                         <div className={styles.itemQuantity}>
                                             <Button
                                                 className={styles.quantityBtn}
-                                                //onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                // onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                                 disabled={item.quantity <= 1}
                                             >
                                                 -
@@ -282,7 +282,7 @@ const BasketPage = () => {
                                             <span className={styles.quantityValue}>{item.quantity}</span>
                                             <Button
                                                 className={styles.quantityBtn}
-                                            //onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                // onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                             >
                                                 +
                                             </Button>
