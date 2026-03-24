@@ -12,7 +12,7 @@ public sealed class OrderItemsModel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
-    [Required] public int Quantity { get; set; } = 0;
+    [Required] public int Quantity { get; set; } = 1;
 
     [Required]
     [Column(TypeName = "decimal(18, 2)")]
