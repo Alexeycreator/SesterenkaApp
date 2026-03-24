@@ -7,7 +7,7 @@ import { Categories } from '../../servicesApi/CategoriesApi';
 import { Product } from '../../servicesApi/ProductsApi';
 import { Manufacturer } from '../../servicesApi/ManufacturersApi';
 import { StockWarehousesQuantity } from '../../servicesApi/StocksApi';
-import { Catalog, getCatalogData } from '../../servicesApi/CatalogApi';
+import { addToOrderItem, Catalog, getCatalogData } from '../../servicesApi/CatalogApi';
 import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './CatalogPage.module.css';
@@ -539,6 +539,31 @@ const CatalogPage = () => {
         return productData;
     };
 
+    // добавление позиций в корзину
+    const addToOrderItems = async (productId: number, quantity: number = 1) => {
+        try {
+            setLoadingCatalogData(true);
+            const result = await addToOrderItem(productId);
+            console.log('Товар успешно добавлен в корзину: ', result);
+            navigate('/basket');
+        }
+        catch (error: any) {
+            console.error('Ошибка добавления:', error);
+
+            // Показываем сообщение об ошибке от сервера
+            if (error.serverMessage) {
+                console.log(error.serverMessage);
+            } else if (error.message) {
+                console.log(error.message);
+            } else {
+                console.log('Не удалось добавить товар в корзину');
+            }
+        } finally {
+            setLoadingCatalogData(false);
+        }
+    };
+
+    // уловие для отображение загрузки страницы
     if (loadingCatalogData) {
         return <LoadingSpinner />;
     }
@@ -615,8 +640,8 @@ const CatalogPage = () => {
                                                         onClick={() => {
                                                             if (isInStock) {
                                                                 // Логика добавления в корзину
-                                                                // addToCart(selectedProduct.id);
-                                                                navigate('/basket');
+                                                                addToOrderItems(selectedProduct.id);
+                                                                //navigate('/basket');
                                                             }
                                                         }}
                                                     >
