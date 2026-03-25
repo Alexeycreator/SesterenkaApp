@@ -2,9 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
-using WebApi.Models.DTOs.Basket;
 using WebApi.Models.DTOs.Catalog;
-using WebApi.Models.DTOs.Product;
+using WebApi.Models.DTOs.OrderItem;
 
 namespace WebApi.Controllers;
 
@@ -35,11 +34,11 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         return Ok(orderItem);
     }
 
-    [HttpGet("basket-data")]
-    public async Task<IActionResult> GetBasketData()
+    [HttpGet("orderItem-data")]
+    public async Task<IActionResult> GetOrderItemData()
     {
         var basketItems = await dbContext.OrderItems
-            .Select(oi => new BasketDataDto
+            .Select(oi => new OrderItemDataDto
             {
                 Id = oi.Id,
                 Quantity = oi.Quantity,
@@ -64,12 +63,12 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         });
     }
 
-    [HttpGet("basket-data/{orderId}")]
-    public async Task<IActionResult> GetBasketData(int orderId)
+    [HttpGet("orderItem-data/{orderId}")]
+    public async Task<IActionResult> GetOrderItemData(int orderId)
     {
         var basketItems = await dbContext.OrderItems
             .Where(oi => oi.Orders_Id == orderId)
-            .Select(oi => new BasketDataDto
+            .Select(oi => new OrderItemDataDto
             {
                 Id = oi.Id,
                 Quantity = oi.Quantity,
@@ -158,9 +157,53 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         if (!anyItems)
         {
             await dbContext.Database.ExecuteSqlRawAsync(
-                "DBCC CHECKIDENT ('OrderItems', RESEED, 0)");
+                "DBCC CHECKIDENT ('dbo.OrderItems', RESEED, 0)");
         }
 
         return Ok();
+    }
+
+    [HttpPut("product/{id}")]
+    public async Task<IActionResult> UpdateOrderItemQuantity(int id, [FromBody] UpdateOrderItemQuantityDto? request)
+    {
+        try
+        {
+            if (request == null)
+            {
+                return BadRequest(new { message = "Некорректные данные" });
+            }
+
+            var orderItem = await dbContext.OrderItems.FindAsync(id);
+            if (orderItem == null)
+            {
+                return NotFound(new { message = "Товар в корзине не найден" });
+            }
+
+            var stock = await dbContext.Stocks
+                .Where(s => s.Products_Id == orderItem.Products_Id)
+                .SumAsync(s => s.Quantity);
+
+            if (stock < request.Quantity)
+            {
+                return BadRequest(new
+                {
+                    message = $"Недостаточно товара на складе. Доступно: {stock} шт."
+                });
+            }
+
+            orderItem.Quantity = request.Quantity;
+            await dbContext.SaveChangesAsync();
+
+            if (orderItem.Orders_Id != null)
+            {
+                return Ok(await GetOrderItemData(orderItem.Orders_Id.Value));
+            }
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
     }
 }
