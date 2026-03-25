@@ -1,6 +1,9 @@
-namespace WebApi.Models.DTOs.Basket;
+using System.ComponentModel.DataAnnotations;
 
-public class UpdateOrderItemQuantityDto
+namespace WebApi.Models.DTOs.OrderItem;
+
+public sealed class UpdateOrderItemQuantityDto
 {
-    
+    [Range(1, 999, ErrorMessage = "Количество должно быть от 1 до 999")]
+    public int Quantity { get; set; }
 }

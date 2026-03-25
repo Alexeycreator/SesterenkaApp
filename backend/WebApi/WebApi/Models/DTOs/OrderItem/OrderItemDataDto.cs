@@ -1,6 +1,6 @@
-namespace WebApi.Models.DTOs.Basket;
+namespace WebApi.Models.DTOs.OrderItem;
 
-public sealed class BasketDataDto
+public sealed class OrderItemDataDto
 {
     public int Id { get; set; }
     public int Quantity { get; set; }
