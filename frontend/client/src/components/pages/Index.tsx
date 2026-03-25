@@ -4,7 +4,7 @@ export { InformationPage } from './Information/InformationPage';
 export { HelpPage } from './Help/HelpPage';
 export { CatalogPage } from './Catalog/CatalogPage';
 export { AccountPage } from './Account/AccountPage';
-export { BasketPage } from './Basket/BasketPage';
+export { OrderItemsPage } from './OrderItem/OrderItemsPage';
 export { PrivacyPolicyPage } from './PrivacyPolicy/PrivacyPolicyPage';
 export { TermsOfUsePage } from './TermsOfUse/TermsOfUsePage';
 export { SaleItemsPage } from './SaleItems/SaleItemsPage';
