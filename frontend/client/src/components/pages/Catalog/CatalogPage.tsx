@@ -18,192 +18,6 @@ interface FilterState {
     maxPrice: number;
 }
 
-// const categories: Category[] = [
-//     {
-//         id: 'oil-filters',
-//         name: 'Масляные фильтры',
-//         icon: '🛢️',
-//         count: 24,
-//         description: 'Фильтры для масла различных производителей',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'cabin-filters',
-//         name: 'Салонные фильтры',
-//         icon: '🌬️',
-//         count: 18,
-//         description: 'Фильтры салона для чистого воздуха',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'air-filters',
-//         name: 'Воздушные фильтры',
-//         icon: '💨',
-//         count: 15,
-//         description: 'Фильтры для очистки воздуха двигателя',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'fuel-filters',
-//         name: 'Топливные фильтры',
-//         icon: '⛽',
-//         count: 12,
-//         description: 'Фильтры для очистки топлива',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'pistons',
-//         name: 'Поршни и кольца',
-//         icon: '⚙️',
-//         count: 32,
-//         description: 'Поршни, кольца и комплектующие',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'wheels',
-//         name: 'Колеса и шины',
-//         icon: '🛞',
-//         count: 45,
-//         description: 'Шины, диски и колесные аксессуары',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'batteries',
-//         name: 'Аккумуляторы',
-//         icon: '🔋',
-//         count: 16,
-//         description: 'Автомобильные аккумуляторы',
-//         image: 'https://via.placeholder.com/400x200'
-//     },
-//     {
-//         id: 'tools',
-//         name: 'Инструменты',
-//         icon: '🔧',
-//         count: 38,
-//         description: 'Инструменты для обслуживания',
-//         image: 'https://via.placeholder.com/400x200'
-//     }
-// ];
-
-// const products: Product[] = [
-//     {
-//         id: 1,
-//         name: "Фильтр масляный MANN-FILTER W 610/3",
-//         category: "Масляные фильтры",
-//         categoryId: 'oil-filters',
-//         price: 450,
-//         rating: 4.8,
-//         image: "https://via.placeholder.com/300x200",
-//         inStock: true,
-//         description: "Оригинальный масляный фильтр для легковых автомобилей",
-//         brand: "MANN-FILTER",
-//         articleNumber: "W 610/3",
-//         specifications: {
-//             "Высота": "79 мм",
-//             "Наружный диаметр": "76 мм",
-//             "Резьба": "3/4-16 UNF",
-//             "Клапан": "Есть"
-//         }
-//     },
-//     {
-//         id: 2,
-//         name: "Фильтр масляный Bosch 0451103316",
-//         category: "Масляные фильтры",
-//         categoryId: 'oil-filters',
-//         price: 520,
-//         oldPrice: 590,
-//         rating: 4.7,
-//         image: "https://via.placeholder.com/300x200",
-//         inStock: true,
-//         description: "Высококачественный масляный фильтр Bosch",
-//         brand: "Bosch",
-//         articleNumber: "0451103316",
-//         specifications: {
-//             "Высота": "75 мм",
-//             "Наружный диаметр": "76 мм",
-//             "Резьба": "3/4-16 UNF",
-//             "Клапан": "Есть"
-//         }
-//     },
-//     {
-//         id: 3,
-//         name: "Фильтр салонный угольный MANN-FILTER CUK 2939",
-//         category: "Салонные фильтры",
-//         categoryId: 'cabin-filters',
-//         price: 890,
-//         rating: 4.9,
-//         image: "https://via.placeholder.com/300x200",
-//         inStock: true,
-//         description: "Угольный салонный фильтр для очистки воздуха",
-//         brand: "MANN-FILTER",
-//         articleNumber: "CUK 2939",
-//         specifications: {
-//             "Длина": "287 мм",
-//             "Ширина": "215 мм",
-//             "Высота": "30 мм",
-//             "Тип": "Угольный"
-//         }
-//     },
-//     {
-//         id: 4,
-//         name: "Фильтр салонный обычный MANN-FILTER CU 2939",
-//         category: "Салонные фильтры",
-//         categoryId: 'cabin-filters',
-//         price: 590,
-//         rating: 4.6,
-//         image: "https://via.placeholder.com/300x200",
-//         inStock: true,
-//         description: "Стандартный салонный фильтр",
-//         brand: "MANN-FILTER",
-//         articleNumber: "CU 2939",
-//         specifications: {
-//             "Длина": "287 мм",
-//             "Ширина": "215 мм",
-//             "Высота": "30 мм",
-//             "Тип": "Обычный"
-//         }
-//     },
-//     {
-//         id: 5,
-//         name: "Фильтр воздушный MANN-FILTER C 25 108",
-//         category: "Воздушные фильтры",
-//         categoryId: 'air-filters',
-//         price: 680,
-//         rating: 4.8,
-//         image: "https://via.placeholder.com/300x200",
-//         inStock: true,
-//         description: "Воздушный фильтр для двигателя",
-//         brand: "MANN-FILTER",
-//         articleNumber: "C 25 108",
-//         specifications: {
-//             "Длина": "273 мм",
-//             "Ширина": "120 мм",
-//             "Высота": "47 мм",
-//             "Тип": "Панельный"
-//         }
-//     },
-//     {
-//         id: 6,
-//         name: "Фильтр топливный MANN-FILTER WK 31/2",
-//         category: "Топливные фильтры",
-//         categoryId: 'fuel-filters',
-//         price: 750,
-//         oldPrice: 820,
-//         rating: 4.7,
-//         image: "https://via.placeholder.com/300x200",
-//         inStock: true,
-//         description: "Топливный фильтр тонкой очистки",
-//         brand: "MANN-FILTER",
-//         articleNumber: "WK 31/2",
-//         specifications: {
-//             "Высота": "135 мм",
-//             "Диаметр": "55 мм",
-//             "Резьба": "M12x1.5",
-//             "Тип": "Врезной"
-//         }
-//     }
-// ];
-
 const CatalogPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
     const navigate = useNavigate();
@@ -419,12 +233,6 @@ const CatalogPage = () => {
         updateUrl(selectedCategory, null, searchQuery, newFilters);
     };
 
-    const handlePriceChange = (type: 'min' | 'max', value: number) => {
-        const newFilters = { ...filters, [type === 'min' ? 'minPrice' : 'maxPrice']: value };
-        setFilters(newFilters);
-        updateUrl(selectedCategory, null, searchQuery, newFilters);
-    };
-
     const resetFilters = () => {
         const newFilters = { brands: [], minPrice: 0, maxPrice: 10000 };
         setFilters(newFilters);
@@ -545,7 +353,7 @@ const CatalogPage = () => {
             setLoadingCatalogData(true);
             const result = await addToOrderItem(productId);
             console.log('Товар успешно добавлен в корзину: ', result);
-            navigate('/basket');
+            navigate('/orderItems');
         }
         catch (error: any) {
             console.error('Ошибка добавления:', error);
@@ -639,9 +447,7 @@ const CatalogPage = () => {
                                                         disabled={!isInStock}
                                                         onClick={() => {
                                                             if (isInStock) {
-                                                                // Логика добавления в корзину
                                                                 addToOrderItems(selectedProduct.id);
-                                                                //navigate('/basket');
                                                             }
                                                         }}
                                                     >
@@ -844,7 +650,7 @@ const CatalogPage = () => {
                                 <Row className="mb-4">
                                     <Col>
                                         <h2 className={styles.categoryHeaderTitle}>
-                                            {selectedCategoryData.name}{/* {selectedCategoryData.icon} {selectedCategoryData.name} */}
+                                            {selectedCategoryData.icon} {selectedCategoryData.name}
                                         </h2>
                                     </Col>
                                 </Row>
