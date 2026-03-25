@@ -59,8 +59,6 @@ interface HeaderState {
 }
 
 export default class Header extends Component<HeaderProps, HeaderState> {
-    private loginInput = createRef<HTMLInputElement>();
-    private passwordInput = createRef<HTMLInputElement>();
     private authRef = createRef<HTMLDivElement>();
     private registrationRef = createRef<HTMLDivElement>();
     private menuRef = React.createRef<HTMLDivElement>();
@@ -451,14 +449,6 @@ export default class Header extends Component<HeaderProps, HeaderState> {
             showPassword,
             errors,
             user,
-            authLoading,
-            authError,
-            authFieldErrors,
-            authForm,
-            registrationStep,
-            registrationLoading,
-            registrationError,
-            registrationFieldErrors
         } = this.state;
 
         return (
@@ -522,7 +512,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
                                 <li className="nav-item">
                                         <Link
                                             className={`nav-link ${styles.navLink}`}
-                                            to={`/basket`}
+                                            to={`/orderItems`}
                                         >
                                             Корзина
                                         </Link>
@@ -534,7 +524,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
                                     <li>
                                         <Link
                                             className={`dropdown-item ${styles.navLink}`}
-                                            to={`/lk/${user.id}`}
+                                            to={`/personalAccount?userId=${user.id}`}
                                         >
                                             Личный кабинет
                                         </Link>
