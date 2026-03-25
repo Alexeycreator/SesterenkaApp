@@ -9,10 +9,10 @@ import {
   HelpPage,
   CatalogPage,
   AccountPage,
-  BasketPage,
   PrivacyPolicyPage,
   TermsOfUsePage,
   SaleItemsPage,
+  OrderItemsPage,
 } from './components/pages/Index';
 
 import Header from './components/header/Header';
@@ -20,6 +20,7 @@ import Footer from './components/footer/Footer';
 
 import './App.css';
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
+import OrderPage from './components/pages/Order/OrderPage';
 
 interface ScrollToTopProps {
   location: Location;
@@ -59,8 +60,9 @@ function App() {
 
               <Route path='/catalog' element={<CatalogPage />} />
 
-              <Route path='/lk' element={<AccountPage />} />
-              <Route path='/basket' element={<BasketPage />} />
+              <Route path='/personalAccount' element={<AccountPage />} />
+              <Route path='/orderItems' element={<OrderItemsPage />} />
+              <Route path='/order' element={<OrderPage />} />
 
               <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
               <Route path='/terms_of_use' element={<TermsOfUsePage />} />
