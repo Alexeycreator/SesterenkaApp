@@ -12,8 +12,8 @@ public sealed class OrdersModel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
-    [Required] public DateTime OrderDate { get; set; }
-
+    [Required] public DateTime OrderDate { get; set; } = DateTime.Now;
+    //[Required] [MaxLength(100)] public string NameOrder { get; set; }
     [Required] [MaxLength(25)] public string Status { get; set; } = "Выдан";
 
     [Column("Users_Id")]
