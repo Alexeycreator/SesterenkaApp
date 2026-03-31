@@ -9,4 +9,6 @@ public sealed class AddToOrderItemsDto
 
     [Range(1, 999, ErrorMessage = "Количество должно быть от 1 до 999")]
     public int Quantity { get; set; } = 1;
+    
+    public string UserLogin { get; set; }
 }
