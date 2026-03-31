@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
 using WebApi.Models.DTOs.Order;
+using WebApi.Services.EnumFlags;
 
 namespace WebApi.Controllers;
 
@@ -13,6 +15,9 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     private List<AddressesOrderDataDto> addressesDto = new List<AddressesOrderDataDto>();
     private List<OrderItemsOrderDataDto> orderItemsDto = new List<OrderItemsOrderDataDto>();
     private List<OrderResponseDto> orderResponse = new List<OrderResponseDto>();
+    private readonly string statusBasket = OrdersEnum.Basket.GetDescription();
+    private readonly string statusProcessing = OrdersEnum.Processing.GetDescription();
+    private readonly string statusCompleted = OrdersEnum.Completed.GetDescription();
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrdersModel>>> GetOrdersAsync()
@@ -124,5 +129,40 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
         }
 
         return orderItemsDto;
+    }
+
+    [HttpPost("create-order")]
+    public async Task<IActionResult> CreateOrder([FromBody] AddOrderDto? request)
+    {
+        try
+        {
+            if (request == null || request.UserLogin.Length <= 0)
+            {
+                return BadRequest();
+            }
+
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Login == request.UserLogin);
+            if (user != null)
+            {
+                var order = await dbContext.Orders.Where(o => o.Users_Id == user.Id && o.Status == statusBasket)
+                    .FirstOrDefaultAsync();
+                if (order != null)
+                {
+                    order.Status = statusProcessing;
+                }
+
+                await dbContext.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, new { message = $"Ошибка базы данных: {ex.Message}" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
+        }
     }
 }
