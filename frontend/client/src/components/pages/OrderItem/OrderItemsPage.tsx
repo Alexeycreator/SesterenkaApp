@@ -5,12 +5,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../LoadingSpinner';
 import { getOrderItemData, OrderItem, OrderItemDto, updateOrderItemQuantity, deleteOrderItem } from '../../servicesApi/OrderItemsApi';
 import { getProducts, Product } from '../../servicesApi/ProductsApi';
+import { useAuth } from '../../../contexts/AuthContext';
 
 import styles from './OrderItemsPage.module.css';
 
 const OrderItemsPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
     const navigate = useNavigate();
+    const { user: currentUser, isAuthenticated } = useAuth();
 
     // состояние корзины
     const [orderItemData, setOrderItemData] = useState<OrderItem | null>(null);
@@ -25,7 +27,7 @@ const OrderItemsPage = () => {
     const fetchOrderItem = async () => {
         try {
             setLoadingOrderItem(true);
-            const orderItem = await getOrderItemData();
+            const orderItem = await getOrderItemData(currentUser?.id || 0, currentUser?.login || '', currentUser?.role || '');
             setOrderItemData(orderItem);
             if (orderItem != null) {
                 const products = orderItem.items;
@@ -166,7 +168,15 @@ const OrderItemsPage = () => {
     };
 
     const handleOrders = () => {
-        navigate('/order');
+        try {
+            // const response = await 
+        }
+        catch (err: any) {
+            console.error(err);
+        }
+        finally {
+            navigate('/order');
+        }
     };
 
     if (loadingOrderItem) {
