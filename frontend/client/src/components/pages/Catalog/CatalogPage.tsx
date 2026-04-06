@@ -8,6 +8,7 @@ import { Product } from '../../servicesApi/ProductsApi';
 import { Manufacturer } from '../../servicesApi/ManufacturersApi';
 import { StockWarehousesQuantity } from '../../servicesApi/StocksApi';
 import { addToOrderItem, Catalog, getCatalogData } from '../../servicesApi/CatalogApi';
+import { useAuth } from '../../../contexts/AuthContext';
 import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './CatalogPage.module.css';
@@ -21,6 +22,9 @@ interface FilterState {
 const CatalogPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
     const navigate = useNavigate();
+
+    // состояние пользователя
+    const { user: currentUser, isAuthenticated } = useAuth();
 
     // состояние данных страницы
     const [catalogData, setCatalogData] = useState<Catalog | null>();
@@ -348,10 +352,10 @@ const CatalogPage = () => {
     };
 
     // добавление позиций в корзину
-    const addToOrderItems = async (productId: number, quantity: number = 1) => {
+    const addToOrderItems = async (productId: number, userLogin: string, quantity: number = 1) => {
         try {
             setLoadingCatalogData(true);
-            const result = await addToOrderItem(productId);
+            const result = await addToOrderItem(productId, userLogin);
             console.log('Товар успешно добавлен в корзину: ', result);
             navigate('/orderItems');
         }
@@ -447,7 +451,7 @@ const CatalogPage = () => {
                                                         disabled={!isInStock}
                                                         onClick={() => {
                                                             if (isInStock) {
-                                                                addToOrderItems(selectedProduct.id);
+                                                                addToOrderItems(selectedProduct.id, currentUser?.login || '');
                                                             }
                                                         }}
                                                     >
