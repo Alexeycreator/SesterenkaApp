@@ -1,0 +1,331 @@
+/* OrderDetailsPage.module.css */
+
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+    padding-top: 90px;
+}
+
+/* Хлебные крошки */
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.breadcrumbs a {
+    color: #c49b6b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumbs a:hover {
+    color: #8B5A2B;
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    color: #95a5a6;
+}
+
+.breadcrumbs .current {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Заголовок */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.backButton {
+    color: #8B5A2B;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 16px;
+    background-color: white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid #c49b6b;
+}
+
+.backButton:hover {
+    background-color: #f0e5d5;
+    color: #5a3e2b;
+    border-color: #8B5A2B;
+}
+
+.title {
+    flex: 1;
+    font-size: 2rem;
+    color: #2c3e50;
+    font-family: 'Cormorant Garamond', serif;
+    margin: 0;
+}
+
+.statusWrapper {
+    display: flex;
+    align-items: center;
+}
+
+/* Карточки */
+.infoCard,
+.summaryCard,
+.itemsCard {
+    border: 2px solid #D2B48C;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    color: #8B5A2B;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 2px solid #D2B48C;
+    padding-bottom: 10px;
+}
+
+/* Информационная сетка */
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.infoLabel {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+.infoValue {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Итоговая карточка */
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+
+.summaryDivider {
+    height: 1px;
+    background: #D2B48C;
+    margin: 15px 0;
+}
+
+.summaryTotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.totalAmount {
+    color: #c49b6b;
+    font-size: 1.4rem;
+}
+
+/* Список товаров */
+.itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.orderItem {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    border: 1px solid #D2B48C;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.orderItem:hover {
+    background: rgba(196, 155, 107, 0.05);
+    transform: translateX(5px);
+}
+
+.itemImage {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.itemImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #D2B48C;
+}
+
+.itemInfo {
+    flex: 2;
+}
+
+.itemCategory {
+    color: #c49b6b;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+.itemName {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.itemBrand {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin-bottom: 3px;
+}
+
+.itemArticle {
+    color: #95a5a6;
+    font-size: 0.75rem;
+}
+
+.itemDetails {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.itemQuantity {
+    color: #2c3e50;
+    font-weight: 500;
+    min-width: 60px;
+}
+
+.itemPrice {
+    color: #7f8c8d;
+    min-width: 80px;
+}
+
+.itemTotal {
+    color: #c49b6b;
+    font-weight: bold;
+    min-width: 100px;
+    text-align: right;
+}
+
+/* Загрузка и ошибка */
+.loadingContainer,
+.errorContainer {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 20px;
+    margin-top: 50px;
+}
+
+.spinner {
+    font-size: 3rem;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Статусы заказов */
+.statusBasket {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.statusProcessing {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.statusReady {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.statusCompleted {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.statusCancelled {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .orderItem {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .itemImage {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+    }
+    
+    .itemDetails {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+}
