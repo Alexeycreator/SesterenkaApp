@@ -1,0 +1,240 @@
+/* Основной контейнер */
+.pageContainer {
+    background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Контент ошибки */
+.errorContent {
+    text-align: center;
+    background: white;
+    border-radius: 30px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 2px solid #D2B48C;
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Иллюстрация */
+.errorIllustration {
+    margin-bottom: 30px;
+}
+
+.errorNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 8rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.digit {
+    font-size: 8rem;
+    font-weight: 800;
+    color: #8B5A2B;
+    text-shadow: 4px 4px 12px rgba(139, 90, 43, 0.2);
+    animation: bounce 2s ease infinite;
+}
+
+.digit:first-child {
+    animation-delay: 0s;
+}
+
+.digit:last-child {
+    animation-delay: 0.3s;
+}
+
+.errorIcon {
+    font-size: 5rem;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    animation: rotate 3s ease infinite;
+}
+
+/* Заголовок */
+.errorTitle {
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* Описание */
+.errorDescription {
+    color: #7f8c8d;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Кнопки */
+.errorActions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.backButton {
+    background: transparent;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.backButton:hover {
+    background: rgba(196, 155, 107, 0.1);
+    transform: translateY(-2px);
+    border-color: #8B5A2B;
+}
+
+.homeButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.homeButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Дополнительная информация */
+.helpInfo {
+    border-top: 1px solid #D2B48C;
+    padding-top: 25px;
+}
+
+.helpInfo p {
+    color: #5a6b7a;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.helpLinks {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.helpLink {
+    color: #c49b6b;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
+
+.helpLink:hover {
+    color: #8B5A2B;
+    background: rgba(196, 155, 107, 0.1);
+    transform: translateX(3px);
+}
+
+/* Анимации */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .errorContent {
+        padding: 30px 20px;
+    }
+    
+    .errorNumber {
+        font-size: 5rem;
+        gap: 10px;
+    }
+    
+    .digit {
+        font-size: 5rem;
+    }
+    
+    .errorIcon {
+        width: 80px;
+        height: 80px;
+        font-size: 3rem;
+    }
+    
+    .errorTitle {
+        font-size: 1.5rem;
+    }
+    
+    .errorActions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .helpLinks {
+        gap: 10px;
+    }
+    
+    .helpLink {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .errorTitle {
+        font-size: 1.2rem;
+    }
+    
+    .errorDescription {
+        font-size: 0.9rem;
+    }
+    
+    .helpLinks {
+        flex-direction: column;
+        align-items: center;
+    }
+}
