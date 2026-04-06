@@ -1,98 +1,208 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button, Form, Nav, Badge, Table } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Form, Nav, Badge } from 'react-bootstrap';
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
+import { useAuth } from '../../../contexts/AuthContext';
+import { getOrderUser, OrderData, OrderItems, Orders } from '../../servicesApi/OrderApi';
+import { AddressOrder } from '../../servicesApi/AddressesApi';
+import LoadingSpinner from '../../LoadingSpinner';
+
 import styles from './AccountPage.module.css';
 
-interface UserData {
-    firstName: string;
-    secondName: string;
-    email: string;
-    phone: string;
-    birthDate: string;
-    registeredSince: string;
-    totalOrders: number;
-    totalSpent: number;
-}
-
-interface Order {
-    id: string;
-    date: string;
-    status: 'completed' | 'processing' | 'cancelled' | 'delivered';
-    itemsCount: number;
-    total: number;
-    deliveryAddress: string;
-}
-
 const AccountPage = () => {
-    const [activeTab, setActiveTab] = useState('profile');
-    const [isEditing, setIsEditing] = useState(false);
+    // для навигации и проверки пользователя
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const { user: currentUser, isAuthenticated } = useAuth();
+    const { orderId } = useParams<{ orderId: string }>();
 
-    const userData: UserData = {
-        firstName: 'Иван',
-        secondName: 'Петров',
-        email: 'ivan.petrov@example.com',
-        phone: '+7 (901) 339-95-22',
-        birthDate: '15.03.1990',
-        registeredSince: '10 января 2024',
-        totalOrders: 12,
-        totalSpent: 45680
+    // получаем параметры из URL
+    const userId = searchParams.get('userId');
+    const activeTab = searchParams.get('tab') || 'profile';
+
+    // состояния измнения пользователя
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedUser, setEditedUser] = useState({
+        firstName: currentUser?.firstName || '',
+        secondName: currentUser?.secondName || '',
+        surName: currentUser?.surName || '',
+        email: currentUser?.email || '',
+        phoneNumber: currentUser?.phoneNumber || '',
+        birthday: currentUser?.birthday || ''
+    });
+
+    // состояния данных страницы
+    const [accountData, setAccountData] = useState<OrderData[]>([]);
+    const [addressesData, setAddressesData] = useState<AddressOrder[]>([]);
+    const [ordersData, setOrdersData] = useState<Orders[]>([]);
+    const [orderItemsData, setOrderItemsData] = useState<OrderItems[][]>([]);
+    const [loadingAccountPage, setLoadingAccountPage] = useState(false);
+    const [errorAccountPage, setErrorAccountPage] = useState<string | null>(null);
+
+    const fetchOrders = async () => {
+        try {
+            setLoadingAccountPage(true);
+            const orders = await getOrderUser(currentUser?.login || '');
+            setAccountData(orders);
+            if (orders != null) {
+                fillingOrderUserData(orders);
+            }
+            else {
+                console.error("Данные пустые!");
+            }
+        }
+        catch (err: any) {
+            console.error('Ошибка загрузки данных товара:', err);
+            if (err.code === 'ERR_BAD_REQUEST') {
+                if (err.response?.status === 404) {
+                    const serverMessage = err.response.data?.message || 'Информация не найдена';
+                    setErrorAccountPage(serverMessage);
+                    navigate('/404', { replace: true });
+                } else {
+                    setErrorAccountPage(err.response?.data?.message || 'Ошибка загрузки данных');
+                }
+            } else {
+                setErrorAccountPage('Ошибка соединения с сервером');
+            }
+        }
+        finally {
+            setLoadingAccountPage(false);
+        }
     };
 
-    const [editedData, setEditedData] = useState(userData);
+    // хуки
+    useEffect(() => {
+        fetchOrders();
+    }, []);
 
-    const orders: Order[] = [
-        {
-            id: 'ORD-2024-001',
-            date: '15.03.2024',
-            status: 'delivered',
-            itemsCount: 3,
-            total: 2340,
-            deliveryAddress: 'Москва, ул. Пальмовая, 13'
-        },
-        {
-            id: 'ORD-2024-002',
-            date: '10.03.2024',
-            status: 'processing',
-            itemsCount: 2,
-            total: 1780,
-            deliveryAddress: 'Москва, ул. Пальмовая, 13'
-        },
-        {
-            id: 'ORD-2024-003',
-            date: '05.03.2024',
-            status: 'completed',
-            itemsCount: 5,
-            total: 5670,
-            deliveryAddress: 'Москва, ул. Пальмовая, 13'
-        },
-        {
-            id: 'ORD-2024-004',
-            date: '28.02.2024',
-            status: 'cancelled',
-            itemsCount: 1,
-            total: 890,
-            deliveryAddress: 'Москва, ул. Пальмовая, 13'
+    useEffect(() => {
+        if (currentUser) {
+            setEditedUser({
+                firstName: currentUser.firstName || '',
+                secondName: currentUser.secondName || '',
+                surName: currentUser.surName || '',
+                email: currentUser.email || '',
+                phoneNumber: currentUser.phoneNumber || '',
+                birthday: currentUser.birthday || ''
+            });
         }
-    ];
+    }, [currentUser]);
 
+    const fillingOrderUserData = (data: OrderData[]) => {
+        data.forEach(ord => {
+            const addresses = ord?.addresses;
+            const orders = ord?.orders;
+            const orderItems = ord?.orders.map(o => o.orderItems);
+            setAddressesData(addresses);
+            setOrdersData(orders);
+            setOrderItemsData(orderItems);
+        });
+    };
+
+    // Обновление вкладки с сохранением userId
+    const handleTabChange = (tab: string) => {
+        const params: Record<string, string> = {};
+
+        if (userId) {
+            params.userId = userId;
+        }
+
+        if (tab !== 'profile') {
+            params.tab = tab;
+        }
+
+        setSearchParams(params);
+    };
+
+    // Получение статуса заказа
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case 'completed': return <Badge className={styles.statusCompleted}>Завершен</Badge>;
-            case 'processing': return <Badge className={styles.statusProcessing}>В обработке</Badge>;
-            case 'delivered': return <Badge className={styles.statusDelivered}>Доставлен</Badge>;
-            case 'cancelled': return <Badge className={styles.statusCancelled}>Отменен</Badge>;
-            default: return null;
+            case 'В корзине':
+                return <Badge className={styles.statusBasket}>🛒 {status}</Badge>;
+            case 'В обработке':
+                return <Badge className={styles.statusProcessing}>⚙️ {status}</Badge>;
+            case 'Собран':
+                return <Badge className={styles.statusReady}>📦 {status}</Badge>;
+            case 'Выдан':
+                return <Badge className={styles.statusCompleted}>✅ {status}</Badge>;
+            case 'Отменен':
+                return <Badge className={styles.statusCancelled}>❌ {status}</Badge>;
+            default:
+                return <Badge className={styles.statusProcessing}>{status}</Badge>;
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setEditedData(prev => ({ ...prev, [name]: value }));
+    // Форматирование даты
+    const formatBirthdayDate = (dateString: string | Date | null | undefined) => {
+        if (!dateString) {
+            return 'Дата не указана';
+        };
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Некорректная дата';
+        };
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}.${month}.${year}`;
     };
 
-    const saveProfile = () => {
-        // Здесь будет логика сохранения
-        setIsEditing(false);
+    const formatOrderDate = (dateString: string | Date | null | undefined) => {
+        if (!dateString) {
+            return 'Дата не указана';
+        };
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Некорректная дата';
+        };
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+    };
+
+    const birthdayCorrectDate = formatBirthdayDate(currentUser?.birthday);
+
+    // Обработчик изменения полей
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEditedUser(prev => ({ ...prev, [name]: value }));
+    };
+
+    // Сохранение профиля
+    const saveProfile = async () => {
+        try {
+            // TODO: отправить запрос на обновление данных
+            // await updateUserProfile(editedUser);
+            setIsEditing(false);
+            alert('Данные успешно обновлены');
+        } catch (error) {
+            console.error('Ошибка обновления:', error);
+            alert('Не удалось обновить данные');
+        }
+    };
+
+    // Проверка авторизации
+    if (!isAuthenticated) {
+        return <Navigate to="/" replace />;
+    };
+
+    if (loadingAccountPage) {
+        <LoadingSpinner />
+    };
+
+    // Проверка прав доступа
+    if (userId && currentUser && parseInt(userId) !== currentUser.id) {
+        return <Navigate to={`/personalAccount?userId=${currentUser.id}&tab=${activeTab}`} replace />;
     };
 
     return (
@@ -102,7 +212,7 @@ const AccountPage = () => {
                 <Col>
                     <h1 className={styles.title}>Личный кабинет</h1>
                     <p className={styles.subtitle}>
-                        Добро пожаловать, {userData.secondName} {userData.firstName}!
+                        Добро пожаловать, {currentUser?.secondName} {currentUser?.firstName}!
                     </p>
                 </Col>
             </Row>
@@ -114,7 +224,7 @@ const AccountPage = () => {
                         <Nav.Item>
                             <Nav.Link
                                 active={activeTab === 'profile'}
-                                onClick={() => setActiveTab('profile')}
+                                onClick={() => handleTabChange('profile')}
                                 className={styles.tabLink}
                             >
                                 👤 Профиль
@@ -123,7 +233,7 @@ const AccountPage = () => {
                         <Nav.Item>
                             <Nav.Link
                                 active={activeTab === 'orders'}
-                                onClick={() => setActiveTab('orders')}
+                                onClick={() => handleTabChange('orders')}
                                 className={styles.tabLink}
                             >
                                 📦 Заказы
@@ -131,17 +241,8 @@ const AccountPage = () => {
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link
-                                active={activeTab === 'addresses'}
-                                onClick={() => setActiveTab('addresses')}
-                                className={styles.tabLink}
-                            >
-                                🏠 Адреса доставки
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link
                                 active={activeTab === 'settings'}
-                                onClick={() => setActiveTab('settings')}
+                                onClick={() => handleTabChange('settings')}
                                 className={styles.tabLink}
                             >
                                 ⚙️ Настройки
@@ -171,25 +272,37 @@ const AccountPage = () => {
                                 {isEditing ? (
                                     <Form>
                                         <Row>
-                                            <Col md={6}>
+                                            <Col md={4}>
                                                 <Form.Group className="mb-3">
                                                     <Form.Label className={styles.formLabel}>Имя</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         name="firstName"
-                                                        value={editedData.firstName}
+                                                        value={editedUser.firstName}
                                                         onChange={handleInputChange}
                                                         className={styles.formInput}
                                                     />
                                                 </Form.Group>
                                             </Col>
-                                            <Col md={6}>
+                                            <Col md={4}>
                                                 <Form.Group className="mb-3">
                                                     <Form.Label className={styles.formLabel}>Фамилия</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         name="secondName"
-                                                        value={editedData.secondName}
+                                                        value={editedUser.secondName}
+                                                        onChange={handleInputChange}
+                                                        className={styles.formInput}
+                                                    />
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={4}>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Label className={styles.formLabel}>Отчество</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="surName"
+                                                        value={editedUser.surName}
                                                         onChange={handleInputChange}
                                                         className={styles.formInput}
                                                     />
@@ -197,25 +310,37 @@ const AccountPage = () => {
                                             </Col>
                                         </Row>
                                         <Row>
-                                            <Col md={6}>
+                                            <Col md={4}>
                                                 <Form.Group className="mb-3">
                                                     <Form.Label className={styles.formLabel}>Email</Form.Label>
                                                     <Form.Control
                                                         type="email"
                                                         name="email"
-                                                        value={editedData.email}
+                                                        value={editedUser.email}
                                                         onChange={handleInputChange}
                                                         className={styles.formInput}
                                                     />
                                                 </Form.Group>
                                             </Col>
-                                            <Col md={6}>
+                                            <Col md={4}>
                                                 <Form.Group className="mb-3">
                                                     <Form.Label className={styles.formLabel}>Телефон</Form.Label>
                                                     <Form.Control
                                                         type="tel"
-                                                        name="phone"
-                                                        value={editedData.phone}
+                                                        name="phoneNumber"
+                                                        value={editedUser.phoneNumber}
+                                                        onChange={handleInputChange}
+                                                        className={styles.formInput}
+                                                    />
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={4}>
+                                                <Form.Group className="mb-3">
+                                                    <Form.Label className={styles.formLabel}>Дата рождения</Form.Label>
+                                                    <Form.Control
+                                                        type="date"
+                                                        name="birthday"
+                                                        value={editedUser.birthday?.split('T')[0] || ''}
                                                         onChange={handleInputChange}
                                                         className={styles.formInput}
                                                     />
@@ -232,36 +357,32 @@ const AccountPage = () => {
                                 ) : (
                                     <div className={styles.profileInfo}>
                                         <div className={styles.infoRow}>
-                                            <span className={styles.infoLabel}>Имя:</span>
-                                            <span className={styles.infoValue}>{userData.firstName} {userData.secondName}</span>
+                                            <span className={styles.infoLabel}>ФИО:</span>
+                                            <span className={styles.infoValue}>
+                                                {currentUser?.secondName} {currentUser?.firstName} {currentUser?.surName}
+                                            </span>
                                         </div>
                                         <div className={styles.infoRow}>
                                             <span className={styles.infoLabel}>Email:</span>
-                                            <span className={styles.infoValue}>{userData.email}</span>
+                                            <span className={styles.infoValue}>{currentUser?.email}</span>
                                         </div>
                                         <div className={styles.infoRow}>
                                             <span className={styles.infoLabel}>Телефон:</span>
-                                            <span className={styles.infoValue}>{userData.phone}</span>
+                                            <span className={styles.infoValue}>{currentUser?.phoneNumber}</span>
                                         </div>
                                         <div className={styles.infoRow}>
                                             <span className={styles.infoLabel}>Дата рождения:</span>
-                                            <span className={styles.infoValue}>{userData.birthDate}</span>
-                                        </div>
-                                        <div className={styles.infoRow}>
-                                            <span className={styles.infoLabel}>Зарегистрирован:</span>
-                                            <span className={styles.infoValue}>{userData.registeredSince}</span>
+                                            <span className={styles.infoValue}>{birthdayCorrectDate}</span>
                                         </div>
                                     </div>
                                 )}
 
                                 <div className={styles.statsGrid}>
                                     <div className={styles.statCard}>
-                                        <div className={styles.statValue}>{userData.totalOrders}</div>
-                                        <div className={styles.statLabel}>Всего заказов</div>
+                                        <div className={styles.statLabel}>{`Всего заказов\n ${accountData.map(a => a.countOrder)}`}</div>
                                     </div>
                                     <div className={styles.statCard}>
-                                        <div className={styles.statValue}>{userData.totalSpent} ₽</div>
-                                        <div className={styles.statLabel}>Всего потрачено</div>
+                                        <div className={styles.statLabel}>{`Всего потрачено\n ${accountData.map(a => a.totalPrice)} ₽`}</div>
                                     </div>
                                 </div>
                             </Card.Body>
@@ -273,72 +394,44 @@ const AccountPage = () => {
                         <Card className={styles.contentCard}>
                             <Card.Body>
                                 <h2 className={styles.sectionTitle}>История заказов</h2>
-                                <div className={styles.ordersList}>
-                                    {orders.map((order) => (
-                                        <div key={order.id} className={styles.orderItem}>
-                                            <div className={styles.orderHeader}>
-                                                <span className={styles.orderId}>Заказ {order.id}</span>
-                                                <span className={styles.orderDate}>{order.date}</span>
-                                                {getStatusBadge(order.status)}
-                                            </div>
-                                            <div className={styles.orderDetails}>
-                                                <div className={styles.orderInfo}>
-                                                    <span>Товаров: {order.itemsCount}</span>
-                                                    <span>Сумма: {order.total} ₽</span>
-                                                </div>
-                                                <div className={styles.orderAddress}>
-                                                    Адрес доставки: {order.deliveryAddress}
-                                                </div>
-                                            </div>
-                                            <Button
-                                                variant="link"
-                                                className={styles.orderDetailsBtn}
-                                            >
-                                                Подробнее →
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    )}
-
-                    {/* Адреса доставки */}
-                    {activeTab === 'addresses' && (
-                        <Card className={styles.contentCard}>
-                            <Card.Body>
-                                <div className={styles.addressesHeader}>
-                                    <h2 className={styles.sectionTitle}>Адреса доставки</h2>
-                                    <Button className={styles.addAddressButton}>
-                                        + Добавить адрес
-                                    </Button>
-                                </div>
-                                <div className={styles.addressesList}>
-                                    <div className={styles.addressItem}>
-                                        <div className={styles.addressMain}>
-                                            <div className={styles.addressType}>Основной адрес</div>
-                                            <div className={styles.addressText}>
-                                                Москва, ул. Пальмовая, д. 13, кв. 42
-                                            </div>
-                                        </div>
-                                        <div className={styles.addressActions}>
-                                            <Button className={styles.addressEditBtn}>✎</Button>
-                                            <Button className={styles.addressDeleteBtn}>✕</Button>
-                                        </div>
+                                {loadingAccountPage ? (
+                                    <div className={styles.loadingOrders}>Загрузка заказов...</div>
+                                ) : accountData.length === 0 ? (
+                                    <div className={styles.emptyOrders}>
+                                        <p>У вас пока нет заказов</p>
+                                        <Button onClick={() => navigate('/catalog')} className={styles.shopButton}>
+                                            Перейти в каталог
+                                        </Button>
                                     </div>
-                                    <div className={styles.addressItem}>
-                                        <div className={styles.addressMain}>
-                                            <div className={styles.addressType}>Рабочий адрес</div>
-                                            <div className={styles.addressText}>
-                                                Москва, ул. Тверская, д. 15, офис 304
+                                ) : (
+                                    <div className={styles.ordersList}>
+                                        {ordersData.map((order) => (
+                                            <div key={order.id} className={styles.orderItem}>
+                                                <div className={styles.orderHeader}>
+                                                    <span className={styles.orderId}>Заказ {order.id}</span>
+                                                    <span className={styles.orderDate}>{formatOrderDate(order.orderDate)}</span>
+                                                    {getStatusBadge(order.status)}
+                                                </div>
+                                                <div className={styles.orderDetails}>
+                                                    <div className={styles.orderInfo}>
+                                                        <span>{`Товаров: ${order.orderItems.length}`}</span>
+                                                        <span>{`Сумма: ${order.orderItems.reduce((sum, oi) => sum + oi.totalPrice, 0)} ₽`}</span>
+                                                    </div>
+                                                    <div className={styles.orderAddress}>
+                                                        Адрес доставки:
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    variant="link"
+                                                    className={styles.orderDetailsBtn}
+                                                    onClick={() => navigate(`/order/${order.id}`)}
+                                                >
+                                                    Подробнее →
+                                                </Button>
                                             </div>
-                                        </div>
-                                        <div className={styles.addressActions}>
-                                            <Button className={styles.addressEditBtn}>✎</Button>
-                                            <Button className={styles.addressDeleteBtn}>✕</Button>
-                                        </div>
+                                        ))}
                                     </div>
-                                </div>
+                                )}
                             </Card.Body>
                         </Card>
                     )}
