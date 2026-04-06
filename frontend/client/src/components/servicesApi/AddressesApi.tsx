@@ -19,6 +19,13 @@ export interface Address {
     isShop: boolean;
 };
 
+export interface AddressOrder {
+    id: number,
+    city: string,
+    street: string,
+    house?: string | null
+};
+
 export const getAddresses = async (): Promise<Address[]> => {
     const response = await api.get<Address[]>('/Addresses');
     return response.data;

@@ -1,9 +1,5 @@
 import React from "react";
 import axios from "axios";
-import { Product } from "./ProductsApi";
-import { Categories } from "./CategoriesApi";
-import { Manufacturer } from "./ManufacturersApi";
-import { StockWarehousesQuantity } from "./StocksApi";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -33,9 +29,13 @@ export interface OrderItem {
 };
 
 // получение данных для корзины
-export const getOrderItemData = async (): Promise<OrderItem> => {
+export const getOrderItemData = async (id: number, loginUser: string, roleUser: string): Promise<OrderItem> => {
     try {
-        const response = await api.get<OrderItem>('/OrderItems/orderItem-data');
+        const response = await api.post<OrderItem>('/OrderItems/orderItem-data', {
+            id,
+            loginUser,
+            roleUser
+        });
         return response.data;
     } catch (error: any) {
         if (error.response) {

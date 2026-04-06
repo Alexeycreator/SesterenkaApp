@@ -24,6 +24,7 @@ export interface Catalog {
 export interface OrderItem {
     quantity: number;
     product_Id: number | null;
+    userLogin: string;
 }
 
 export const getCatalogData = async (): Promise<Catalog> => {
@@ -51,11 +52,12 @@ export const getCatalogData = async (): Promise<Catalog> => {
     }
 };
 
-export const addToOrderItem = async (product_Id: number, quantity: number = 1): Promise<OrderItem> => {
+export const addToOrderItem = async (product_Id: number, userLogin: string, quantity: number = 1): Promise<OrderItem> => {
     try {
         const response = await api.post<OrderItem>('/OrderItems', {
             product_Id,
-            quantity
+            quantity,
+            userLogin
         });
         return response.data;
     }
@@ -94,28 +96,3 @@ export const addToOrderItem = async (product_Id: number, quantity: number = 1): 
         }
     }
 };
-
-// export const getCatalogDataById = async (id: number): Promise<Catalog> => {
-//     try {
-//         const response = await api.get<Catalog>(`/Products/catalog-data/${id}`);
-//         return response.data;
-//     } catch (error: any) {
-//         if (error.response) {
-//             console.log('Ошибка ответа:', error.response.data);
-//             console.log('Статус:', error.response.status);
-
-//             // eslint-disable-next-line no-throw-literal
-//             throw {
-//                 ...error,
-//                 serverMessage: error.response.data?.message || 'Неизвестная ошибка',
-//                 statusCode: error.response.status
-//             };
-//         } else if (error.request) {
-//             // eslint-disable-next-line no-throw-literal
-//             throw { message: 'Нет ответа от сервера', isNetworkError: true };
-//         } else {
-//             // eslint-disable-next-line no-throw-literal
-//             throw { message: error.message, isSetupError: true };
-//         }
-//     }
-// };
