@@ -2,7 +2,6 @@
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
     min-height: 100vh;
     padding: 20px;
-    padding-top: 90px;
 }
 
 .title {
@@ -246,9 +245,9 @@
 }
 
 /* Статусы заказов */
-.statusCompleted,
-.statusDelivered {
-    background: linear-gradient(135deg, #27ae60, #229954);
+/* Корзина (черновик) */
+.statusBasket {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
     color: white;
     padding: 3px 10px;
     border-radius: 15px;
@@ -256,6 +255,7 @@
     font-weight: 500;
 }
 
+/* В обработке (ожидает подтверждения) */
 .statusProcessing {
     background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
@@ -265,6 +265,27 @@
     font-weight: 500;
 }
 
+/* Собран (готов к выдаче) */
+.statusReady {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Выдан (завершен) */
+.statusCompleted {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Отменен */
 .statusCancelled {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
@@ -416,6 +437,35 @@
     background: #e74c3c;
     color: white;
     transform: translateY(-2px);
+}
+
+/* AccountPage.module.css - добавьте */
+
+.loadingOrders {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+}
+
+.emptyOrders {
+    text-align: center;
+    padding: 40px;
+}
+
+.emptyOrders p {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+.shopButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    padding: 10px 25px;
+}
+
+.shopButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
 }
 
 /* Адаптивность */
