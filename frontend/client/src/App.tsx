@@ -14,13 +14,14 @@ import {
   SaleItemsPage,
   OrderItemsPage,
 } from './components/pages/Index';
-
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
+import OrderPage from './components/pages/Order/OrderPage';
+import NotFoundPage from './components/pages/NotFound/NotFoundPage';
+import OrderDetailsPage from './components/pages/Order/OrderDetailsPage';
 
 import './App.css';
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
-import OrderPage from './components/pages/Order/OrderPage';
 
 interface ScrollToTopProps {
   location: Location;
@@ -63,10 +64,13 @@ function App() {
               <Route path='/personalAccount' element={<AccountPage />} />
               <Route path='/orderItems' element={<OrderItemsPage />} />
               <Route path='/order' element={<OrderPage />} />
+              <Route path='/order/:id' element={<OrderDetailsPage />} />
 
               <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
               <Route path='/terms_of_use' element={<TermsOfUsePage />} />
               <Route path='/sale_items' element={<SaleItemsPage />} />
+
+              <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </div>
           <div style={{ height: '100px' }}></div>
