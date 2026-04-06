@@ -13,7 +13,7 @@ export interface RegisterRequest {
     password: string;
 }
 
-// Данные пользователя (без пароля!) - соответствует ClientResponseDto на сервере
+// Данные пользователя (без пароля!) - соответствует UserResponseDto на сервере
 export interface UserData {
     id: number;
     secondName: string;
@@ -25,6 +25,7 @@ export interface UserData {
     gender: string;
     age: number;
     birthday: string;
+    role: string;
     // Пароля здесь НЕТ!
 }
 
