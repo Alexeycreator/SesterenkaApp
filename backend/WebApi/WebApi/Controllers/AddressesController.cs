@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
+using WebApi.Models.DTOs.Order;
 
 namespace WebApi.Controllers;
 
@@ -9,6 +10,8 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public sealed class AddressesController(ServerDbContext dbContext) : ControllerBase
 {
+    private List<AddressesOrderDataDto> addressShop = new List<AddressesOrderDataDto>();
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AddressesModel>>> GetAddresses()
     {
@@ -30,6 +33,34 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
         }
 
         return Ok(address);
+    }
+
+    [HttpGet("shop-address")]
+    public async Task<IActionResult> GetAddressShop()
+    {
+        try
+        {
+            var addresses = await dbContext.Addresses.ToListAsync();
+            foreach (var address in addresses)
+            {
+                if (address.IsShop)
+                {
+                    addressShop.Add(new AddressesOrderDataDto()
+                    {
+                        Id = address.Id,
+                        City = address.City,
+                        Street = address.Street,
+                        House = address.House
+                    });
+                }
+            }
+
+            return Ok(addressShop);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
+        }
     }
 
     [HttpPost]
@@ -93,7 +124,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
 
         return CreatedAtAction(nameof(GetAddresses), new { id = address.Id }, address);
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAddress(int id, AddressesModel address)
     {
