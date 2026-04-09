@@ -12,6 +12,7 @@ const api = axios.create({
 
 export interface OrderItemDto {
     id: number;
+    productId: number;
     quantity: number;
     priceAtMoment: number;
     nameCategories: string;
@@ -29,10 +30,9 @@ export interface OrderItem {
 };
 
 // получение данных для корзины
-export const getOrderItemData = async (id: number, loginUser: string, roleUser: string): Promise<OrderItem> => {
+export const getOrderItemData = async (loginUser: string, roleUser: string): Promise<OrderItem> => {
     try {
         const response = await api.post<OrderItem>('/OrderItems/orderItem-data', {
-            id,
             loginUser,
             roleUser
         });
