@@ -61,6 +61,8 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
                 {
                     Id = o.Id,
                     LoginUser = o.Users.Login,
+                    Status = o.Status,
+                    OrderDate = o.OrderDate,
                     OrderItems = orderItemsDto,
                 }).Where(o => o.LoginUser == currentUserLogin).ToListAsync();
 
@@ -136,22 +138,66 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     {
         try
         {
-            if (request == null || request.UserLogin.Length <= 0)
+            if (request == null || request.OrderItems == null)
             {
                 return BadRequest();
             }
 
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Login == request.UserLogin);
-            if (user != null)
+            var address = await dbContext.Addresses.FirstOrDefaultAsync(a => a.Id == request.AddressId);
+            if (address != null && address.IsShop)
             {
-                var order = await dbContext.Orders.Where(o => o.Users_Id == user.Id && o.Status == statusBasket)
-                    .FirstOrDefaultAsync();
-                if (order != null)
+                if (user != null)
                 {
-                    order.Status = statusProcessing;
-                }
+                    var order = await dbContext.Orders.Where(o => o.Users_Id == user.Id && o.Status == statusBasket)
+                        .FirstOrDefaultAsync();
+                    if (order != null)
+                    {
+                        order.Status = statusProcessing;
+                        foreach (var product in request.OrderItems)
+                        {
+                            var productDb = await dbContext.Products.FindAsync(product.Id);
+                            if (productDb == null)
+                            {
+                                return BadRequest(new { message = $"Товар с ID {product.Id} не найден" });
+                            }
 
-                await dbContext.SaveChangesAsync();
+                            var stocks = await dbContext.Stocks
+                                .Where(s => s.Products_Id == productDb.Id)
+                                .ToListAsync();
+                            var totalStock = stocks.Sum(s => s.Quantity);
+                            if (totalStock < product.Quantity)
+                            {
+                                return BadRequest(new
+                                {
+                                    message =
+                                        $"Недостаточно товара '{productDb.Name}' на складе. Доступно: {totalStock} шт. (в заказе {product.Quantity} шт.)"
+                                });
+                            }
+
+                            int remainingToDeduct = product.Quantity;
+                            foreach (var stock in stocks.OrderBy(s => s.Quantity))
+                            {
+                                if (remainingToDeduct <= 0)
+                                {
+                                    break;
+                                }
+
+                                var deductQuantity = Math.Min(stock.Quantity, remainingToDeduct);
+                                stock.Quantity -= deductQuantity;
+                                remainingToDeduct -= deductQuantity;
+
+                                dbContext.Entry(stock).State = EntityState.Modified;
+                            }
+                        }
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                return NotFound();
             }
 
             return Ok();
