@@ -48,6 +48,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
             {
                 return NotFound();
             }
+
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Login == request.LoginUser);
             if (user != null)
             {
@@ -58,11 +59,13 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                 {
                     var orderItems = await dbContext.OrderItems
                         .Where(oi =>
-                            oi.Orders != null && oi.Orders.Users != null && oi.Orders.Users.Login == request.LoginUser &&
+                            oi.Orders != null && oi.Orders.Users != null &&
+                            oi.Orders.Users.Login == request.LoginUser &&
                             oi.Orders_Id == order.Id)
                         .Select(oi => new OrderItemDataDto
                         {
                             Id = oi.Id,
+                            ProductId = oi.Products.Id,
                             Quantity = oi.Quantity,
                             PriceAtMoment = oi.PriceAtMoment,
                             NameProducts = oi.Products != null ? oi.Products.Name : "Товар не найден",
