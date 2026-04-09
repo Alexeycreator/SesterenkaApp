@@ -27,7 +27,7 @@ const OrderItemsPage = () => {
     const fetchOrderItem = async () => {
         try {
             setLoadingOrderItem(true);
-            const orderItem = await getOrderItemData(currentUser?.id || 0, currentUser?.login || '', currentUser?.role || '');
+            const orderItem = await getOrderItemData(currentUser?.login || '', currentUser?.role || '');
             setOrderItemData(orderItem);
             if (orderItem != null) {
                 const products = orderItem.items;
