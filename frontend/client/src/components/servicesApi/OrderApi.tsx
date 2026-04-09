@@ -41,6 +41,19 @@ export interface OrderData {
     totalPrice: number
 };
 
+export interface OrderItemsOrderDataDto {
+    id: number,
+    quantity: number,
+    price: number,
+    nameProduct: string
+};
+
+export interface AddOrder {
+    userLogin: string,
+    addressId: number,
+    orderItems: OrderItemsOrderDataDto[]
+};
+
 // получение данных всех заказов
 export const getOrderData = async (): Promise<Order[]> => {
     try {
@@ -71,6 +84,31 @@ export const getOrderData = async (): Promise<Order[]> => {
 export const getOrderUser = async (loginUser: string): Promise<OrderData[]> => {
     try {
         const response = await api.get<OrderData[]>(`Orders/order-data?currentUserLogin=${loginUser}`);
+        return response.data;
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
+
+export const createOrder = async (orderData: AddOrder): Promise<AddOrder> => {
+    try {
+        const response = await api.post<AddOrder>('/Orders/create-order', orderData);
         return response.data;
     } catch (error: any) {
         if (error.response) {
