@@ -138,7 +138,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     {
         try
         {
-            if (request == null || request.OrderItems == null)
+            if (request == null)
             {
                 return BadRequest();
             }
