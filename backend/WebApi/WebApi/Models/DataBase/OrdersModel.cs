@@ -33,9 +33,4 @@ public sealed class OrdersModel
     public UsersModel? Users { get; set; }
 
     [JsonIgnore] public ICollection<OrderItemsModel>? OrderItems { get; set; }
-
-    public OrdersModel()
-    {
-        NameOrder = $"Заказ_{OrderDate.ToShortDateString()}_{Id}";
-    }
 }
