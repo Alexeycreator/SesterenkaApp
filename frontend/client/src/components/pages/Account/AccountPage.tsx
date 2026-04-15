@@ -408,7 +408,7 @@ const AccountPage = () => {
                                         {ordersData.map((order) => (
                                             <div key={order.id} className={styles.orderItem}>
                                                 <div className={styles.orderHeader}>
-                                                    <span className={styles.orderId}>Заказ {order.id}</span>
+                                                    <span className={styles.orderId}>Заказ {order.nameOrder}</span>
                                                     <span className={styles.orderDate}>{formatOrderDate(order.orderDate)}</span>
                                                     {getStatusBadge(order.status)}
                                                 </div>
