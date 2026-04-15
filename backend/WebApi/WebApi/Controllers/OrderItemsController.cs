@@ -162,7 +162,8 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                     {
                         OrderDate = DateTime.Now,
                         Status = statusBasket,
-                        Users_Id = user.Id
+                        Users_Id = user.Id,
+                        NameOrder = $"{DateTime.Now.ToShortDateString()}"
                     };
                     dbContext.Orders.Add(order);
                     await dbContext.SaveChangesAsync();
