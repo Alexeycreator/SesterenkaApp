@@ -298,6 +298,15 @@ namespace WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("Addresses_Id")
+                        .HasColumnType("int")
+                        .HasColumnName("Addresses_Id");
+
+                    b.Property<string>("NameOrder")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -311,6 +320,8 @@ namespace WebApi.Migrations
                         .HasColumnName("Users_Id");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Addresses_Id");
 
                     b.HasIndex("OrderDate")
                         .HasDatabaseName("IX_Orders_OrderDate");
@@ -659,10 +670,17 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.DataBase.OrdersModel", b =>
                 {
+                    b.HasOne("WebApi.Models.DataBase.AddressesModel", "Addresses")
+                        .WithMany()
+                        .HasForeignKey("Addresses_Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("WebApi.Models.DataBase.UsersModel", "Users")
                         .WithMany("Orders")
                         .HasForeignKey("Users_Id")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Addresses");
 
                     b.Navigation("Users");
                 });
