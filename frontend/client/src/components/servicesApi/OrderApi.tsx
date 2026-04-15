@@ -28,6 +28,7 @@ export interface OrderItems {
 
 export interface Orders {
     id: number,
+    nameOrder: string;
     loginUser: string,
     status: string,
     orderDate: Date,
@@ -53,6 +54,28 @@ export interface AddOrder {
     addressId: number,
     orderItems: OrderItemsOrderDataDto[]
 };
+
+export interface ProductsCurrentOrder{
+    id: number;
+    quantity: number;
+    price: number;
+    nameProduct: string;
+    categories: string;
+    manufacturers: string;
+    partNumber: string;
+    totalPriceProduct: number;
+    image: string;
+}
+
+export interface CurrentOrder {
+    id: number;
+    dateOrder: Date;
+    status: string;
+    countProducts: number;
+    address: AddressOrder;
+    products: ProductsCurrentOrder[];
+    totalPriceOrder: number;
+}
 
 // получение данных всех заказов
 export const getOrderData = async (): Promise<Order[]> => {
@@ -106,9 +129,36 @@ export const getOrderUser = async (loginUser: string): Promise<OrderData[]> => {
     }
 };
 
+// обновление состояния заказа
 export const createOrder = async (orderData: AddOrder): Promise<AddOrder> => {
     try {
         const response = await api.post<AddOrder>('/Orders/create-order', orderData);
+        return response.data;
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
+
+// вывод информации о конкретной заказе
+export const getCurrentOrderData = async(orderId: number):Promise<CurrentOrder>=>{
+try {
+        const response = await api.get<CurrentOrder>(`Orders/current-order?id=${orderId}`);
         return response.data;
     } catch (error: any) {
         if (error.response) {
