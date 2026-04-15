@@ -18,6 +18,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     private readonly string statusBasket = OrdersEnum.Basket.GetDescription();
     private readonly string statusProcessing = OrdersEnum.Processing.GetDescription();
     private readonly string statusCompleted = OrdersEnum.Completed.GetDescription();
+    private CurrentOrderDto currentOrderDto = new CurrentOrderDto();
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrdersModel>>> GetOrdersAsync()
@@ -34,7 +35,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
             return NotFound(new
             {
                 StatusCode = 404,
-                Message = $"Данного производителя не существует",
+                Message = $"Данного заказа не существует",
                 Timestamp = DateTime.UtcNow
             });
         }
@@ -60,6 +61,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
                 .Select(o => new OrderDataDto()
                 {
                     Id = o.Id,
+                    NameOrder = o.NameOrder,
                     LoginUser = o.Users.Login,
                     Status = o.Status,
                     OrderDate = o.OrderDate,
@@ -79,6 +81,77 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
         catch (NullReferenceException ex)
         {
             return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    [HttpGet("current-order")]
+    public async Task<IActionResult> GetCurrentOrder(int id)
+    {
+        try
+        {
+            var currentOrder = await dbContext.Orders.FindAsync(id);
+            if (currentOrder != null)
+            {
+                AddressesOrderDataDto address = new AddressesOrderDataDto();
+                List<CurrentOrderProductsDto> products = new List<CurrentOrderProductsDto>();
+
+                var addressesDb = await dbContext.Addresses.FindAsync(currentOrder.Addresses_Id);
+                if (addressesDb != null)
+                {
+                    address.Id = addressesDb.Id;
+                    address.City = addressesDb.City;
+                    address.House = addressesDb.House;
+                    address.Street = addressesDb.Street;
+                }
+
+                var orderItems = await dbContext.OrderItems
+                    .Include(oi => oi.Products)
+                    .Include(oi => oi.Products.Categories)
+                    .Include(oi => oi.Products.Manufacturers)
+                    .Where(oi => oi.Orders_Id == id)
+                    .ToListAsync();
+                if (orderItems.Count > 0)
+                {
+                    foreach (var product in orderItems)
+                    {
+                        if (product.Products != null && product.Products.Categories != null &&
+                            product.Products.Manufacturers != null)
+                        {
+                            double totalPriceProducts = product.PriceAtMoment * product.Quantity;
+                            products.Add(new CurrentOrderProductsDto()
+                            {
+                                Id = product.Products.Id,
+                                Quantity = product.Quantity,
+                                NameProduct = product.Products.Name,
+                                Price = product.PriceAtMoment,
+                                Categories = product.Products.Categories.Name,
+                                Manufacturers = product.Products.Manufacturers.Name,
+                                PartNumber = product.Products.PartNumber,
+                                TotalPriceProduct = totalPriceProducts,
+                                Image = product.Products.Image,
+                            });
+                        }
+                    }
+                }
+
+                currentOrderDto.Id = currentOrder.Id;
+                currentOrderDto.DateOrder = currentOrder.OrderDate;
+                currentOrderDto.Status = currentOrder.Status;
+                currentOrderDto.Address = address;
+                currentOrderDto.Products = products;
+                currentOrderDto.CountProducts = products.Count;
+                currentOrderDto.TotalPriceOrder = products.Sum(p => p.Price * p.Quantity);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return Ok(currentOrderDto);
         }
         catch (Exception ex)
         {
@@ -190,6 +263,8 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
                                 dbContext.Entry(stock).State = EntityState.Modified;
                             }
                         }
+
+                        order.Addresses_Id = request.AddressId;
                     }
 
                     await dbContext.SaveChangesAsync();
