@@ -1,0 +1,67 @@
+.contentCard {
+    border: 2px solid #D2B48C;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    color: #8B5A2B;
+    font-size: 1.5rem;
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.settingsSection {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #D2B48C;
+}
+
+.settingsSection:last-child {
+    border-bottom: none;
+}
+
+.settingsSubtitle {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.changePasswordButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 10px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.changePasswordButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.deleteWarning {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.deleteAccountButton {
+    background: transparent;
+    border: 2px solid #e74c3c;
+    color: #e74c3c;
+    font-weight: 500;
+    padding: 8px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.deleteAccountButton:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+}

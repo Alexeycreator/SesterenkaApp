@@ -1,0 +1,169 @@
+.contentCard {
+    border: 2px solid #D2B48C;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    color: #8B5A2B;
+    font-size: 1.5rem;
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.ordersList {
+    margin-top: 20px;
+}
+
+.orderItem {
+    border: 2px solid #D2B48C;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.orderItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.orderHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #D2B48C;
+}
+
+.orderId {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.orderDate {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.orderDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.orderInfo {
+    display: flex;
+    gap: 20px;
+    color: #2c3e50;
+}
+
+.orderAddress {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.orderDetailsBtn {
+    color: #c49b6b;
+    text-decoration: none;
+    padding: 0;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.orderDetailsBtn:hover {
+    color: #8B5A2B;
+    transform: translateX(5px);
+}
+
+/* Статусы заказов */
+.statusBasket {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.statusProcessing {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.statusReady {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.statusCompleted {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.statusCancelled {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.loadingOrders {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+}
+
+.emptyOrders {
+    text-align: center;
+    padding: 40px;
+}
+
+.emptyOrders p {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+.shopButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    padding: 10px 25px;
+}
+
+.shopButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .orderHeader {
+        flex-wrap: wrap;
+    }
+
+    .orderDetails {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

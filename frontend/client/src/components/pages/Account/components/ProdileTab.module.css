@@ -1,0 +1,146 @@
+.contentCard {
+    border: 2px solid #D2B48C;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    color: #8B5A2B;
+    font-size: 1.5rem;
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #D2B48C;
+}
+
+.editButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.editButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.profileInfo {
+    margin-bottom: 25px;
+}
+
+.infoRow {
+    display: flex;
+    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #D2B48C;
+}
+
+.infoLabel {
+    width: 150px;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.infoValue {
+    flex: 1;
+    color: #2c3e50;
+}
+
+/* Форма редактирования */
+.formLabel {
+    color: #8B5A2B;
+    font-weight: 500;
+}
+
+.formInput {
+    border: 2px solid #D2B48C;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #FFF8F0;
+    color: #8B5A2B;
+}
+
+.formInput:focus {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
+    outline: none;
+    background-color: white;
+}
+
+.saveButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 10px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.saveButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.statCard {
+    background: linear-gradient(135deg, #c49b6b10, #b38b5b10);
+    border: 2px solid #D2B48C;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.statValue {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.statLabel {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .profileHeader {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .infoRow {
+        flex-direction: column;
+    }
+
+    .infoLabel {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+}
