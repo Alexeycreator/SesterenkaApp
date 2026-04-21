@@ -22,7 +22,7 @@ public sealed class UsersController(
     IPasswordHasher passwordHasher) : ControllerBase
 {
     private Logger loggerUsersController = LogManager.GetCurrentClassLogger();
-    
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UsersModel>>> GetUsers()
     {
@@ -45,7 +45,7 @@ public sealed class UsersController(
 
         return Ok(user);
     }
-    
+
     [HttpPost("register")]
     public async Task<ActionResult<UserResponseDto>> Register(CreateUserDto createDto)
     {
@@ -262,7 +262,7 @@ public sealed class UsersController(
         // 4. ВОЗВРАЩАЕМ СТРОКУ ТОКЕНА
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
+
     private int CalculateAge(DateOnly birthday)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
@@ -270,7 +270,7 @@ public sealed class UsersController(
         if (birthday > today.AddYears(-age)) age--;
         return age;
     }
-    
+
     private bool IsPasswordHashed(string password)
     {
         return !string.IsNullOrEmpty(password) &&
@@ -353,6 +353,56 @@ public sealed class UsersController(
         await dbContext.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    [HttpPut("changePassword")]
+    public async Task<IActionResult> UpdatePasswordUser(int userId, string oldPassword, string newPassword)
+    {
+        try
+        {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user != null)
+            {
+                if (user.Password == newPassword)
+                {
+                    return Unauthorized(new { Message = "Старый и новый пароли совпадают" });
+                }
+
+                if (oldPassword != newPassword)
+                {
+                    user.Password = newPassword;
+                    user.PasswordHash = passwordHasher.HashPassword(newPassword);
+                    await dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                else
+                {
+                    return Unauthorized(new { Message = "Старый и новый пароли совпадают" });
+                }
+            }
+            else
+            {
+                return NotFound(new
+                {
+                    StatusCode = 404,
+                    Error = "NotFound",
+                    Message = $"Пользователя не существует!",
+                    Timestamp = DateTime.UtcNow,
+                });
+            }
+        }
+        catch (NullReferenceException ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, new { message = $"Ошибка базы данных: {ex.Message}" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
