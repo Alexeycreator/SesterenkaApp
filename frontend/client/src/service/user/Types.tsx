@@ -36,3 +36,9 @@ export interface SearchClientsParams {
 export interface CheckUniqueResponse {
     isUnique: boolean;
 }
+
+export interface ChangePasswordRequest {
+    userId: number;
+    oldPassword: string;
+    newPassword: string;
+}

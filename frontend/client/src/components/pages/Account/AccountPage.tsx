@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Form, Nav, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Nav, Badge, Modal } from 'react-bootstrap';
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '../../../contexts/AuthContext';
 import { getOrderUser, OrderData, OrderItems, Orders } from '../../servicesApi/OrderApi';
 import { AddressOrder } from '../../servicesApi/AddressesApi';
+import { changePassword } from '../../../service/IndexAuth';
 import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './AccountPage.module.css';
@@ -13,7 +14,7 @@ const AccountPage = () => {
     // для навигации и проверки пользователя
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { user: currentUser, isAuthenticated } = useAuth();
+    const { user: currentUser, isAuthenticated, logout, login, setUser } = useAuth();
     const { orderId } = useParams<{ orderId: string }>();
 
     // получаем параметры из URL
@@ -38,6 +39,23 @@ const AccountPage = () => {
     const [orderItemsData, setOrderItemsData] = useState<OrderItems[][]>([]);
     const [loadingAccountPage, setLoadingAccountPage] = useState(false);
     const [errorAccountPage, setErrorAccountPage] = useState<string | null>(null);
+
+    // Поля для смены пароля
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [isChanging, setIsChanging] = useState(false);
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    // Состояния для показа/скрытия паролей
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    // Ошибки
+    const [oldPasswordError, setOldPasswordError] = useState('');
+    const [newPasswordError, setNewPasswordError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     const fetchOrders = async () => {
         try {
@@ -188,6 +206,79 @@ const AccountPage = () => {
         } catch (error) {
             console.error('Ошибка обновления:', error);
             alert('Не удалось обновить данные');
+        }
+    };
+
+    // Метод смены пароля
+    const handleChangePassword = async () => {
+        if (!currentUser?.id) {
+            alert('Ошибка: пользователь не авторизован');
+            return;
+        }
+
+        // Валидация
+        if (!oldPassword) {
+            setOldPasswordError('Введите текущий пароль');
+            return;
+        }
+
+        if (!newPassword) {
+            setNewPasswordError('Введите новый пароль');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            setNewPasswordError('Пароль должен быть не менее 6 символов');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setConfirmPasswordError('Пароли не совпадают');
+            return;
+        }
+
+        try {
+            setIsChanging(true);
+
+            // Меняем пароль
+            await changePassword(currentUser.id, oldPassword, newPassword);
+
+            // Пробуем войти с новым паролем
+            try {
+                const loginResponse = await login(currentUser.login, newPassword);
+
+                // Обновляем токен в localStorage
+                localStorage.setItem('token', loginResponse.token);
+                localStorage.setItem('user', JSON.stringify(loginResponse.user));
+
+                // Обновляем состояние
+                setUser(loginResponse.user);
+
+                alert('Пароль успешно изменен');
+                setShowPasswordModal(false);
+
+                // Очищаем поля
+                setOldPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+
+            } catch (loginError) {
+                // Если не удалось войти, выходим из аккаунта
+                alert('Пароль изменен, но требуется повторный вход');
+                logout();
+                navigate('/login');
+            }
+
+        } catch (error: any) {
+            console.error('Ошибка:', error);
+
+            if (error.statusCode === 401) {
+                setOldPasswordError('Неверный текущий пароль');
+            } else {
+                alert(error.message || 'Не удалось изменить пароль');
+            }
+        } finally {
+            setIsChanging(false);
         }
     };
 
@@ -441,31 +532,124 @@ const AccountPage = () => {
                         <Card className={styles.contentCard}>
                             <Card.Body>
                                 <h2 className={styles.sectionTitle}>Настройки аккаунта</h2>
-
-                                <div className={styles.settingsSection}>
-                                    <h3 className={styles.settingsSubtitle}>Уведомления</h3>
-                                    <Form>
-                                        <Form.Check
-                                            type="checkbox"
-                                            label="Получать уведомления о статусе заказа"
-                                            defaultChecked
-                                            className={styles.settingCheckbox}
-                                        />
-                                        <Form.Check
-                                            type="checkbox"
-                                            label="Получать новости и акции"
-                                            defaultChecked
-                                            className={styles.settingCheckbox}
-                                        />
-                                    </Form>
-                                </div>
-
                                 <div className={styles.settingsSection}>
                                     <h3 className={styles.settingsSubtitle}>Безопасность</h3>
-                                    <Button className={styles.changePasswordButton}>
+                                    <Button
+                                        className={styles.changePasswordButton}
+                                        onClick={() => setShowPasswordModal(true)}
+                                    >
                                         Изменить пароль
                                     </Button>
                                 </div>
+
+                                {/* Модальное окно смены пароля */}
+                                <Modal show={showPasswordModal} onHide={() => setShowPasswordModal(false)} centered>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Изменение пароля</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <Form>
+                                            {/* Старый пароль */}
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Текущий пароль *</Form.Label>
+                                                <div className={styles.passwordInputWrapper}>
+                                                    <Form.Control
+                                                        type={showOldPassword ? 'text' : 'password'}
+                                                        value={oldPassword}
+                                                        onChange={(e) => {
+                                                            setOldPassword(e.target.value);
+                                                            setOldPasswordError('');
+                                                        }}
+                                                        placeholder="Введите текущий пароль"
+                                                        isInvalid={!!oldPasswordError}
+                                                        className={styles.passwordInput}
+                                                    />
+                                                    <Button
+                                                        variant="link"
+                                                        className={styles.passwordToggle}
+                                                        onClick={() => setShowOldPassword(!showOldPassword)}
+                                                    >
+                                                        {showOldPassword ? '🙈' : '👁️'}
+                                                    </Button>
+                                                </div>
+                                                <Form.Control.Feedback type="invalid">
+                                                    {oldPasswordError}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+
+                                            {/* Новый пароль */}
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Новый пароль *</Form.Label>
+                                                <div className={styles.passwordInputWrapper}>
+                                                    <Form.Control
+                                                        type={showNewPassword ? 'text' : 'password'}
+                                                        value={newPassword}
+                                                        onChange={(e) => {
+                                                            setNewPassword(e.target.value);
+                                                            setNewPasswordError('');
+                                                        }}
+                                                        placeholder="Введите новый пароль"
+                                                        isInvalid={!!newPasswordError}
+                                                        className={styles.passwordInput}
+                                                    />
+                                                    <Button
+                                                        variant="link"
+                                                        className={styles.passwordToggle}
+                                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                                    >
+                                                        {showNewPassword ? '🙈' : '👁️'}
+                                                    </Button>
+                                                </div>
+                                                <Form.Control.Feedback type="invalid">
+                                                    {newPasswordError}
+                                                </Form.Control.Feedback>
+                                                <Form.Text className="text-muted">
+                                                    Пароль должен содержать не менее 6 символов
+                                                </Form.Text>
+                                            </Form.Group>
+
+                                            {/* Подтверждение пароля */}
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Подтверждение пароля *</Form.Label>
+                                                <div className={styles.passwordInputWrapper}>
+                                                    <Form.Control
+                                                        type={showConfirmPassword ? 'text' : 'password'}
+                                                        value={confirmPassword}
+                                                        onChange={(e) => {
+                                                            setConfirmPassword(e.target.value);
+                                                            setConfirmPasswordError('');
+                                                        }}
+                                                        placeholder="Повторите новый пароль"
+                                                        isInvalid={!!confirmPasswordError}
+                                                        className={styles.passwordInput}
+                                                    />
+                                                    <Button
+                                                        variant="link"
+                                                        className={styles.passwordToggle}
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                    >
+                                                        {showConfirmPassword ? '🙈' : '👁️'}
+                                                    </Button>
+                                                </div>
+                                                <Form.Control.Feedback type="invalid">
+                                                    {confirmPasswordError}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                        </Form>
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="secondary" onClick={() => setShowPasswordModal(false)}>
+                                            Отмена
+                                        </Button>
+                                        <Button
+                                            variant="primary"
+                                            onClick={handleChangePassword}
+                                            disabled={isChanging}
+                                        >
+                                            {isChanging ? 'Сохранение...' : 'Сохранить'}
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal>
 
                                 <div className={styles.settingsSection}>
                                     <h3 className={styles.settingsSubtitle}>Удаление аккаунта</h3>
