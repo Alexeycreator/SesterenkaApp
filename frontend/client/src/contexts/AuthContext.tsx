@@ -8,6 +8,7 @@ interface AuthContextType {
     login: (login: string, password: string) => Promise<any>;
     logout: () => void;
     loading: boolean;
+    role: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,6 +16,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<UserData | null>(authApi.getStoredUser());
     const [loading, setLoading] = useState(false);
+
+    // Получаем роль из user
+    const getUserRole = (): string => {
+        return user?.role || 'user';
+    };
 
     useEffect(() => {
         // Слушаем изменения авторизации
@@ -62,7 +68,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isAuthenticated: !!user,
             login,
             logout,
-            loading
+            loading,
+            role: getUserRole()
         }}>
             {children}
         </AuthContext.Provider>
