@@ -289,29 +289,82 @@
     color: white;
 }
 
+/* Стили для секции категорий */
+.sectionSubtitle {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Стили для кнопки обновления */
+.refreshButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.refreshButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Стили для загрузчика */
+.loader {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.1rem;
+    color: #8B5A2B;
+}
+
+/* Анимация для карточек категорий при обновлении */
+.categoryItem {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .heroTitle {
         font-size: 2.5rem;
     }
-    
+
     .heroSubtitle {
         font-size: 1.2rem;
     }
-    
+
     .heroButtons {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     .sectionTitle {
         font-size: 1.8rem;
     }
-    
+
     .ctaSection {
         padding: 30px;
     }
-    
+
     .ctaTitle {
         font-size: 1.5rem;
     }

@@ -1,17 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+
+import { getCategories, Categories } from '../../servicesApi/CategoriesApi';
+
 import styles from './MainPage.module.css';
 
 const MainPage = () => {
-    const categories = [
-        { icon: '🛢️', name: 'Масляные фильтры', link: '/catalog?category=oil-filters' },
-        { icon: '🌬️', name: 'Салонные фильтры', link: '/catalog?category=cabin-filters' },
-        { icon: '💨', name: 'Воздушные фильтры', link: '/catalog?category=air-filters' },
-        { icon: '⛽', name: 'Топливные фильтры', link: '/catalog?category=fuel-filters' },
-        { icon: '⚙️', name: 'Поршни и кольца', link: '/catalog?category=pistons' },
-        { icon: '🛞', name: 'Колеса и шины', link: '/catalog?category=wheels' }
+    // Состояние для категорий
+    const [randomCategories, setRandomCategories] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const defaultCategories = [
+        { id: 1, icon: '🛢️', name: 'Масляные фильтры', link: '/catalog?category=1' },
+        { id: 2, icon: '🌬️', name: 'Салонные фильтры', link: '/catalog?category=2' },
+        { id: 3, icon: '💨', name: 'Воздушные фильтры', link: '/catalog?category=3' },
+        { id: 4, icon: '⛽', name: 'Топливные фильтры', link: '/catalog?category=4' },
+        { id: 5, icon: '⚙️', name: 'Поршни и кольца', link: '/catalog?category=5' },
+        { id: 6, icon: '🛞', name: 'Колеса и шины', link: '/catalog?category=6' }
     ];
+
+    // Загрузка категорий при монтировании компонента
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    // Функция для получения категорий из API
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            const categories = await getCategories();
+
+            if (categories && categories.length > 0) {
+                const apiCategories = categories.map((cat: Categories, index: number) => ({
+                    id: cat.id,
+                    icon: cat.icon || '📦',
+                    name: cat.name,
+                    link: `/catalog?category=${cat.id}`
+                }));
+                selectRandomCategories(apiCategories);
+            } else {
+                selectRandomCategories(defaultCategories);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки категорий:', error);
+            selectRandomCategories(defaultCategories);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Функция для выбора 6 случайных категорий
+    const selectRandomCategories = (categories: any[]) => {
+        if (!categories || categories.length === 0) return;
+
+        const shuffled = [...categories];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        const selected = shuffled.slice(0, 6);
+        setRandomCategories(selected);
+    };
+
+    // Функция для обновления случайных категорий (при перезагрузке)
+    const refreshCategories = () => {
+        if (randomCategories.length > 0) {
+            selectRandomCategories(randomCategories);
+        } else {
+            selectRandomCategories(defaultCategories);
+        }
+    };
 
     const advantages = [
         {
@@ -33,45 +93,6 @@ const MainPage = () => {
             icon: '🔧',
             title: 'Консультации',
             description: 'Профессиональная помощь в подборе'
-        }
-    ];
-
-    const news = [
-        {
-            id: 1,
-            title: "Новые технологии в производстве поршней",
-            date: "15 марта 2024",
-            excerpt: "Современные методы литья позволяют создавать поршни, которые служат на 30% дольше."
-        },
-        {
-            id: 2,
-            title: "Как выбрать масляный фильтр",
-            date: "12 марта 2024",
-            excerpt: "Разбираемся в типах фильтров и сроках замены."
-        },
-        {
-            id: 3,
-            title: "Открытие нового склада в Москве",
-            date: "10 марта 2024",
-            excerpt: "Теперь доставка запчастей станет еще быстрее."
-        }
-    ];
-
-    const testimonials = [
-        {
-            name: "Алексей Петров",
-            text: "Отличный магазин! Быстро подобрали нужные запчасти, доставили вовремя. Буду заказывать еще.",
-            rating: 5
-        },
-        {
-            name: "Дмитрий Соколов",
-            text: "Большой выбор фильтров, приятные цены. Спасибо за консультацию по подбору масляного фильтра.",
-            rating: 5
-        },
-        {
-            name: "Екатерина Иванова",
-            text: "Заказывала салонный фильтр. Прислали с курьером на следующий день. Качеством довольна.",
-            rating: 5
         }
     ];
 
@@ -108,23 +129,54 @@ const MainPage = () => {
             </Row>
 
             {/* Категории */}
-            <Row className="mb-5">
+            <Row className="mb-4">
                 <Col>
                     <h2 className={styles.sectionTitle}>Популярные категории</h2>
+                    <p className={styles.sectionSubtitle}>
+                        Каждый раз новые предложения для вас
+                    </p>
                 </Col>
             </Row>
-            <Row xs={2} md={3} lg={6} className="g-3 mb-5">
-                {categories.map((cat, index) => (
-                    <Col key={index}>
-                        <Link to={cat.link} className={styles.categoryLink}>
-                            <div className={styles.categoryItem}>
-                                <div className={styles.categoryIcon}>{cat.icon}</div>
-                                <div className={styles.categoryName}>{cat.name}</div>
-                            </div>
-                        </Link>
+
+            {loading ? (
+                <Row className="mb-5">
+                    <Col className="text-center">
+                        <div className={styles.loader}>Загрузка категорий...</div>
                     </Col>
-                ))}
-            </Row>
+                </Row>
+            ) : (
+                <>
+                    <Row xs={2} md={3} lg={6} className="g-3 mb-4">
+                        {randomCategories.map((cat, index) => (
+                            <Col key={cat.id}>
+                                <Link
+                                    to={cat.link}
+                                    className={styles.categoryLink}
+                                >
+                                    <div className={styles.categoryItem}>
+                                        <div className={styles.categoryIcon}>
+                                            {cat.icon}
+                                        </div>
+                                        <div className={styles.categoryName}>{cat.name}</div>
+                                    </div>
+                                </Link>
+                            </Col>
+                        ))}
+                    </Row>
+
+                    {/* Кнопка обновления категорий */}
+                    <Row className="mb-5">
+                        <Col className="text-center">
+                            <button
+                                onClick={refreshCategories}
+                                className={styles.refreshButton}
+                            >
+                                🔄 Обновить подборку
+                            </button>
+                        </Col>
+                    </Row>
+                </>
+            )}
 
             {/* Преимущества */}
             <Row className="mb-5">
@@ -139,55 +191,6 @@ const MainPage = () => {
                             <div className={styles.advantageIcon}>{adv.icon}</div>
                             <h3 className={styles.advantageTitle}>{adv.title}</h3>
                             <p className={styles.advantageDescription}>{adv.description}</p>
-                        </div>
-                    </Col>
-                ))}
-            </Row>
-
-            {/* Новости */}
-            <Row className="mb-4">
-                <Col>
-                    <h2 className={styles.sectionTitle}>Новости и статьи</h2>
-                </Col>
-            </Row>
-            <Row xs={1} md={3} className="g-4 mb-5">
-                {news.map((item) => (
-                    <Col key={item.id}>
-                        <Card className={styles.newsCard}>
-                            <Card.Body>
-                                <div className={styles.newsDate}>{item.date}</div>
-                                <Card.Title className={styles.newsTitle}>
-                                    {item.title}
-                                </Card.Title>
-                                <Card.Text className={styles.newsText}>
-                                    {item.excerpt}
-                                </Card.Text>
-                                <Link to={`/news?id=${item.id}`} className={styles.newsLink}>
-                                    Читать далее →
-                                </Link>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-
-            {/* Отзывы */}
-            <Row className="mb-4">
-                <Col>
-                    <h2 className={styles.sectionTitle}>Отзывы клиентов</h2>
-                </Col>
-            </Row>
-            <Row xs={1} md={3} className="g-4 mb-5">
-                {testimonials.map((item, index) => (
-                    <Col key={index}>
-                        <div className={styles.testimonialCard}>
-                            <div className={styles.testimonialRating}>
-                                {[...Array(item.rating)].map((_, i) => (
-                                    <span key={i} className={styles.star}>★</span>
-                                ))}
-                            </div>
-                            <p className={styles.testimonialText}>"{item.text}"</p>
-                            <div className={styles.testimonialAuthor}>— {item.name}</div>
                         </div>
                     </Col>
                 ))}
