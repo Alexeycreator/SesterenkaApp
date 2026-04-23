@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+import { getShopAddress, AddressOrder } from '../servicesApi/AddressesApi';
+import { getUsers, User } from '../servicesApi/UsersApi';
 
 import styles from './Footer.module.css';
 
 const Footer = () => {
+    // Состояния для динамических данных
+    const [adminUser, setAdminUser] = useState<User | null>(null);
+    const [shopAddress, setShopAddress] = useState<AddressOrder | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [users, addresses] = await Promise.all([
+                    getUsers(),
+                    getShopAddress()
+                ]);
+
+                const admin = users.find(user => user.role === 'admin');
+                setAdminUser(admin || null);
+
+                if (addresses && addresses.length > 0) {
+                    setShopAddress(addresses[0]);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных для футера:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <footer className={styles.footer}>
             {/* Декоративный верхний элемент */}
@@ -15,17 +47,12 @@ const Footer = () => {
                 {/* О нас */}
                 <div className={styles.section}>
                     <h4 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>🏜️</span> О компании
+                        <span className={styles.sectionIcon}>🔧</span> О компании
                     </h4>
                     <ul className={styles.list}>
                         <li className={styles.listItem}>
                             <Link to="/information" className={styles.link}>
                                 О нас
-                            </Link>
-                        </li>
-                        <li className={styles.listItem}>
-                            <Link to="/information#quality" className={styles.link}>
-                                Качество продукта
                             </Link>
                         </li>
                     </ul>
@@ -34,17 +61,12 @@ const Footer = () => {
                 {/* Покупателям */}
                 <div className={styles.section}>
                     <h4 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>🧳</span> Покупателям
+                        <span className={styles.sectionIcon}>🛒</span> Покупателям
                     </h4>
                     <ul className={styles.list}>
                         <li className={styles.listItem}>
                             <Link to="/catalog" className={styles.link}>
                                 Все товары
-                            </Link>
-                        </li>
-                        <li className={styles.listItem}>
-                            <Link to="/sale_items" className={styles.link}>
-                                Товары со скидкой
                             </Link>
                         </li>
                         <li className={styles.listItem}>
@@ -62,32 +84,21 @@ const Footer = () => {
                     </h4>
                     <ul className={styles.list}>
                         <li className={styles.contactItem}>
-                            <span className={styles.contactIcon}>📧</span> vm96276915@gmail.com
+                            <span className={styles.contactIcon}>📧</span>
+                            {loading ? 'Загрузка...' : (adminUser?.email || 'info@koleso-porshen.ru')}
                         </li>
                         <li className={styles.contactItem}>
-                            <span className={styles.contactIcon}>📱</span> +7 (901) 339-95-22
+                            <span className={styles.contactIcon}>📱</span>
+                            {loading ? 'Загрузка...' : (adminUser?.phoneNumber || '+7 (999) 123-45-67')}
                         </li>
                         <li className={styles.contactItem}>
-                            <span className={styles.contactIcon}>📍</span> Москва, ул. Пальмовая, 13
+                            <span className={styles.contactIcon}>📍</span>
+                            {loading ? 'Загрузка...' : (shopAddress ? `г. ${shopAddress.city}, ул. ${shopAddress.street}, д. ${shopAddress.house}` : 'Москва, ул. Пальмовая, 13')}
                         </li>
                         <li className={styles.contactItem}>
-                            <span className={styles.contactIcon}>⏰</span> Пн-Пт: 8:00 - 22:00
+                            <span className={styles.contactIcon}>⏰</span> Круглосуточно
                         </li>
                     </ul>
-                </div>
-            </div>
-
-            {/* Нижняя часть с копирайтом и доп. информацией */}
-            <div className={styles.bottomSection}>
-                <div className={styles.copyright}>© 2026 Колесо и поршень. Все права защищены.</div>
-                <div className={styles.links}>
-                    <Link to="/privacy_policy" className={styles.bottomLink}>
-                        Политика конфиденциальности
-                    </Link>
-                    <span className={styles.separator}>|</span>
-                    <Link to="/terms_of_use" className={styles.bottomLink}>
-                        Условия использования
-                    </Link>
                 </div>
             </div>
 
