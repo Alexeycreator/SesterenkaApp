@@ -39,8 +39,10 @@ export const getOrderItemData = async (loginUser: string, roleUser: string): Pro
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            console.log('Ошибка ответа:', error.response.data);
-            console.log('Статус:', error.response.status);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Ошибка ответа:', error.response.data);
+                console.log('Статус:', error.response.status);
+            }
 
             // eslint-disable-next-line no-throw-literal
             throw {

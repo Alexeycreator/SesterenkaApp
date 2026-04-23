@@ -1,0 +1,61 @@
+.authModal :global(.modal-content) {
+    background: linear-gradient(135deg, #F8F0E0 0%, #F0E0D0 100%);
+    border: 2px solid #C0A080;
+    border-radius: 15px;
+}
+
+.authModal :global(.modal-header) {
+    border-bottom: 2px solid #C0A080;
+    padding: 15px 20px;
+}
+
+.authModal :global(.modal-title) {
+    color: #8B5A2B;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+}
+
+.authModal :global(.modal-body) {
+    padding: 20px;
+}
+
+.authModal :global(.form-label) {
+    color: #8B5A2B;
+    font-weight: 500;
+}
+
+.authModal :global(.form-control) {
+    border: 2px solid #D2B48C;
+    border-radius: 8px;
+    background-color: #FFF8F0;
+    color: #8B5A2B;
+}
+
+.authModal :global(.form-control:focus) {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
+}
+
+.authModal :global(.btn-primary) {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.authModal :global(.btn-primary:hover) {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.authModal :global(.btn-link) {
+    color: #c49b6b;
+    text-decoration: none;
+}
+
+.authModal :global(.btn-link:hover) {
+    color: #8B5A2B;
+}

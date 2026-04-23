@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../../contexts/AuthContext';
@@ -34,6 +34,10 @@ const OrderPage = () => {
     const [submitting, setSubmitting] = useState(false);
     const [step, setStep] = useState(1);
     const [showAuthModal, setShowAuthModal] = useState(false);
+
+    // Состояние для модального окна подтверждения оплаты
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [isConfirmed, setIsConfirmed] = useState(false);
 
     const [itemsData, setItemsData] = useState<OrderItemsOrderDataDto[]>([]);
 
@@ -96,6 +100,7 @@ const OrderPage = () => {
     // хуки
     useEffect(() => {
         fetchAddresses();
+        console.log("я тут");
     }, []);
 
     useEffect(() => {
@@ -103,6 +108,39 @@ const OrderPage = () => {
     }, []);
 
     const total = orderItemsData?.totalAmount || 0;
+
+    // Обработчик подтверждения заказа с модальным окном
+    const handleConfirmOrder = async () => {
+        try {
+            setSubmitting(true);
+
+            const orderData: AddOrder = {
+                userLogin: user?.login || '',
+                addressId: Number(selectedAddressShop),
+                orderItems: orderItemsData?.items.map(oi => ({
+                    id: oi.productId,
+                    quantity: oi.quantity,
+                    price: oi.priceAtMoment,
+                    nameProduct: oi.nameProducts
+                })) || []
+            };
+
+            await createOrder(orderData);
+
+            // Закрываем модальное окно и показываем успех
+            setShowPaymentModal(false);
+            alert('Заказ успешно оформлен!');
+            navigate(`/personalAccount?userId=${user?.id}&tab=orders`);
+
+        } catch (error) {
+            console.error('Ошибка оформления заказа:', error);
+            alert('Произошла ошибка при оформлении заказа');
+            setShowPaymentModal(false);
+        } finally {
+            setSubmitting(false);
+            setIsConfirmed(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -122,35 +160,19 @@ const OrderPage = () => {
             return;
         }
 
-        try {
-            setSubmitting(true);
-
-            const orderData: AddOrder = {
-                userLogin: user?.login || '',
-                addressId: Number(selectedAddressShop),
-                orderItems: orderItemsData?.items.map(oi => ({
-                    id: oi.productId,
-                    quantity: oi.quantity,
-                    price: oi.priceAtMoment,
-                    nameProduct: oi.nameProducts
-                })) || []
-            };
-
-            await createOrder(orderData);
-
-            alert('Заказ успешно оформлен!');
-            navigate(`/personalAccount?userId=${user?.id}&tab=orders`);
-
-        } catch (error) {
-            console.error('Ошибка оформления заказа:', error);
-            alert('Произошла ошибка при оформлении заказа');
-        } finally {
-            setSubmitting(false);
-        }
+        // Шаг 2 - показываем модальное окно с информацией об оплате
+        setShowPaymentModal(true);
     };
 
     const getSelectedAddressShop = () => {
         return addressesData.find(a => a.id === selectedAddressShop);
+    };
+
+    // Сброс подтверждения при закрытии модального окна
+    const handleClosePaymentModal = () => {
+        if (!isConfirmed) {
+            setShowPaymentModal(false);
+        }
     };
 
     return (
@@ -172,6 +194,64 @@ const OrderPage = () => {
                     </div>
                 </div>
             )}
+
+            {/* Модальное окно для подтверждения оплаты наличными */}
+            <Modal
+                show={showPaymentModal}
+                onHide={handleClosePaymentModal}
+                centered
+                backdrop="static"
+                className={styles.paymentModal}
+            >
+                <Modal.Header closeButton={!submitting}>
+                    <Modal.Title className={styles.paymentModalTitle}>
+                        💳 Способ оплаты
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className={styles.paymentModalBody}>
+                    <div className={styles.paymentInfo}>
+                        <div className={styles.paymentIcon}>💰</div>
+                        <h4>Оплата наличными</h4>
+                        <p className={styles.paymentDescription}>
+                            Оплата заказа производится <strong>наличными</strong> при получении товара в магазине.
+                        </p>
+                        <div className={styles.paymentDetails}>
+                            <div className={styles.paymentDetailItem}>
+                                <span className={styles.detailIcon}>📍</span>
+                                <span>Пункт выдачи: <strong>{getSelectedAddressShop()?.city}, ул. {getSelectedAddressShop()?.street}, д. {getSelectedAddressShop()?.house}</strong></span>
+                            </div>
+                            <div className={styles.paymentDetailItem}>
+                                <span className={styles.detailIcon}>💵</span>
+                                <span>Сумма к оплате: <strong>{total} ₽</strong></span>
+                            </div>
+                            <div className={styles.paymentDetailItem}>
+                                <span className={styles.detailIcon}>📦</span>
+                                <span>Способ получения: <strong>Самовывоз</strong></span>
+                            </div>
+                        </div>
+                        <div className={styles.paymentWarning}>
+                            ⚠️ Внимание: На данный момент доступна только оплата наличными при получении.
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className={styles.paymentModalFooter}>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={handleClosePaymentModal}
+                        disabled={submitting}
+                        className={styles.cancelPaymentButton}
+                    >
+                        Отмена
+                    </Button>
+                    <Button
+                        onClick={handleConfirmOrder}
+                        disabled={submitting}
+                        className={styles.confirmPaymentButton}
+                    >
+                        {submitting ? 'Оформление...' : 'Подтвердить заказ'}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
             {/* Заголовок */}
             <Row className="mb-4">
@@ -230,7 +310,6 @@ const OrderPage = () => {
                                                         type="text"
                                                         name="fullName"
                                                         value={`${user?.secondName} ${user?.firstName} ${user?.surName}`}
-                                                        // onChange={handleAddressChange}
                                                         required
                                                         disabled={!isAuthenticated}
                                                         placeholder="Иванов Иван Иванович"
@@ -244,7 +323,6 @@ const OrderPage = () => {
                                                         type="tel"
                                                         name="phone"
                                                         value={user?.phoneNumber}
-                                                        // onChange={handleAddressChange}
                                                         required
                                                         disabled={!isAuthenticated}
                                                         placeholder="+7 (999) 123-45-67"
@@ -259,7 +337,6 @@ const OrderPage = () => {
                                                 type="email"
                                                 name="email"
                                                 value={user?.email}
-                                                // onChange={handleAddressChange}
                                                 required
                                                 disabled={!isAuthenticated}
                                                 placeholder="example@mail.ru"

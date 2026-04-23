@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Badge, Button, InputGroup, Form, Modal, Accordion } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 import { Categories } from '../../servicesApi/CategoriesApi';
 import { Product } from '../../servicesApi/ProductsApi';
@@ -9,7 +8,12 @@ import { Manufacturer } from '../../servicesApi/ManufacturersApi';
 import { StockWarehousesQuantity } from '../../servicesApi/StocksApi';
 import { addToOrderItem, Catalog, getCatalogData } from '../../servicesApi/CatalogApi';
 import { useAuth } from '../../../contexts/AuthContext';
+import { AuthModal } from './components/AuthModal';
 import LoadingSpinner from '../../LoadingSpinner';
+import { CategoriesList } from './components/CategoriesList';
+import { ProductsList } from './components/ProductsList';
+import { Filters } from './components/Filters';
+import { ProductDetails } from './components/ProductDetails';
 
 import styles from './CatalogPage.module.css';
 
@@ -19,88 +23,45 @@ interface FilterState {
     maxPrice: number;
 }
 
+// Функция нормализации строки
+const normalizeString = (str: string) => str.toLowerCase().replace(/\s+/g, '');
+
 const CatalogPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
     const navigate = useNavigate();
-
-    // состояние пользователя
     const { user: currentUser, isAuthenticated } = useAuth();
 
-    // состояние данных страницы
+    // Состояния
     const [catalogData, setCatalogData] = useState<Catalog | null>();
     const [loadingCatalogData, setLoadingCatalogData] = useState(true);
-    const [errorCatalogData, setErrorCatalogData] = useState<string | null>(null);
-
-    // состояние категорий
     const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
-
-    // состояние товаров
     const [productData, setProductData] = useState<Product[]>([]);
-
-    // состояние брэндов товаров
     const [manufacturerData, setManufacturerData] = useState<Manufacturer[]>([]);
-
-    // состояние остатков на складе
     const [stockWarehousesQuantityData, setStockWarehousesQuantityData] = useState<StockWarehousesQuantity[]>([]);
 
-    // состояния фильтров и поиска
+    // Фильтры и поиск
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState('');
+    const [categorySearchQuery, setCategorySearchQuery] = useState('');
     const [filters, setFilters] = useState<FilterState>({
         brands: [],
         minPrice: 0,
         maxPrice: 10000
     });
-
-    // новые состояния для временных значений цены
     const [tempMinPrice, setTempMinPrice] = useState<number>(filters.minPrice);
     const [tempMaxPrice, setTempMaxPrice] = useState<number>(filters.maxPrice);
 
-    // получение данных для страницы
-    const fetchCatalogData = async () => {
-        try {
-            setLoadingCatalogData(true);
-            const catalogData = await getCatalogData();
-            setCatalogData(catalogData);
-            if (catalogData != null) {
-                fillingCatalogData(catalogData);
-            }
-            else {
-                console.log('Данные для страницы каталога пустые!');
-            }
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки страницы категории товаров:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorCatalogData(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setErrorCatalogData(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setErrorCatalogData('Ошибка соединения с сервером');
-            }
-        }
-        finally {
-            setLoadingCatalogData(false);
-        }
-    };
+    // Модальное окно авторизации
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [pendingProductId, setPendingProductId] = useState<number | null>(null);
 
-    // извлечение данных из объекта
-    const fillingCatalogData = (data: Catalog) => {
-        const allCategories = data?.categories;
-        const allProducts = data?.products;
-        const allStocks = data?.stocks;
-        const allManufacturers = data?.manufacturers;
-        setCategoriesData(allCategories);
-        setProductData(allProducts);
-        setStockWarehousesQuantityData(allStocks);
-        setManufacturerData(allManufacturers);
-    };
+    // Чтение параметров из URL
+    const selectedCategory = searchParams.get('category')
+        ? parseInt(searchParams.get('category')!)
+        : null;
+    const selectedProductId = searchParams.get('id') ? parseInt(searchParams.get('id')!) : null;
 
-    // хуки
+    // Загрузка данных
     useEffect(() => {
         fetchCatalogData();
     }, []);
@@ -110,41 +71,61 @@ const CatalogPage = () => {
         setTempMaxPrice(filters.maxPrice);
     }, [filters.minPrice, filters.maxPrice]);
 
-    // Чтение параметров из URL
-    const selectedCategory = searchParams.get('category')
-        ? parseInt(searchParams.get('category')!)
-        : null;
-    const selectedProductId = searchParams.get('id') ? parseInt(searchParams.get('id')!) : null;
+    // Чтение поискового запроса из URL при загрузке
+    useEffect(() => {
+        const searchFromUrl = searchParams.get('search');
+        if (searchFromUrl) {
+            setSearchQuery(searchFromUrl);
+        }
+        const categorySearchFromUrl = searchParams.get('categorySearch');
+        if (categorySearchFromUrl) {
+            setCategorySearchQuery(categorySearchFromUrl);
+        }
+    }, []);
 
-    // Обновление URL
-    const updateUrl = (category: number | null, productId?: number | null, search?: string, newFilters?: FilterState) => {
+    const fetchCatalogData = async () => {
+        try {
+            setLoadingCatalogData(true);
+            const data = await getCatalogData();
+            setCatalogData(data);
+            if (data) {
+                setCategoriesData(data.categories);
+                setProductData(data.products);
+                setStockWarehousesQuantityData(data.stocks);
+                setManufacturerData(data.manufacturers);
+            }
+        } catch (err) {
+            console.error('Ошибка загрузки:', err);
+        } finally {
+            setLoadingCatalogData(false);
+        }
+    };
+
+    // Обновление URL (только для важных параметров, не для каждого символа поиска)
+    const updateUrl = (category: number | null, productId?: number | null, newFilters?: FilterState) => {
         const params: Record<string, string> = {};
-
         if (category !== null && category !== undefined) {
             params.category = category.toString();
         }
-
         if (productId) {
             params.id = productId.toString();
         }
 
-        if (search) {
-            params.search = search;
+        if (searchQuery && searchQuery.trim()) {
+            params.search = searchQuery;
+        }
+        if (categorySearchQuery && categorySearchQuery.trim()) {
+            params.categorySearch = categorySearchQuery;
         }
 
         const currentFilters = newFilters || filters;
-
         let filteredBrands = currentFilters.brands;
         if (category && availableBrands.length > 0) {
-            filteredBrands = currentFilters.brands.filter(brand =>
-                availableBrands.includes(brand)
-            );
+            filteredBrands = currentFilters.brands.filter(brand => availableBrands.includes(brand));
         }
-
         if (filteredBrands.length > 0) {
             params.brands = filteredBrands.join(',');
         }
-
         if (currentFilters.minPrice > 0) {
             params.minPrice = currentFilters.minPrice.toString();
         }
@@ -152,105 +133,89 @@ const CatalogPage = () => {
             params.maxPrice = currentFilters.maxPrice.toString();
         }
 
-        setSearchParams(params);
+        setSearchParams(params, { replace: true });
     };
 
-    // подсчет количества товаров в каждой категории
-    const calculateCountProduct = () => {
-        if (categoriesData?.length > 0 && productData?.length > 0) {
-            const result = categoriesData.map(category => {
-                const matchingProducts = productData.filter(product => {
-                    const match = product.categories_Id === category.id;
-                    return match;
-                });
-                return {
-                    categoryId: category.id,
-                    categoryName: category.name,
-                    count: matchingProducts.length
-                };
-            });
-            return result;
+    // Мгновенный поиск по категориям (префиксный поиск - только по началу названия)
+    const handleCategorySearchChange = (value: string) => {
+        setCategorySearchQuery(value);
+
+        if (window.categorySearchTimeout) {
+            clearTimeout(window.categorySearchTimeout);
         }
+        window.categorySearchTimeout = setTimeout(() => {
+            const params: Record<string, string> = {};
+            if (selectedCategory) {
+                params.category = selectedCategory.toString();
+            }
+            if (searchQuery && searchQuery.trim()) {
+                params.search = searchQuery;
+            }
+            if (value && value.trim()) {
+                params.categorySearch = value;
+            }
+            if (filters.brands.length > 0) {
+                params.brands = filters.brands.join(',');
+            }
+            if (filters.minPrice > 0) {
+                params.minPrice = filters.minPrice.toString();
+            }
+            if (filters.maxPrice < 10000) {
+                params.maxPrice = filters.maxPrice.toString();
+            }
+            setSearchParams(params, { replace: true });
+        }, 500);
     };
 
-    // дополнительная функция для подсчета товаров: выводит не целый массив, а подходящие по категории
-    const getProductCountForCategory = (categoryName: string) => {
-        const counts = calculateCountProduct();
-        const category = counts?.find(item => item.categoryName === categoryName);
-        return category ? `${category.count} товар(ов)` : '0 товаров';
+    // Мгновенный поиск по товарам
+    const handleSearchChange = (value: string) => {
+        setSearchQuery(value);
+
+        if (window.productSearchTimeout) {
+            clearTimeout(window.productSearchTimeout);
+        }
+        window.productSearchTimeout = setTimeout(() => {
+            const params: Record<string, string> = {};
+            if (selectedCategory) {
+                params.category = selectedCategory.toString();
+            }
+            if (value && value.trim()) {
+                params.search = value;
+            }
+            if (categorySearchQuery && categorySearchQuery.trim()) {
+                params.categorySearch = categorySearchQuery;
+            }
+            if (filters.brands.length > 0) {
+                params.brands = filters.brands.join(',');
+            }
+            if (filters.minPrice > 0) {
+                params.minPrice = filters.minPrice.toString();
+            }
+            if (filters.maxPrice < 10000) {
+                params.maxPrice = filters.maxPrice.toString();
+            }
+            setSearchParams(params, { replace: true });
+        }, 500);
     };
 
-    // Обработчик применения фильтра цены
-    const applyPriceFilter = () => {
-        const newFilters = {
-            ...filters,
-            minPrice: tempMinPrice,
-            maxPrice: tempMaxPrice
-        };
-        setFilters(newFilters);
-        updateUrl(selectedCategory, null, searchQuery, newFilters);
-    };
+    // Фильтрация категорий по поисковому запросу (ПРЕФИКСНЫЙ поиск - только по началу слова)
+    const filteredCategories = useMemo(() => {
+        if (!categorySearchQuery.trim()) {
+            return categoriesData;
+        }
+        const normalizedQuery = normalizeString(categorySearchQuery);
+        // Ищем только те категории, которые начинаются с поискового запроса
+        return categoriesData.filter(category => {
+            const normalizedName = normalizeString(category.name);
+            return normalizedName.startsWith(normalizedQuery);
+        });
+    }, [categoriesData, categorySearchQuery]);
 
-    // Обработчики изменения временных значений
-    const handleTempMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
-        setTempMinPrice(value);
-    };
-
-    const handleTempMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
-        setTempMaxPrice(value);
-    };
-
-    // Обработчик выбора категории
-    const handleCategoryChange = (categoryId: number | null) => {
-        updateUrl(categoryId, null, searchQuery, { brands: [], minPrice: 0, maxPrice: 10000 });
-    };
-
-    // Обработчик выбора товара
-    const handleProductSelect = (product: Product) => {
-        updateUrl(selectedCategory, product.id, searchQuery, filters);
-    };
-
-    // Обработчик закрытия товара
-    const handleCloseProduct = () => {
-        updateUrl(selectedCategory, null, searchQuery, filters);
-    };
-
-    // Обработчик поиска
-    const handleSearch = () => {
-        updateUrl(selectedCategory, null, searchQuery, filters);
-    };
-
-    // Обработчик изменения фильтров
-    const handleBrandChange = (brand: string) => {
-        const newBrands = filters.brands.includes(brand)
-            ? filters.brands.filter(b => b !== brand)
-            : [...filters.brands, brand];
-
-        const newFilters = {
-            ...filters,
-            brands: newBrands
-        };
-
-        setFilters(newFilters);
-        updateUrl(selectedCategory, null, searchQuery, newFilters);
-    };
-
-    const resetFilters = () => {
-        const newFilters = { brands: [], minPrice: 0, maxPrice: 10000 };
-        setFilters(newFilters);
-        setTempMinPrice(0);
-        setTempMaxPrice(10000);
-        updateUrl(selectedCategory, null, searchQuery, newFilters);
-    };
-
-    // Получение данных категории
+    // Вычисляемые значения
     const selectedCategoryData = selectedCategory
         ? categoriesData.find(c => c.id === selectedCategory)
         : null;
 
-    // Получение доступных брендов для выбранной категории
     const availableBrands = useMemo(() => {
         let filtered = productData;
         if (selectedCategory) {
@@ -259,22 +224,11 @@ const CatalogPage = () => {
                 filtered = filtered.filter(p => p.categories_Id === foundCategory.id);
             }
         }
-
-        const manufacturerIds = filtered
-            .map(p => p.manufacturers_Id)
-            .filter((id): id is number => id !== null && id !== undefined);
-
-        const brandNames = manufacturerIds
-            .map(id => {
-                const manufacturer = manufacturerData?.find(m => m.id === id);
-                return manufacturer?.name;
-            })
-            .filter((name): name is string => name !== null && name !== undefined);
-
+        const manufacturerIds = filtered.map(p => p.manufacturers_Id).filter((id): id is number => id !== null && id !== undefined);
+        const brandNames = manufacturerIds.map(id => manufacturerData?.find(m => m.id === id)?.name).filter((name): name is string => name !== null && name !== undefined);
         return Array.from(new Set(brandNames));
     }, [selectedCategory, productData, manufacturerData, categoriesData]);
 
-    // Получение диапазона цен для выбранной категории
     const priceRange = useMemo(() => {
         let filtered = productData;
         if (selectedCategory) {
@@ -284,29 +238,21 @@ const CatalogPage = () => {
             }
         }
         const prices = filtered.map(p => p.price);
-        return {
-            min: Math.min(...prices),
-            max: Math.max(...prices)
-        };
-    }, [selectedCategory]);
+        if (prices.length === 0) {
+            return { min: 0, max: 10000 };
+        }
+        return { min: Math.min(...prices), max: Math.max(...prices) };
+    }, [selectedCategory, productData, categoriesData]);
 
     // Фильтрация товаров
-    const normalizeString = (str: string) => {
-        return str.toLowerCase().replace(/\s+/g, '');
-    };
-
     const filteredProducts = useMemo(() => {
         let filtered = productData;
-
-        // фильтр по категории
         if (selectedCategory) {
             const foundCategory = categoriesData.find(c => c.id === selectedCategory);
             if (foundCategory) {
                 filtered = filtered.filter(p => p.categories_Id === foundCategory.id);
             }
         }
-
-        // фильтр по поиску
         if (searchQuery) {
             const normalizedQuery = normalizeString(searchQuery);
             filtered = filtered.filter(p =>
@@ -314,455 +260,256 @@ const CatalogPage = () => {
                 normalizeString(p.partNumber).includes(normalizedQuery)
             );
         }
-
-        // фильтр по брендам
         if (filters.brands.length > 0) {
-            const selectedManufacturerIds = manufacturerData
-                ?.filter(m => {
-                    const isMatch = filters.brands.includes(m.name);
-                    if (isMatch) {
-                        console.log(`  Найден производитель: ${m.name} (ID: ${m.id})`);
-                    }
-                    return isMatch;
-                })
-                .map(m => m.id) ?? [];
-
-            filtered = filtered.filter(p =>
-                p.manufacturers_Id && selectedManufacturerIds.includes(p.manufacturers_Id)
-            );
+            const selectedManufacturerIds = manufacturerData?.filter(m => filters.brands.includes(m.name)).map(m => m.id) ?? [];
+            filtered = filtered.filter(p => p.manufacturers_Id && selectedManufacturerIds.includes(p.manufacturers_Id));
         }
-
-        // фильтр по цене
-        filtered = filtered.filter(p =>
-            p.price >= filters.minPrice && p.price <= filters.maxPrice
-        );
-
+        filtered = filtered.filter(p => p.price >= filters.minPrice && p.price <= filters.maxPrice);
         return filtered;
-    }, [selectedCategory, searchQuery, filters]);
+    }, [selectedCategory, searchQuery, filters, productData, categoriesData, manufacturerData]);
 
-    // Находим выбранный товар
-    const selectedProduct = selectedProductId
-        ? productData.find(item => item.id === selectedProductId)
-        : null;
+    const selectedProduct = selectedProductId ? productData.find(item => item.id === selectedProductId) : null;
+    const getProductStock = (productId: number) => stockWarehousesQuantityData.find(item => item.productId === productId);
 
-    // Для отображения всех товаров
-    const getProductStock = (productId: number) => {
-        const productData = stockWarehousesQuantityData.find(item => item.productId === productId);
-        return productData;
+    // Обработчики
+    const handleCategoryChange = (categoryId: number | null) => {
+        setSearchQuery('');
+        setCategorySearchQuery('');
+        setFilters({ brands: [], minPrice: 0, maxPrice: 10000 });
+        setTempMinPrice(0);
+        setTempMaxPrice(10000);
+        updateUrl(categoryId, null, { brands: [], minPrice: 0, maxPrice: 10000 });
     };
 
-    // добавление позиций в корзину
-    const addToOrderItems = async (productId: number, userLogin: string, quantity: number = 1) => {
+    const handleProductSelect = (product: Product) => {
+        updateUrl(selectedCategory, product.id);
+    };
+
+    const handleCloseProduct = () => {
+        updateUrl(selectedCategory, null);
+    };
+
+    const handleClearSearch = () => {
+        setSearchQuery('');
+        const params: Record<string, string> = {};
+        if (selectedCategory) {
+            params.category = selectedCategory.toString();
+        }
+        if (categorySearchQuery && categorySearchQuery.trim()) {
+            params.categorySearch = categorySearchQuery;
+        }
+        if (filters.brands.length > 0) {
+            params.brands = filters.brands.join(',');
+        }
+        if (filters.minPrice > 0) {
+            params.minPrice = filters.minPrice.toString();
+        }
+        if (filters.maxPrice < 10000) {
+            params.maxPrice = filters.maxPrice.toString();
+        }
+        setSearchParams(params, { replace: true });
+    };
+
+    const handleClearCategorySearch = () => {
+        setCategorySearchQuery('');
+        const params: Record<string, string> = {};
+        if (selectedCategory) {
+            params.category = selectedCategory.toString();
+        }
+        if (searchQuery && searchQuery.trim()) {
+            params.search = searchQuery;
+        }
+        if (filters.brands.length > 0) {
+            params.brands = filters.brands.join(',');
+        }
+        if (filters.minPrice > 0) {
+            params.minPrice = filters.minPrice.toString();
+        }
+        if (filters.maxPrice < 10000) {
+            params.maxPrice = filters.maxPrice.toString();
+        }
+        setSearchParams(params, { replace: true });
+    };
+
+    const handleBrandChange = (brand: string) => {
+        const newBrands = filters.brands.includes(brand)
+            ? filters.brands.filter(b => b !== brand)
+            : [...filters.brands, brand];
+        const newFilters = { ...filters, brands: newBrands };
+        setFilters(newFilters);
+        updateUrl(selectedCategory, null, newFilters);
+    };
+
+    const applyPriceFilter = () => {
+        const newFilters = { ...filters, minPrice: tempMinPrice, maxPrice: tempMaxPrice };
+        setFilters(newFilters);
+        updateUrl(selectedCategory, null, newFilters);
+    };
+
+    const resetFilters = () => {
+        const newFilters = { brands: [], minPrice: 0, maxPrice: 10000 };
+        setFilters(newFilters);
+        setTempMinPrice(0);
+        setTempMaxPrice(10000);
+        updateUrl(selectedCategory, null, newFilters);
+    };
+
+    const addToOrderItems = async (productId: number) => {
+        if (!isAuthenticated) {
+            setPendingProductId(productId);
+            setShowAuthModal(true);
+            return;
+        }
         try {
             setLoadingCatalogData(true);
-            const result = await addToOrderItem(productId, userLogin);
-            console.log('Товар успешно добавлен в корзину: ', result);
+            await addToOrderItem(productId, currentUser?.login || '');
             navigate('/orderItems');
-        }
-        catch (error: any) {
+        } catch (error) {
             console.error('Ошибка добавления:', error);
-
-            // Показываем сообщение об ошибке от сервера
-            if (error.serverMessage) {
-                console.error(error.serverMessage);
-            } else if (error.message) {
-                console.error(error.message);
-            } else {
-                console.error('Не удалось добавить товар в корзину');
-            }
         } finally {
             setLoadingCatalogData(false);
         }
     };
 
-    // уловие для отображение загрузки страницы
-    if (loadingCatalogData) {
-        return <LoadingSpinner />;
-    }
+    const handleAuthSuccess = () => {
+        if (pendingProductId) {
+            addToOrderItems(pendingProductId);
+            setPendingProductId(null);
+        }
+    };
 
-    // Если выбран конкретный товар, показываем его полное описание
+    const getProductCountForCategory = (categoryName: string) => {
+        const category = categoriesData.find(c => c.name === categoryName);
+        if (!category) return '0 товаров';
+        const count = productData.filter(p => p.categories_Id === category.id).length;
+        const word = count % 10 === 1 && count % 100 !== 11 ? 'товар' : (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20) ? 'товара' : 'товаров');
+        return `${count} ${word}`;
+    };
+
+    if (loadingCatalogData) return <LoadingSpinner />;
+
     if (selectedProduct) {
         return (
-            <Container fluid className={styles.pageContainer}>
-                <Row className="mb-4">
-                    <Col>
-                        <Button
-                            variant="link"
-                            className={styles.backButton}
-                            onClick={handleCloseProduct}
-                        >
-                            ← Назад к товарам
-                        </Button>
-                    </Col>
-                </Row>
-
-                <Row className="justify-content-center">
-                    <Col md={10} lg={8}>
-                        <Card className={styles.fullProductCard}>
-                            <Row className="g-0">
-                                <Col md={6}>
-                                    <Card.Img
-                                        src={`${api}/${selectedProduct.image}`}
-                                        className={styles.fullProductImage}
-                                    />
-                                </Col>
-                                <Col md={6}>
-                                    <Card.Body className={styles.fullProductBody}>
-                                        <div className={styles.fullProductHeader}>
-                                            <Badge className={styles.categoryBadge}>
-                                                {selectedCategoryData?.name}
-                                            </Badge>
-                                            {(() => {
-                                                const productStock = getProductStock(selectedProduct.id);
-                                                const quantity = productStock?.totalQuantity ?? 0;
-                                                const isInStock = quantity > 0;
-                                                return (
-                                                    <Badge className={isInStock ? styles.inStockBadge : styles.outOfStockBadge}>
-                                                        {isInStock ? `В наличии: ${quantity} шт.` : 'Нет в наличии'}
-                                                    </Badge>
-                                                );
-                                            })()}
-                                        </div>
-                                        <h1 className={styles.fullProductTitle}>
-                                            {selectedProduct.name}
-                                        </h1>
-                                        <div className={styles.fullProductBrand}>
-                                            {manufacturerData?.find(m => m.id === selectedProduct?.manufacturers_Id)?.name || 'Бренд не указан'}
-                                        </div>
-                                        <div className={styles.fullProductArticle}>
-                                            Артикул: {selectedProduct.partNumber}
-                                        </div>
-                                        <div className={styles.fullProductPrice}>
-                                            {selectedProduct.price} ₽
-                                        </div>
-                                        <p className={styles.fullProductDescription}>
-                                            {selectedProduct.details}
-                                        </p>
-                                        {/* Добавление в корзину */}
-                                        <div className={styles.fullProductActions}>
-                                            {(() => {
-                                                const productStock = getProductStock(selectedProduct.id);
-                                                const quantity = productStock?.totalQuantity ?? 0;
-                                                const isInStock = quantity > 0;
-
-                                                return (
-                                                    <Button
-                                                        className={styles.fullProductAddToCartButton}
-                                                        disabled={!isInStock}
-                                                        onClick={() => {
-                                                            if (isInStock) {
-                                                                addToOrderItems(selectedProduct.id, currentUser?.login || '');
-                                                            }
-                                                        }}
-                                                    >
-                                                        {isInStock ? `🛒 Добавить в корзину` : '❌ Нет в наличии'}
-                                                    </Button>
-                                                );
-                                            })()}
-                                        </div>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-
-                            Описание спецификаций (высота, ширина, посадочное место)
-                            {/* {selectedProduct.specifications && (
-                                <Row className="mt-4">
-                                    <Col>
-                                        <h5 className={styles.specsTitle}>Технические характеристики</h5>
-                                        <div className={styles.specsGrid}>
-                                            {Object.entries(selectedProduct.specifications).map(([key, value]) => (
-                                                <div key={key} className={styles.specItem}>
-                                                    <span className={styles.specKey}>{key}:</span>
-                                                    <span className={styles.specValue}>{value}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </Col>
-                                </Row>
-                            )} */}
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
+            <>
+                <ProductDetails
+                    selectedProduct={selectedProduct}
+                    selectedCategoryData={selectedCategoryData}
+                    manufacturerData={manufacturerData}
+                    getProductStock={getProductStock}
+                    onClose={handleCloseProduct}
+                    onAddToCart={addToOrderItems}
+                    apiUrl={api}
+                    isAuthenticated={isAuthenticated}
+                />
+                <AuthModal
+                    show={showAuthModal}
+                    onClose={() => setShowAuthModal(false)}
+                    onSuccess={handleAuthSuccess}
+                />
+            </>
         );
     }
 
-    // Иначе показываем список категорий или товаров
     return (
-        <Container fluid className={styles.pageContainer}>
-            {/* Заголовок */}
-            <Row className="mb-4">
+        <Container fluid className={styles.container}>
+            <Row className={styles.header}>
                 <Col>
                     <h1 className={styles.title}>Каталог товаров</h1>
-                    <p className={styles.subtitle}>
-                        Найдите необходимые запчасти по названию или артикулу
-                    </p>
+                    <p className={styles.subtitle}>Найдите необходимые запчасти по названию или артикулу</p>
                 </Col>
             </Row>
 
-            {/* Категории или товары */}
             {!selectedCategory ? (
-                // Отображаем категории (без поиска)
                 <>
-                    <h2 className={styles.sectionTitle}>Категории товаров</h2>
-                    <Row xs={1} md={2} lg={3} xl={4} className="g-4">
-                        {categoriesData.map((category) => (
-                            <Col key={category.id}>
-                                <Card
-                                    className={`h-100 ${styles.categoryCard}`}
-                                    onClick={() => handleCategoryChange(category.id)}
-                                >
-                                    <Card.Body className={styles.categoryCardBody}>
-                                        <div className={styles.categoryIconLarge}>
-                                            <span>{category.icon || '📦'}</span>
-                                        </div>
-                                        <Card.Title className={styles.categoryTitle}>
-                                            {category.name}
-                                        </Card.Title>
-                                        <Card.Text className={styles.categoryDescription}>
-                                            {category.description}
-                                        </Card.Text>
-                                        <div className={styles.categoryFooter}>
-                                            <Badge className={styles.productCount}>
-                                                {getProductCountForCategory(category.name)}
-                                            </Badge>
-                                            <span className={styles.categoryLink}>
-                                                Просмотреть →
-                                            </span>
-                                        </div>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        ))}
-                    </Row>
-                </>
-            ) : (
-                // Отображаем товары категории (с поиском)
-                selectedCategoryData && (
-                    <>
-                        <Row>
-                            {/* Фильтры */}
-                            <Col md={3} className="mb-4">
-                                <Card className={styles.filtersCard}>
-                                    <Card.Body>
-                                        <h3 className={styles.filtersTitle}>Фильтры</h3>
-                                        {/* Поиск внутри карточки фильтров */}
-                                        <div className="mb-4">
-                                            <InputGroup>
-                                                <Form.Control
-                                                    placeholder="Поиск по названию или артикулу..."
-                                                    value={searchQuery}
-                                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                                                    className={styles.searchInput}
-                                                />
-                                                {searchQuery && (
-                                                    <Button
-                                                        variant="outline-secondary"
-                                                        onClick={() => setSearchQuery('')}
-                                                        className={styles.clearButton}
-                                                    >
-                                                        ✕
-                                                    </Button>
-                                                )}
-                                                <Button
-                                                    variant="primary"
-                                                    onClick={handleSearch}
-                                                    className={styles.searchButton}
-                                                >
-                                                    🔍
-                                                </Button>
-                                            </InputGroup>
-                                        </div>
-                                        <Accordion defaultActiveKey={['0', '1']} alwaysOpen>
-                                            <Accordion.Item eventKey="0">
-                                                <Accordion.Header>Бренды</Accordion.Header>
-                                                <Accordion.Body>
-                                                    {availableBrands.map((brand) => {
-                                                        const brandString = brand?.toString() ?? '';
-                                                        if (!brandString) {
-                                                            return null;
-                                                        }
-                                                        return (
-                                                            <Form.Check
-                                                                key={brandString}
-                                                                type="checkbox"
-                                                                id={`brand-${brandString}`}
-                                                                label={brandString}
-                                                                checked={filters.brands.includes(brandString)}
-                                                                onChange={() => handleBrandChange(brandString)}
-                                                                className={styles.filterCheckbox}
-                                                            />
-                                                        );
-                                                    })}
-                                                </Accordion.Body>
-                                            </Accordion.Item>
-
-                                            <Accordion.Item eventKey="1">
-                                                <Accordion.Header>Цена</Accordion.Header>
-                                                <Accordion.Body>
-                                                    <Form.Group className="mb-3">
-                                                        <Form.Label>От</Form.Label>
-                                                        <Form.Control
-                                                            type="number"
-                                                            value={tempMinPrice === 0 ? '' : tempMinPrice}
-                                                            onChange={handleTempMinPriceChange}
-                                                            placeholder="0"
-                                                            min={priceRange.min}
-                                                            max={priceRange.max}
-                                                            className={styles.priceInput}
-                                                        />
-                                                    </Form.Group>
-                                                    <Form.Group className="mb-3">
-                                                        <Form.Label>До</Form.Label>
-                                                        <Form.Control
-                                                            type="number"
-                                                            value={tempMaxPrice === 10000 ? '' : tempMaxPrice}
-                                                            onChange={handleTempMaxPriceChange}
-                                                            placeholder="10000"
-                                                            min={priceRange.min}
-                                                            max={priceRange.max}
-                                                            className={styles.priceInput}
-                                                        />
-                                                    </Form.Group>
-                                                    <Button
-                                                        variant="primary"
-                                                        onClick={applyPriceFilter}
-                                                        className={styles.applyPriceButton}
-                                                        size="sm"
-                                                    >
-                                                        Применить
-                                                    </Button>
-                                                </Accordion.Body>
-                                            </Accordion.Item>
-                                        </Accordion>
-
-                                        <Button
-                                            variant="outline-secondary"
-                                            onClick={resetFilters}
-                                            className={styles.resetFiltersButton}
-                                            size="sm"
+                    {/* Поисковая строка по центру */}
+                    <Row className="justify-content-center mb-4">
+                        <Col md={6} lg={5}>
+                            <div className={styles.categorySearchContainer}>
+                                <div className={styles.searchInputWrapper}>
+                                    <input
+                                        type="text"
+                                        className={styles.categorySearchInput}
+                                        placeholder="🔍 Поиск категорий..."
+                                        value={categorySearchQuery}
+                                        onChange={(e) => handleCategorySearchChange(e.target.value)}
+                                        autoFocus
+                                    />
+                                    {categorySearchQuery && (
+                                        <button
+                                            className={styles.clearSearchBtn}
+                                            onClick={handleClearCategorySearch}
+                                            aria-label="Очистить поиск"
                                         >
-                                            Сбросить фильтры
-                                        </Button>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-
-                            {/* Товары */}
-                            <Col md={9}>
-                                <Row className="mb-4">
-                                    <Col>
-                                        <h2 className={styles.categoryHeaderTitle}>
-                                            {selectedCategoryData.icon} {selectedCategoryData.name}
-                                        </h2>
-                                    </Col>
-                                </Row>
-
-                                <Row className="mb-3">
-                                    <Col>
-                                        <p className={styles.resultsInfo}>
-                                            Найдено товаров: <strong>{filteredProducts.length}</strong>
-                                            {searchQuery && (
-                                                <> по запросу "<strong>{searchQuery}</strong>"</>
-                                            )}
-                                        </p>
-                                    </Col>
-                                </Row>
-
-                                {filteredProducts.length > 0 ? (
-                                    <Row xs={1} md={2} lg={3} className="g-4">
-                                        {filteredProducts.map((product) => (
-                                            <Col key={product.id}>
-                                                <Card
-                                                    className={`h-100 ${styles.productCard}`}
-                                                    onClick={() => handleProductSelect(product)}
-                                                >
-                                                    <div className={styles.productImageWrapper}>
-                                                        <Card.Img
-                                                            variant="top"
-                                                            src={`${api}/${product.image}`}
-                                                            className={styles.productImage}
-                                                        />
-                                                        {(() => {
-                                                            const productStock = getProductStock(product.id);
-                                                            const isInStock = (productStock?.totalQuantity ?? 0) > 0;
-
-                                                            if (!isInStock) {
-                                                                return (
-                                                                    <Badge className={styles.outOfStockBadge}>
-                                                                        Нет в наличии
-                                                                    </Badge>
-                                                                );
-                                                            }
-                                                            return null;
-                                                        })()}
-                                                    </div>
-                                                    <Card.Body className={styles.productCardBody}>
-                                                        <div className={styles.productBrand}>
-                                                            {manufacturerData?.find(m => m.id === product?.manufacturers_Id)?.name || 'Бренд не указан'}
-                                                        </div>
-                                                        <Card.Title className={styles.productCardTitle}>
-                                                            {product.name}
-                                                        </Card.Title>
-                                                        <div className={styles.productArticle}>
-                                                            Арт: {product.partNumber}
-                                                        </div>
-                                                        <div className={styles.productPrice}>
-                                                            {product.price} ₽
-                                                        </div>
-                                                        <Button
-                                                            className={styles.viewProductButton}
-                                                            variant="primary"
-                                                            size="sm"
-                                                        >
-                                                            Подробнее
-                                                        </Button>
-                                                    </Card.Body>
-                                                </Card>
-                                            </Col>
-                                        ))}
-                                        <div>
-                                            <Row className="mb-4">
-                                                <Col>
-                                                    <Button
-                                                        variant="link"
-                                                        className={styles.backButton}
-                                                        onClick={() => handleCategoryChange(null)}
-                                                    >
-                                                        ← Назад к категориям
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                    </Row>
-                                ) : (
-                                    <div className={styles.emptyState}>
-                                        <h3>😕 Товары не найдены</h3>
-                                        <p>Попробуйте изменить параметры фильтрации</p>
-                                        <Button
-                                            variant="primary"
-                                            onClick={resetFilters}
-                                            className={styles.resetButton}
-                                        >
-                                            Сбросить фильтры
-                                        </Button>
-                                        <Button
-                                            variant="link"
-                                            className={styles.resetButton}
-                                            onClick={() => handleCategoryChange(null)}
-                                        >
-                                            ← Назад к категориям
-                                        </Button>
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                                {categorySearchQuery && filteredCategories.length === 0 && (
+                                    <div className={styles.noCategoriesFound}>
+                                        Категории не найдены
                                     </div>
                                 )}
-                            </Col>
-                        </Row>
-                    </>
+                            </div>
+                        </Col>
+                    </Row>
+
+                    <CategoriesList
+                        categoriesData={filteredCategories}
+                        onCategorySelect={handleCategoryChange}
+                        getProductCountForCategory={getProductCountForCategory}
+                    />
+                </>
+            ) : (
+                selectedCategoryData && (
+                    <Row>
+                        <Col md={3} className="mb-4">
+                            <Filters
+                                searchQuery={searchQuery}
+                                onSearchChange={handleSearchChange}
+                                onSearch={() => { }}
+                                onClearSearch={handleClearSearch}
+                                availableBrands={availableBrands}
+                                filters={filters}
+                                onBrandChange={handleBrandChange}
+                                tempMinPrice={tempMinPrice}
+                                tempMaxPrice={tempMaxPrice}
+                                onTempMinPriceChange={(e) => setTempMinPrice(e.target.value === '' ? 0 : parseInt(e.target.value))}
+                                onTempMaxPriceChange={(e) => setTempMaxPrice(e.target.value === '' ? 0 : parseInt(e.target.value))}
+                                onApplyPriceFilter={applyPriceFilter}
+                                priceRange={priceRange}
+                                onResetFilters={resetFilters}
+                            />
+                        </Col>
+                        <Col md={9}>
+                            <ProductsList
+                                filteredProducts={filteredProducts}
+                                manufacturerData={manufacturerData}
+                                getProductStock={getProductStock}
+                                onProductSelect={handleProductSelect}
+                                onBackToCategories={() => handleCategoryChange(null)}
+                                searchQuery={searchQuery}
+                                selectedCategoryData={selectedCategoryData}
+                                apiUrl={api}
+                            />
+                        </Col>
+                    </Row>
                 )
             )}
+
+            <AuthModal
+                show={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onSuccess={handleAuthSuccess}
+            />
         </Container>
     );
+};
+
+declare global {
+    interface Window {
+        categorySearchTimeout?: NodeJS.Timeout;
+        productSearchTimeout?: NodeJS.Timeout;
+    }
 }
 
 export { CatalogPage };
