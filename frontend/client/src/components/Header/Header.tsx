@@ -1,7 +1,13 @@
-import React, { Component, useState, useEffect, createRef } from "react";
+import React, { Component, createRef } from "react";
 import { Link } from 'react-router-dom';
 
 import { authApi, UserData } from "../../service/IndexAuth";
+import { AuthContext } from '../../contexts/AuthContext';
+import { getOrderItemData, OrderItem } from "../servicesApi/OrderItemsApi";
+import { NavMenu } from './components/NavMenu';
+import { AuthModal } from './components/AuthModal';
+import { RegistrationModal } from './components/RegistrationModal';
+import { UserMenu } from './components/UserMenu';
 
 import styles from './Header.module.css';
 
@@ -19,52 +25,37 @@ interface RegistrationFormData {
     agreeToPersonalData: boolean;
 }
 
-interface HeaderProps {
-    onCurrencyChange?: () => void;
-}
-
 interface HeaderState {
     showAuth: boolean;
-    showCurrencyMenu: boolean;
-
     showRegistrationModal: boolean;
-
-    loading: boolean;
-    error: string | null;
     user: UserData | null;
-
-    // Форма регистрации
     registrationForm: RegistrationFormData;
-    registrationStep: 1 | 2; // Для многошаговой формы
+    registrationStep: 1 | 2;
     registrationLoading: boolean;
     registrationError: string | null;
     registrationFieldErrors: Record<string, string>;
-
-    // Форма авторизации
-    authForm: {
-        login: string;
-        password: string;
-    };
+    authForm: { login: string; password: string; };
     authLoading: boolean;
     authError: string | null;
-    authFieldErrors: {
-        login?: string;
-        password?: string;
-    };
-
+    authFieldErrors: { login?: string; password?: string; };
     showPassword: boolean;
     errors: Record<string, string>;
-
     showUserMenu: boolean;
+    cartItemsCount: number;
 }
 
-export default class Header extends Component<HeaderProps, HeaderState> {
+export default class Header extends Component<{}, HeaderState> {
+    static contextType = AuthContext;
+    context!: React.ContextType<typeof AuthContext>;
+
     private authRef = createRef<HTMLDivElement>();
     private registrationRef = createRef<HTMLDivElement>();
-    private menuRef = React.createRef<HTMLDivElement>();
     private userMenuRef = createRef<HTMLDivElement>();
+    private fetchTimeout: NodeJS.Timeout | null = null;
+    private isFetching = false; // Флаг для предотвращения множественных запросов
+    private lastFetchTime = 0; // Время последнего запроса
+    private readonly FETCH_DELAY = 1000; // Задержка между запросами в мс
 
-    // Начальное состояние формы регистрации
     private readonly initialRegistrationForm: RegistrationFormData = {
         firstName: '',
         secondName: '',
@@ -79,51 +70,115 @@ export default class Header extends Component<HeaderProps, HeaderState> {
         agreeToPersonalData: false
     };
 
-    // конструктор состояний
     state: HeaderState = {
         showAuth: false,
-        showCurrencyMenu: false,
         showRegistrationModal: false,
-        user: authApi.getStoredUser(),
-
-        // Регистрация
+        user: null,
         registrationForm: { ...this.initialRegistrationForm },
         registrationStep: 1,
         registrationLoading: false,
         registrationError: null,
         registrationFieldErrors: {},
-
-        // Авторизация
-        authForm: {
-            login: '',
-            password: ''
-        },
+        authForm: { login: '', password: '' },
         authLoading: false,
         authError: null,
         authFieldErrors: {},
-
         showPassword: false,
-        loading: true,
-        error: null,
-        errors: {}, // <-
+        errors: {},
         showUserMenu: false,
-    };
-
-    toggleUserMenu = () => {
-        this.setState(prev => ({ showUserMenu: !prev.showUserMenu }));
-    };
-
-    closeUserMenu = () => {
-        this.setState({ showUserMenu: false });
+        cartItemsCount: 0,
     };
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+
+        // Загружаем корзину при монтировании компонента только если пользователь авторизован
+        const { isAuthenticated } = this.context || {};
+        if (isAuthenticated) {
+            this.fetchCartItemsCount();
+        }
+
+        // Добавляем слушатель события обновления корзины
+        window.addEventListener('cartUpdated', this.handleCartUpdate);
+    }
+
+    componentDidUpdate(prevProps: {}, prevState: HeaderState) {
+        // Если пользователь авторизовался или вышел, обновляем корзину
+        const currentUser = this.context?.user;
+        const prevUser = prevState.user;
+
+        if (prevUser !== currentUser) {
+            // Проверяем, авторизован ли пользователь
+            const { isAuthenticated } = this.context || {};
+            if (isAuthenticated && currentUser) {
+                this.fetchCartItemsCount();
+            } else {
+                this.setState({ cartItemsCount: 0 });
+            }
+        }
     }
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
+        window.removeEventListener('cartUpdated', this.handleCartUpdate);
+
+        if (this.fetchTimeout) {
+            clearTimeout(this.fetchTimeout);
+        }
     }
+
+    // Обработчик события обновления корзины
+    handleCartUpdate = () => {
+        const { isAuthenticated, user } = this.context || {};
+        if (isAuthenticated && user) {
+            this.fetchCartItemsCount();
+        }
+    };
+
+    // Метод для получения количества товаров в корзине
+    fetchCartItemsCount = async () => {
+        const { user, isAuthenticated } = this.context || {};
+
+        // Если пользователь не авторизован, сбрасываем счетчик и не делаем запрос
+        if (!isAuthenticated || !user) {
+            this.setState({ cartItemsCount: 0 });
+            return;
+        }
+
+        // Предотвращаем множественные запросы
+        const now = Date.now();
+        if (this.isFetching) {
+            return;
+        }
+
+        // Проверяем, не слишком ли часто вызывается функция
+        if (now - this.lastFetchTime < this.FETCH_DELAY) {
+            return;
+        }
+
+        this.isFetching = true;
+        this.lastFetchTime = now;
+
+        try {
+            const orderItem = await getOrderItemData(user.login || '', user.role || '');
+
+            if (orderItem && orderItem.items && orderItem.items.length > 0) {
+                const totalCount = orderItem.items.reduce((sum, item) => sum + item.quantity, 0);
+                this.setState({ cartItemsCount: totalCount });
+            } else {
+                this.setState({ cartItemsCount: 0 });
+            }
+        } catch (error: any) {
+            console.error('Ошибка загрузки корзины в Header:', error);
+            // Показываем 0 при ошибке, но не выводим ошибку в консоль если это 404
+            if (error.statusCode !== 404) {
+                console.error('Не удалось загрузить корзину:', error.message || error.serverMessage);
+            }
+            this.setState({ cartItemsCount: 0 });
+        } finally {
+            this.isFetching = false;
+        }
+    };
 
     // ========== АВТОРИЗАЦИЯ ==========
     toggleAuthModal = () => {
@@ -138,14 +193,8 @@ export default class Header extends Component<HeaderProps, HeaderState> {
     handleAuthInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         this.setState(prev => ({
-            authForm: {
-                ...prev.authForm,
-                [name]: value
-            },
-            authFieldErrors: {
-                ...prev.authFieldErrors,
-                [name]: undefined
-            },
+            authForm: { ...prev.authForm, [name]: value },
+            authFieldErrors: { ...prev.authFieldErrors, [name]: undefined },
             authError: null
         }));
     };
@@ -154,62 +203,46 @@ export default class Header extends Component<HeaderProps, HeaderState> {
         const { login, password } = this.state.authForm;
         const errors: { login?: string; password?: string } = {};
 
-        if (!login.trim()) {
-            errors.login = 'Введите логин или email';
-        }
-
-        if (!password) {
-            errors.password = 'Введите пароль';
-        }
+        if (!login.trim()) errors.login = 'Введите логин или email';
+        if (!password) errors.password = 'Введите пароль';
 
         this.setState({ authFieldErrors: errors });
         return Object.keys(errors).length === 0;
     };
 
-    notifyAuthChange = (user: UserData | null) => {
-        window.dispatchEvent(new CustomEvent('authChange', { detail: { user } }));
-    };
-
     handleAuthSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!this.validateAuthForm()) {
-            return;
-        }
+        if (!this.validateAuthForm()) return;
 
         this.setState({ authLoading: true, authError: null });
 
         try {
             const { login, password } = this.state.authForm;
-            const response = await authApi.login({ login, password });
+            await this.context!.login(login, password);
 
             this.setState({
-                user: response.user,
                 showAuth: false,
                 authForm: { login: '', password: '' },
                 authError: null,
                 authFieldErrors: {}
             });
 
-            this.notifyAuthChange(response.user);
+            // Загружаем корзину после входа
+            await this.fetchCartItemsCount();
 
+            // Отправляем событие обновления
+            const event = new CustomEvent('cartUpdated');
+            window.dispatchEvent(event);
         } catch (error: any) {
             if (error.response?.status === 401) {
                 this.setState({
                     authError: 'Неверный логин или пароль',
-                    authFieldErrors: {
-                        login: 'Пользователь не найден',
-                        password: 'Неверный пароль'
-                    }
+                    authFieldErrors: { login: 'Пользователь не найден', password: 'Неверный пароль' }
                 });
             } else if (error.request) {
-                this.setState({
-                    authError: 'Сервер не отвечает. Проверьте подключение'
-                });
+                this.setState({ authError: 'Сервер не отвечает. Проверьте подключение' });
             } else {
-                this.setState({
-                    authError: 'Произошла ошибка. Попробуйте снова'
-                });
+                this.setState({ authError: 'Произошла ошибка. Попробуйте снова' });
             }
         } finally {
             this.setState({ authLoading: false });
@@ -217,9 +250,14 @@ export default class Header extends Component<HeaderProps, HeaderState> {
     };
 
     handleLogout = () => {
-        authApi.logout();
-        this.setState({ user: null });
-        this.notifyAuthChange(null);
+        this.context!.logout();
+        this.setState({
+            showUserMenu: false,
+            cartItemsCount: 0
+        });
+        // Отправляем событие об обновлении корзины
+        const event = new CustomEvent('cartUpdated');
+        window.dispatchEvent(event);
     };
 
     // ========== РЕГИСТРАЦИЯ ==========
@@ -244,19 +282,10 @@ export default class Header extends Component<HeaderProps, HeaderState> {
     };
 
     handleClickOutside = (event: MouseEvent) => {
-        if (this.menuRef.current && !this.menuRef.current.contains(event.target as Node)) {
-            this.setState({ showCurrencyMenu: false });
-        }
         if (this.authRef.current && !this.authRef.current.contains(event.target as Node)) {
-            this.setState({
-                showAuth: false,
-                authError: null,
-                authFieldErrors: {},
-                authForm: { login: '', password: '' }
-            });
+            this.setState({ showAuth: false, authError: null, authFieldErrors: {}, authForm: { login: '', password: '' } });
         }
         if (this.registrationRef.current && !this.registrationRef.current.contains(event.target as Node)) {
-            // Исправляем: передаем объект, а не функцию
             this.setState({
                 showRegistrationModal: false,
                 registrationError: null,
@@ -302,11 +331,9 @@ export default class Header extends Component<HeaderProps, HeaderState> {
         } else if (form.password.length < 6) {
             errors.password = 'Минимум 6 символов';
         }
-
         if (form.password !== form.confirmPassword) {
             errors.confirmPassword = 'Пароли не совпадают';
         }
-
         if (!form.agreeToPersonalData) {
             errors.agreeToPersonalData = 'Необходимо согласие';
         }
@@ -327,55 +354,39 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
     handleRegistrationSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!this.validateRegistrationStep2()) {
-            return;
-        }
+        if (!this.validateRegistrationStep2()) return;
 
         this.setState({ registrationLoading: true, registrationError: null });
 
         try {
             const form = this.state.registrationForm;
-
-            // Преобразуем данные формы в формат для API
             const registerData = {
                 secondName: form.secondName,
                 firstName: form.firstName,
-                surName: form.surName, // Можно добавить поле в форму если нужно
+                surName: form.surName,
                 phoneNumber: form.phone,
                 email: form.email,
-                login: form.email, // Используем email как логин
+                login: form.email,
                 password: form.password
             };
 
-            // Отправляем запрос на регистрацию
             await authApi.register(registerData);
-
-            // После успешной регистрации пробуем сразу войти
-            const loginResponse = await authApi.login({
-                login: form.email,
-                password: form.password
-            });
+            await this.context!.login(form.email, form.password);
 
             this.setState({
-                user: loginResponse.user,
                 showRegistrationModal: false,
                 registrationForm: { ...this.initialRegistrationForm },
                 registrationStep: 1
             });
 
-            console.log('Регистрация успешна! Добро пожаловать!');
+            // Загружаем корзину после регистрации
+            await this.fetchCartItemsCount();
 
+            const event = new CustomEvent('cartUpdated');
+            window.dispatchEvent(event);
         } catch (error: any) {
             if (error.response?.status === 409) {
-                const message = error.response.data?.message || '';
-                if (message.includes('логин')) {
-                    this.setState({ registrationError: 'Пользователь с таким email уже существует' });
-                } else if (message.includes('телефон')) {
-                    this.setState({ registrationError: 'Пользователь с таким телефоном уже существует' });
-                } else {
-                    this.setState({ registrationError: 'Пользователь уже существует' });
-                }
+                this.setState({ registrationError: 'Пользователь с таким email или телефоном уже существует' });
             } else {
                 this.setState({ registrationError: 'Ошибка при регистрации. Попробуйте позже' });
             }
@@ -387,7 +398,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
     toggleRegistrationModal = () => {
         this.setState(prevState => ({
             showRegistrationModal: !prevState.showRegistrationModal,
-            showAuth: false // Закрываем модалку входа
+            showAuth: false
         }));
     };
 
@@ -401,65 +412,22 @@ export default class Header extends Component<HeaderProps, HeaderState> {
                 [name]: type === 'checkbox' ? checked : value
             }
         }));
-
-        // Очищаем ошибку для поля, если она была
-        if (this.state.errors[name]) {
-            this.setState(prev => {
-                const newErrors = { ...prev.errors };
-                delete newErrors[name];
-                return { errors: newErrors };
-            });
-        }
     };
 
-    validateRegistrationForm = (): boolean => {
-        const { registrationForm } = this.state;
-        const newErrors: Record<string, string> = {};
-
-        // Личные данные
-        if (!registrationForm.firstName) newErrors.firstName = 'Имя обязательно';
-        if (!registrationForm.secondName) newErrors.lastName = 'Фамилия обязательна';
-        if (!registrationForm.email) newErrors.email = 'Email обязателен';
-        else if (!/\S+@\S+\.\S+/.test(registrationForm.email)) newErrors.email = 'Email некорректен';
-
-        if (!registrationForm.phone) newErrors.phone = 'Телефон обязателен';
-
-        // Пароль
-        if (!registrationForm.password) newErrors.password = 'Пароль обязателен';
-        else if (registrationForm.password.length < 6) newErrors.password = 'Пароль должен быть не менее 6 символов';
-
-        if (registrationForm.password !== registrationForm.confirmPassword) {
-            newErrors.confirmPassword = 'Пароли не совпадают';
-        }
-
-        // Согласия
-        if (!registrationForm.agreeToPersonalData) {
-            newErrors.agreeToPersonalData = 'Необходимо согласие на обработку данных';
-        }
-
-        this.setState({ errors: newErrors });
-        return Object.keys(newErrors).length === 0;
+    toggleUserMenu = () => {
+        this.setState(prev => ({ showUserMenu: !prev.showUserMenu }));
     };
 
     render() {
-        const {
-            showAuth,
-            showRegistrationModal,
-            registrationForm,
-            showPassword,
-            errors,
-            user,
-        } = this.state;
+        const { showAuth, showRegistrationModal, registrationForm, showPassword, errors, cartItemsCount } = this.state;
+        const user = this.context?.user;
+        const isAuthenticated = this.context?.isAuthenticated;
 
         return (
             <>
                 <nav className={`navbar navbar-expand-lg ${styles.navbar}`}>
                     <div className={`container-fluid ${styles.container}`}>
-                        {/* Логотип */}
-                        <Link
-                            to="/"
-                            className={`navbar-brand ${styles.logo}`}
-                        >
+                        <Link to="/" className={`navbar-brand ${styles.logo}`}>
                             <span>Колесо и поршень</span>
                         </Link>
 
@@ -468,371 +436,75 @@ export default class Header extends Component<HeaderProps, HeaderState> {
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent"
-                            aria-controls="navbarSupportedContent"
-                            aria-expanded="false"
                             aria-label="Toggle navigation"
                         >
                             <span className={`navbar-toggler-icon ${styles.navbarTogglerIcon}`}></span>
                         </button>
 
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul className={`navbar-nav me-auto mb-2 mb-lg-0 ${styles.navMenu}`}>
-                                <li className="nav-item">
-                                    <Link
-                                        to="/catalog"
-                                        className={`nav-link ${styles.navLink}`}
-                                    >
-                                        Каталог
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link
-                                        to="/news"
-                                        className={`nav-link ${styles.navLink}`}
-                                    >
-                                        Новости
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link
-                                        className={`nav-link ${styles.navLink}`}
-                                        to="/information"
-                                    >
-                                        Информация
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link
-                                        className={`nav-link ${styles.navLink}`}
-                                        to="/help"
-                                    >
-                                        Помощь
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                        <Link
-                                            className={`nav-link ${styles.navLink}`}
-                                            to={`/orderItems`}
-                                        >
-                                            Корзина
-                                        </Link>
-                                    </li>
-                            </ul>
+                            <NavMenu />
 
-                            {user && (
-                                <ul className={`navbar-nav me-auto mb-2 mb-lg-0 ${styles.navList}`}>
-                                    <li>
-                                        <Link
-                                            className={`dropdown-item ${styles.navLink}`}
-                                            to={`/personalAccount?userId=${user.id}`}
-                                        >
-                                            Личный кабинет
-                                        </Link>
-                                    </li>
-                                </ul>
-                            )}
+                            <div className={styles.rightSection}>
+                                <Link to="/orderItems" className={styles.cartLink}>
+                                    <span className={styles.cartIcon}>🛒</span>
+                                    {isAuthenticated && (
+                                        <span className={styles.cartBadge}>{cartItemsCount}</span>
+                                    )}
+                                </Link>
 
-                            {/* Кнопка авторизации */}
-                            <div className={styles.positionRelative}>
                                 {user ? (
-                                    <div className={styles.userInfo}>
-                                        <span className={styles.userName}>
-                                            {user.secondName} {user.firstName}
-                                        </span>
-                                        <button
-                                            className={styles.logoutButton}
-                                            onClick={this.handleLogout}
-                                        >
-                                            Выйти
+                                    <div className={styles.userMenuWrapper} ref={this.userMenuRef}>
+                                        <button className={styles.userAvatar} onClick={this.toggleUserMenu}>
+                                            <span className={styles.userIcon}>👤</span>
+                                            <span className={styles.userName}>{user.firstName}</span>
+                                            <span className={styles.dropdownArrow}>▼</span>
                                         </button>
+                                        {this.state.showUserMenu && (
+                                            <UserMenu user={user} onLogout={this.handleLogout} />
+                                        )}
                                     </div>
                                 ) : (
-                                    <button
-                                        className={styles.authButton}
-                                        id="authButton"
-                                        onClick={this.toggleAuthModal}
-                                    >
-                                        𓁐
+                                    <button className={styles.authButton} onClick={this.toggleAuthModal}>
+                                        <span className={styles.authIcon}>🔑</span>
+                                        <span>Вход</span>
                                     </button>
-                                )}
-
-                                {/* Модальное окно авторизации */}
-                                {showAuth && !user && (
-                                    <div
-                                        ref={this.authRef}
-                                        id="authModal"
-                                        className={styles.authModal}
-                                    >
-                                        <h3 className={styles.authModalTitle}>
-                                            𓋴 Вход
-                                        </h3>
-
-                                        <form onSubmit={this.handleAuthSubmit}>
-                                            <div className={styles.authFormField}>
-                                                <input
-                                                    type="text"
-                                                    name="login"
-                                                    value={this.state.authForm.login}
-                                                    onChange={this.handleAuthInputChange}
-                                                    placeholder="Введите логин или Email"
-                                                    className={`${styles.authInput} ${this.state.authFieldErrors.login ? styles.authInputError : ''
-                                                        }`}
-                                                />
-                                                {this.state.authFieldErrors.login && (
-                                                    <div className={styles.authFieldError}>
-                                                        {this.state.authFieldErrors.login}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className={styles.authFormField}>
-                                                <input
-                                                    type="password"
-                                                    name="password"
-                                                    value={this.state.authForm.password}
-                                                    onChange={this.handleAuthInputChange}
-                                                    placeholder="Пароль"
-                                                    className={`${styles.authInput} ${this.state.authFieldErrors.password ? styles.authInputError : ''
-                                                        }`}
-                                                />
-                                                {this.state.authFieldErrors.password && (
-                                                    <div className={styles.authFieldError}>
-                                                        {this.state.authFieldErrors.password}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {this.state.authError && (
-                                                <div className={styles.authError}>
-                                                    {this.state.authError}
-                                                </div>
-                                            )}
-
-                                            <div className={styles.authButtons}>
-                                                <button
-                                                    type="submit"
-                                                    disabled={this.state.authLoading}
-                                                    className={styles.authSubmitButton}
-                                                >
-                                                    {this.state.authLoading ? 'Вход...' : 'Войти'}
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={this.switchToRegistration}
-                                                    className={styles.authRegisterButton}
-                                                >
-                                                    Регистрация
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
                                 )}
                             </div>
                         </div>
                     </div>
                 </nav>
 
-                {/* Модальное окно регистрации */}
-                {showRegistrationModal && (
-                    <div className={styles.registrationOverlay}>
-                        <div className={styles.registrationModal}>
-                            <button
-                                onClick={this.toggleRegistrationModal}
-                                className={styles.closeButton}
-                            >
-                                ✕
-                            </button>
+                <AuthModal
+                    show={showAuth}
+                    onClose={() => this.setState({ showAuth: false })}
+                    authForm={this.state.authForm}
+                    authLoading={this.state.authLoading}
+                    authError={this.state.authError}
+                    authFieldErrors={this.state.authFieldErrors}
+                    onInputChange={this.handleAuthInputChange}
+                    onSubmit={this.handleAuthSubmit}
+                    onRegister={this.switchToRegistration}
+                    ref={this.authRef}
+                />
 
-                            <h2 className={styles.registrationTitle}>
-                                🐪 Регистрация туриста
-                            </h2>
-
-                            <form onSubmit={this.handleRegistrationSubmit}>
-                                <section className={styles.section}>
-                                    <h3 className={styles.sectionTitle}>
-                                        📋 Личные данные
-                                    </h3>
-
-                                    <div className={styles.formGrid}>
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Имя <span className={styles.required}>*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="firstName"
-                                                value={registrationForm.firstName}
-                                                onChange={this.handleRegistrationChange}
-                                                placeholder="Иван"
-                                                className={`${styles.formInput} ${errors.firstName ? styles.formInputError : ''
-                                                    }`}
-                                            />
-                                            {errors.firstName && (
-                                                <div className={styles.fieldError}>{errors.firstName}</div>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Фамилия <span className={styles.required}>*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="lastName"
-                                                value={registrationForm.secondName}
-                                                onChange={this.handleRegistrationChange}
-                                                placeholder="Петров"
-                                                className={`${styles.formInput} ${errors.lastName ? styles.formInputError : ''
-                                                    }`}
-                                            />
-                                            {errors.lastName && (
-                                                <div className={styles.fieldError}>{errors.lastName}</div>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Email <span className={styles.required}>*</span>
-                                            </label>
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                value={registrationForm.email}
-                                                onChange={this.handleRegistrationChange}
-                                                placeholder="ivan@mail.ru"
-                                                className={`${styles.formInput} ${errors.email ? styles.formInputError : ''
-                                                    }`}
-                                            />
-                                            {errors.email && (
-                                                <div className={styles.fieldError}>{errors.email}</div>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Телефон <span className={styles.required}>*</span>
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                name="phone"
-                                                value={registrationForm.phone}
-                                                onChange={this.handleRegistrationChange}
-                                                placeholder="+7 (999) 123-45-67"
-                                                className={`${styles.formInput} ${errors.phone ? styles.formInputError : ''
-                                                    }`}
-                                            />
-                                            {errors.phone && (
-                                                <div className={styles.fieldError}>{errors.phone}</div>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Пол
-                                            </label>
-                                            <div className={styles.radioGroup}>
-                                                <label className={styles.radioLabel}>
-                                                    <input
-                                                        type="radio"
-                                                        name="gender"
-                                                        value="male"
-                                                        checked={registrationForm.gender === 'Мужской'}
-                                                        onChange={this.handleRegistrationChange}
-                                                    />
-                                                    Мужской
-                                                </label>
-                                                <label className={styles.radioLabel}>
-                                                    <input
-                                                        type="radio"
-                                                        name="gender"
-                                                        value="female"
-                                                        checked={registrationForm.gender === 'Женский'}
-                                                        onChange={this.handleRegistrationChange}
-                                                    />
-                                                    Женский
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-
-                                <section className={styles.section}>
-                                    <h3 className={styles.sectionTitle}>
-                                        🔐 Безопасность
-                                    </h3>
-
-                                    <div className={styles.formGrid}>
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Пароль <span className={styles.required}>*</span>
-                                            </label>
-                                            <input
-                                                type={showPassword ? 'text' : 'password'}
-                                                name="password"
-                                                value={registrationForm.password}
-                                                onChange={this.handleRegistrationChange}
-                                                placeholder="Не менее 6 символов"
-                                                className={`${styles.formInput} ${errors.password ? styles.formInputError : ''
-                                                    }`}
-                                            />
-                                            {errors.password && (
-                                                <div className={styles.fieldError}>{errors.password}</div>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.formField}>
-                                            <label className={styles.formLabel}>
-                                                Подтвердите пароль <span className={styles.required}>*</span>
-                                            </label>
-                                            <input
-                                                type={showPassword ? 'text' : 'password'}
-                                                name="confirmPassword"
-                                                value={registrationForm.confirmPassword}
-                                                onChange={this.handleRegistrationChange}
-                                                placeholder="Повторите пароль"
-                                                className={`${styles.formInput} ${errors.confirmPassword ? styles.formInputError : ''
-                                                    }`}
-                                            />
-                                            {errors.confirmPassword && (
-                                                <div className={styles.fieldError}>{errors.confirmPassword}</div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.showPasswordCheckbox}>
-                                        <label className={styles.showPasswordLabel}>
-                                            <input
-                                                type="checkbox"
-                                                checked={showPassword}
-                                                onChange={() => this.setState({ showPassword: !showPassword })}
-                                            />
-                                            Показать пароль
-                                        </label>
-                                    </div>
-                                </section>
-
-                                <div className={styles.registrationButtons}>
-                                    <button
-                                        type="submit"
-                                        className={styles.submitButton}
-                                    >
-                                        🐪 Зарегистрироваться
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={this.toggleRegistrationModal}
-                                        className={styles.cancelButton}
-                                    >
-                                        Отмена
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
+                <RegistrationModal
+                    show={showRegistrationModal}
+                    onClose={this.toggleRegistrationModal}
+                    registrationForm={registrationForm}
+                    showPassword={showPassword}
+                    errors={errors}
+                    registrationLoading={this.state.registrationLoading}
+                    registrationError={this.state.registrationError}
+                    registrationFieldErrors={this.state.registrationFieldErrors}
+                    registrationStep={this.state.registrationStep}
+                    onInputChange={this.handleRegistrationChange}
+                    onNext={this.handleRegistrationNext}
+                    onBack={this.handleRegistrationBack}
+                    onSubmit={this.handleRegistrationSubmit}
+                    onTogglePassword={() => this.setState({ showPassword: !showPassword })}
+                    ref={this.registrationRef}
+                />
             </>
         );
     }
-}  
+}
