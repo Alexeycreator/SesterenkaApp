@@ -190,9 +190,6 @@ const InformationPage = () => {
                             <div className={styles.teamPosition}>
                                 {user.position}
                             </div>
-                            <p className={styles.teamDescription}>
-                                {`Описание обязанностей (в разработке)`}{/* {member.description} */}
-                            </p>
                         </div>
                     </Col>
                 ))}
@@ -214,59 +211,14 @@ const InformationPage = () => {
                                     <span className={styles.storeIcon}>📍</span>
                                     {`ул. ${store.street}, д. ${store.house}`}
                                 </div>
-                                <div className={styles.storePhone}>
-                                    <span className={styles.storeIcon}>📞</span>
-                                    {`Номер телефона (в разработке)`}{/* {store.phone} */}
-                                </div>
                                 <div className={styles.storeSchedule}>
                                     <span className={styles.storeIcon}>🕐</span>
-                                    {`График работы в будни (в разработке)`}{/* {store.schedule} */}
+                                    Круглосуточно
                                 </div>
-                                <div className={styles.storeWeekend}>
-                                    <span className={styles.storeIcon}>📅</span>
-                                    {`График в выходные (в разработке)`}{/* {store.weekend} */}
-                                </div>
-                                {/* <div className={styles.storeFeatures}>
-                                    {store.features.map((feature, idx) => (
-                                        <span key={idx} className={styles.storeFeature}>
-                                            ✓ {feature}
-                                        </span>
-                                    ))}
-                                </div> */}
                             </div>
                         </Col>
                     )
                 })}
-                {/* {stores.map((store, index) => (
-                    <Col key={index}>
-                        <div className={styles.storeCard}>
-                            <h3 className={styles.storeCity}>{store.city}</h3>
-                            <div className={styles.storeAddress}>
-                                <span className={styles.storeIcon}>📍</span>
-                                {store.address}
-                            </div>
-                            <div className={styles.storePhone}>
-                                <span className={styles.storeIcon}>📞</span>
-                                {store.phone}
-                            </div>
-                            <div className={styles.storeSchedule}>
-                                <span className={styles.storeIcon}>🕐</span>
-                                {store.schedule}
-                            </div>
-                            <div className={styles.storeWeekend}>
-                                <span className={styles.storeIcon}>📅</span>
-                                {store.weekend}
-                            </div>
-                            <div className={styles.storeFeatures}>
-                                {store.features.map((feature, idx) => (
-                                    <span key={idx} className={styles.storeFeature}>
-                                        ✓ {feature}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </Col>
-                ))} */}
             </Row>
 
             {/* Дополнительная информация */}
