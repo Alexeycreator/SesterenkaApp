@@ -8,7 +8,7 @@ public sealed class CreateUserDto
     [Required] [MaxLength(100)] public string FirstName { get; set; }
     [MaxLength(100)] public string? SurName { get; set; }
     [Required] [MaxLength(15)] public string Gender { get; set; }
-    [Required] [DataType(DataType.Date)] public DateTime Birthday { get; set; }
+    [Required] [DataType(DataType.Date)] public DateOnly Birthday { get; set; }
 
     [Required]
     [Range(0, 100, ErrorMessage = "Возраст должен быть от 0 до 100 лет")]

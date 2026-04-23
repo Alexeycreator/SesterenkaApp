@@ -51,7 +51,6 @@ public sealed class UsersController(
     {
         try
         {
-            // Проверка уникальности
             if (await dbContext.Users.AnyAsync(c => c.Login == createDto.Login))
                 return Conflict(new { message = "Логин уже существует" });
 
@@ -61,9 +60,7 @@ public sealed class UsersController(
             if (await dbContext.Users.AnyAsync(c => c.PhoneNumber == createDto.PhoneNumber))
                 return Conflict(new { message = "Телефон уже существует" });
 
-            // Хэшируем пароль для поля PasswordHash
             string hashedPassword = passwordService.HashPassword(createDto.Password);
-
             loggerUsersController.Info($"Пароль захэширован для пользователя {createDto.Login}");
 
             var user = new UsersModel
@@ -71,11 +68,16 @@ public sealed class UsersController(
                 SecondName = createDto.SecondName,
                 FirstName = createDto.FirstName,
                 SurName = createDto.SurName,
+                Gender = createDto.Gender, 
+                Birthday = createDto.Birthday, 
+                Age = createDto.Age, 
                 PhoneNumber = createDto.PhoneNumber,
                 Email = createDto.Email,
                 Login = createDto.Login,
-                Password = createDto.Password, // Сохраняем оригинальный пароль
-                PasswordHash = hashedPassword, // Сохраняем хэш
+                Password = createDto.Password,
+                PasswordHash = hashedPassword,
+                Role = createDto.Role, 
+                Position = createDto.Position, 
                 LoginAttempts = 0,
             };
 
@@ -95,7 +97,8 @@ public sealed class UsersController(
                 Age = user.Age,
                 Birthday = user.Birthday,
                 Gender = user.Gender,
-                Role = user.Role
+                Role = user.Role,
+                Position = user.Position
             };
 
             return Ok(response);
@@ -103,7 +106,7 @@ public sealed class UsersController(
         catch (Exception ex)
         {
             loggerUsersController.Error(ex, "Ошибка при регистрации пользователя {Login}", createDto.Login);
-            return StatusCode(500, new { message = "Внутренняя ошибка сервера" });
+            return StatusCode(500, new { message = "Внутренняя ошибка сервера: " + ex.Message });
         }
     }
 
