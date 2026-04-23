@@ -21,7 +21,7 @@ import NotFoundPage from './components/pages/NotFound/NotFoundPage';
 import OrderDetailsPage from './components/pages/Order/OrderDetailsPage';
 
 import './App.css';
-import "../node_modules/bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface ScrollToTopProps {
   location: Location;
@@ -42,42 +42,30 @@ const ScrollToTop = ({ location }: ScrollToTopProps) => {
 function App() {
   const location = useLocation();
   return (
-    <>
-      <AuthProvider>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%)'
-        }}>
-          <Header />
-          <ScrollToTop location={location} />
-          <div style={{ flex: '1 0 auto', width: '100%' }}>
-            <Routes location={location} key={location.pathname}>
-              <Route path='/' element={<MainPage />} />
-              <Route path='/news' element={<NewsPage />} />
-              <Route path='/information' element={<InformationPage />} />
-              <Route path='/help' element={<HelpPage />} />
-
-              <Route path='/catalog' element={<CatalogPage />} />
-
-              <Route path='/personalAccount' element={<AccountPage />} />
-              <Route path='/orderItems' element={<OrderItemsPage />} />
-              <Route path='/order' element={<OrderPage />} />
-              <Route path='/order/:id' element={<OrderDetailsPage />} />
-
-              <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
-              <Route path='/terms_of_use' element={<TermsOfUsePage />} />
-              <Route path='/sale_items' element={<SaleItemsPage />} />
-
-              <Route path='*' element={<NotFoundPage />} />
-            </Routes>
-          </div>
-          <div style={{ height: '100px' }}></div>
-          <Footer />
-        </div>
-      </AuthProvider>
-    </>
+    <AuthProvider>
+      <div className="app-container">
+        <Header />
+        <ScrollToTop location={location} />
+        <main className="app-main">
+          <Routes location={location} key={location.pathname}>
+            <Route path='/' element={<MainPage />} />
+            <Route path='/news' element={<NewsPage />} />
+            <Route path='/information' element={<InformationPage />} />
+            <Route path='/help' element={<HelpPage />} />
+            <Route path='/catalog' element={<CatalogPage />} />
+            <Route path='/personalAccount' element={<AccountPage />} />
+            <Route path='/orderItems' element={<OrderItemsPage />} />
+            <Route path='/order' element={<OrderPage />} />
+            <Route path='/order/:id' element={<OrderDetailsPage />} />
+            <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
+            <Route path='/terms_of_use' element={<TermsOfUsePage />} />
+            <Route path='/sale_items' element={<SaleItemsPage />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
 
