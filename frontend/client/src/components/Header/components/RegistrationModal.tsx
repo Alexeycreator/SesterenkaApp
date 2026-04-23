@@ -1,323 +1,325 @@
 import React from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
 
-import styles from '../Header.module.css';
-
-interface RegistrationFormData {
-    firstName: string;
-    secondName: string;
-    surName: string | null;
-    email: string;
-    phone: string;
-    gender: 'Мужской' | 'Женский';
-    birthDay: string;
-    password: string;
-    confirmPassword: string;
-    agreeToNews: boolean;
-    agreeToPersonalData: boolean;
-}
+import styles from './RegistrationModal.module.css';
 
 interface RegistrationModalProps {
     show: boolean;
     onClose: () => void;
-    registrationForm: RegistrationFormData;
+    registrationForm: any;
     showPassword: boolean;
     errors: Record<string, string>;
     registrationLoading: boolean;
     registrationError: string | null;
     registrationFieldErrors: Record<string, string>;
     registrationStep: 1 | 2;
-    onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+    onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     onNext: () => void;
     onBack: () => void;
-    onSubmit: (e: React.FormEvent) => Promise<void>;
+    onSubmit: (e: React.FormEvent) => void;
     onTogglePassword: () => void;
 }
 
-export const RegistrationModal = React.forwardRef<HTMLDivElement, RegistrationModalProps>(({
+const RegistrationModal: React.FC<RegistrationModalProps> = ({
     show,
     onClose,
     registrationForm,
     showPassword,
-    errors,
     registrationLoading,
     registrationError,
     registrationFieldErrors,
     registrationStep,
     onInputChange,
-    onNext,
     onBack,
     onSubmit,
-    onTogglePassword
-}, ref) => {
-    if (!show) return null;
+    onTogglePassword,
+    onNext
+}) => {
+    const handleNext = () => {
+        onNext();
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSubmit(e);
+    };
 
     return (
-        <div className={styles.registrationOverlay}>
-            <div ref={ref} className={styles.registrationModal}>
-                <button
-                    onClick={onClose}
-                    className={styles.closeButton}
-                >
-                    ✕
-                </button>
+        <Modal show={show} onHide={onClose} centered size="lg" className={styles.modal}>
+            <Modal.Header closeButton className={styles.modalHeader}>
+                <Modal.Title className={styles.modalTitle}>
+                    <span className={styles.titleIcon}>📝</span>
+                    {registrationStep === 1 ? 'Регистрация - Шаг 1' : 'Регистрация - Шаг 2'}
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className={styles.modalBody}>
+                {registrationError && (
+                    <div className={styles.errorMessage}>
+                        {registrationError}
+                    </div>
+                )}
 
-                <h2 className={styles.registrationTitle}>
-                    🐪 Регистрация туриста
-                </h2>
+                {registrationStep === 1 ? (
+                    // Шаг 1: Личная информация
+                    <div className={styles.formContainer}>
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>👤</span>
+                                Фамилия <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="secondName"
+                                value={registrationForm.secondName}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.secondName}
+                                placeholder="Введите вашу фамилию"
+                                className={styles.formInput}
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.secondName}
+                            </Form.Control.Feedback>
+                        </Form.Group>
 
-                <form onSubmit={onSubmit}>
-                    {registrationStep === 1 ? (
-                        // Шаг 1: Личные данные
-                        <section className={styles.section}>
-                            <h3 className={styles.sectionTitle}>
-                                📋 Личные данные
-                            </h3>
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>👤</span>
+                                Имя <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="firstName"
+                                value={registrationForm.firstName}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.firstName}
+                                placeholder="Введите ваше имя"
+                                className={styles.formInput}
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.firstName}
+                            </Form.Control.Feedback>
+                        </Form.Group>
 
-                            <div className={styles.formGrid}>
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Имя <span className={styles.required}>*</span>
-                                    </label>
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>👤</span>
+                                Отчество
+                            </Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="surName"
+                                value={registrationForm.surName || ''}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.surName}
+                                placeholder="Введите ваше отчество"
+                                className={styles.formInput}
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.surName}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>📧</span>
+                                Email <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="email"
+                                name="email"
+                                value={registrationForm.email}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.email}
+                                placeholder="example@mail.ru"
+                                className={styles.formInput}
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.email}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>📱</span>
+                                Телефон <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="tel"
+                                name="phone"
+                                value={registrationForm.phone}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.phone}
+                                placeholder="+7XXXXXXXXXX"
+                                className={styles.formInput}
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.phone}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>⚥</span>
+                                Пол <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <div className={styles.genderGroup}>
+                                <label className={styles.genderLabel}>
                                     <input
-                                        type="text"
-                                        name="firstName"
-                                        value={registrationForm.firstName}
+                                        type="radio"
+                                        name="gender"
+                                        value="Мужской"
+                                        checked={registrationForm.gender === 'Мужской'}
                                         onChange={onInputChange}
-                                        placeholder="Иван"
-                                        className={`${styles.formInput} ${errors.firstName ? styles.formInputError : ''}`}
+                                        className={styles.genderRadio}
                                     />
-                                    {errors.firstName && (
-                                        <div className={styles.fieldError}>{errors.firstName}</div>
-                                    )}
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Фамилия <span className={styles.required}>*</span>
-                                    </label>
+                                    <span className={styles.genderText}>Мужской</span>
+                                </label>
+                                <label className={styles.genderLabel}>
                                     <input
-                                        type="text"
-                                        name="secondName"
-                                        value={registrationForm.secondName}
+                                        type="radio"
+                                        name="gender"
+                                        value="Женский"
+                                        checked={registrationForm.gender === 'Женский'}
                                         onChange={onInputChange}
-                                        placeholder="Петров"
-                                        className={`${styles.formInput} ${errors.secondName ? styles.formInputError : ''}`}
+                                        className={styles.genderRadio}
                                     />
-                                    {errors.secondName && (
-                                        <div className={styles.fieldError}>{errors.secondName}</div>
-                                    )}
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Отчество
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="surName"
-                                        value={registrationForm.surName || ''}
-                                        onChange={onInputChange}
-                                        placeholder="Иванович"
-                                        className={styles.formInput}
-                                    />
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Email <span className={styles.required}>*</span>
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={registrationForm.email}
-                                        onChange={onInputChange}
-                                        placeholder="ivan@mail.ru"
-                                        className={`${styles.formInput} ${errors.email ? styles.formInputError : ''}`}
-                                    />
-                                    {errors.email && (
-                                        <div className={styles.fieldError}>{errors.email}</div>
-                                    )}
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Телефон <span className={styles.required}>*</span>
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={registrationForm.phone}
-                                        onChange={onInputChange}
-                                        placeholder="+7 (999) 123-45-67"
-                                        className={`${styles.formInput} ${errors.phone ? styles.formInputError : ''}`}
-                                    />
-                                    {errors.phone && (
-                                        <div className={styles.fieldError}>{errors.phone}</div>
-                                    )}
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Пол
-                                    </label>
-                                    <div className={styles.radioGroup}>
-                                        <label className={styles.radioLabel}>
-                                            <input
-                                                type="radio"
-                                                name="gender"
-                                                value="male"
-                                                checked={registrationForm.gender === 'Мужской'}
-                                                onChange={onInputChange}
-                                            />
-                                            Мужской
-                                        </label>
-                                        <label className={styles.radioLabel}>
-                                            <input
-                                                type="radio"
-                                                name="gender"
-                                                value="female"
-                                                checked={registrationForm.gender === 'Женский'}
-                                                onChange={onInputChange}
-                                            />
-                                            Женский
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Дата рождения
-                                    </label>
-                                    <input
-                                        type="date"
-                                        name="birthDay"
-                                        value={registrationForm.birthDay}
-                                        onChange={onInputChange}
-                                        className={styles.formInput}
-                                    />
-                                </div>
-                            </div>
-
-                            {registrationError && (
-                                <div className={styles.registrationError}>
-                                    {registrationError}
-                                </div>
-                            )}
-
-                            <div className={styles.formActions}>
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className={styles.cancelButton}
-                                >
-                                    Отмена
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={onNext}
-                                    className={styles.nextButton}
-                                >
-                                    Далее →
-                                </button>
-                            </div>
-                        </section>
-                    ) : (
-                        // Шаг 2: Безопасность
-                        <section className={styles.section}>
-                            <h3 className={styles.sectionTitle}>
-                                🔐 Безопасность
-                            </h3>
-
-                            <div className={styles.formGrid}>
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Пароль <span className={styles.required}>*</span>
-                                    </label>
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        value={registrationForm.password}
-                                        onChange={onInputChange}
-                                        placeholder="Не менее 6 символов"
-                                        className={`${styles.formInput} ${errors.password ? styles.formInputError : ''}`}
-                                    />
-                                    {errors.password && (
-                                        <div className={styles.fieldError}>{errors.password}</div>
-                                    )}
-                                </div>
-
-                                <div className={styles.formField}>
-                                    <label className={styles.formLabel}>
-                                        Подтвердите пароль <span className={styles.required}>*</span>
-                                    </label>
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="confirmPassword"
-                                        value={registrationForm.confirmPassword}
-                                        onChange={onInputChange}
-                                        placeholder="Повторите пароль"
-                                        className={`${styles.formInput} ${errors.confirmPassword ? styles.formInputError : ''}`}
-                                    />
-                                    {errors.confirmPassword && (
-                                        <div className={styles.fieldError}>{errors.confirmPassword}</div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className={styles.showPasswordCheckbox}>
-                                <label className={styles.showPasswordLabel}>
-                                    <input
-                                        type="checkbox"
-                                        checked={showPassword}
-                                        onChange={onTogglePassword}
-                                    />
-                                    Показать пароль
+                                    <span className={styles.genderText}>Женский</span>
                                 </label>
                             </div>
-
-                            <div className={styles.agreementCheckbox}>
-                                <label className={styles.agreementLabel}>
-                                    <input
-                                        type="checkbox"
-                                        name="agreeToPersonalData"
-                                        checked={registrationForm.agreeToPersonalData}
-                                        onChange={onInputChange}
-                                    />
-                                    Я согласен на обработку персональных данных
-                                </label>
-                                {errors.agreeToPersonalData && (
-                                    <div className={styles.fieldError}>{errors.agreeToPersonalData}</div>
-                                )}
-                            </div>
-
-                            {registrationError && (
-                                <div className={styles.registrationError}>
-                                    {registrationError}
-                                </div>
+                            {registrationFieldErrors.gender && (
+                                <div className={styles.errorFeedback}>{registrationFieldErrors.gender}</div>
                             )}
+                        </Form.Group>
 
-                            <div className={styles.formActions}>
-                                <button
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>🎂</span>
+                                Дата рождения <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type="date"
+                                name="birthDay"
+                                value={registrationForm.birthDay}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.birthDay}
+                                className={styles.formInput}
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.birthDay}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                    </div>
+                ) : (
+                    // Шаг 2: Пароль и соглашения
+                    <Form onSubmit={handleSubmit} className={styles.formContainer}>
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>🔒</span>
+                                Пароль <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <div className={styles.passwordWrapper}>
+                                <Form.Control
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={registrationForm.password}
+                                    onChange={onInputChange}
+                                    isInvalid={!!registrationFieldErrors.password}
+                                    placeholder="Минимум 6 символов"
+                                    className={styles.formInput}
+                                    required
+                                />
+                                <Button
                                     type="button"
-                                    onClick={onBack}
-                                    className={styles.backButton}
+                                    variant="link"
+                                    onClick={onTogglePassword}
+                                    className={styles.passwordToggle}
                                 >
-                                    ← Назад
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={registrationLoading}
-                                    className={styles.submitButton}
-                                >
-                                    {registrationLoading ? 'Регистрация...' : '🐪 Зарегистрироваться'}
-                                </button>
+                                    {showPassword ? "🙈" : "👁️"}
+                                </Button>
                             </div>
-                        </section>
-                    )}
-                </form>
-            </div>
-        </div>
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.password}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+
+                        <Form.Group className={styles.formGroup}>
+                            <Form.Label className={styles.formLabel}>
+                                <span className={styles.labelIcon}>🔒</span>
+                                Подтверждение пароля <span className={styles.requiredStar}>*</span>
+                            </Form.Label>
+                            <Form.Control
+                                type={showPassword ? "text" : "password"}
+                                name="confirmPassword"
+                                value={registrationForm.confirmPassword}
+                                onChange={onInputChange}
+                                isInvalid={!!registrationFieldErrors.confirmPassword}
+                                placeholder="Повторите пароль"
+                                className={styles.formInput}
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid" className={styles.errorFeedback}>
+                                {registrationFieldErrors.confirmPassword}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+
+                        <Form.Group className={styles.checkboxGroup}>
+                            <label className={styles.checkboxLabel}>
+                                <input
+                                    type="checkbox"
+                                    name="agreeToPersonalData"
+                                    checked={registrationForm.agreeToPersonalData}
+                                    onChange={onInputChange}
+                                    className={styles.checkbox}
+                                />
+                                <span className={styles.checkboxText}>
+                                    Я согласен на обработку персональных данных <span className={styles.requiredStar}>*</span>
+                                </span>
+                            </label>
+                            {registrationFieldErrors.agreeToPersonalData && (
+                                <div className={styles.errorFeedback}>{registrationFieldErrors.agreeToPersonalData}</div>
+                            )}
+                        </Form.Group>
+
+                        <Button
+                            type="submit"
+                            className={styles.submitButton}
+                            disabled={registrationLoading}
+                        >
+                            {registrationLoading ? (
+                                <>
+                                    <span className={styles.spinner}></span>
+                                    Загрузка...
+                                </>
+                            ) : (
+                                'Зарегистрироваться'
+                            )}
+                        </Button>
+                    </Form>
+                )}
+            </Modal.Body>
+            <Modal.Footer className={styles.modalFooter}>
+                {registrationStep === 2 && (
+                    <Button variant="outline-secondary" onClick={onBack} className={styles.backButton}>
+                        ← Назад
+                    </Button>
+                )}
+                {registrationStep === 1 && (
+                    <Button
+                        onClick={handleNext}
+                        disabled={registrationLoading}
+                        className={styles.nextButton}
+                    >
+                        Далее →
+                    </Button>
+                )}
+            </Modal.Footer>
+        </Modal>
     );
-});
+};
 
-RegistrationModal.displayName = 'RegistrationModal';
+export default RegistrationModal;

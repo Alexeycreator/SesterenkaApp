@@ -6,8 +6,9 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { getOrderItemData, OrderItem } from "../servicesApi/OrderItemsApi";
 import { NavMenu } from './components/NavMenu';
 import { AuthModal } from './components/AuthModal';
-import { RegistrationModal } from './components/RegistrationModal';
+import RegistrationModal from './components/RegistrationModal';
 import { UserMenu } from './components/UserMenu';
+import { clientApi } from '../../service/user/Requests';
 
 import styles from './Header.module.css';
 
@@ -48,13 +49,11 @@ export default class Header extends Component<{}, HeaderState> {
     static contextType = AuthContext;
     context!: React.ContextType<typeof AuthContext>;
 
-    private authRef = createRef<HTMLDivElement>();
-    private registrationRef = createRef<HTMLDivElement>();
     private userMenuRef = createRef<HTMLDivElement>();
     private fetchTimeout: NodeJS.Timeout | null = null;
-    private isFetching = false; // Флаг для предотвращения множественных запросов
-    private lastFetchTime = 0; // Время последнего запроса
-    private readonly FETCH_DELAY = 1000; // Задержка между запросами в мс
+    private isFetching = false;
+    private lastFetchTime = 0;
+    private readonly FETCH_DELAY = 1000;
 
     private readonly initialRegistrationForm: RegistrationFormData = {
         firstName: '',
@@ -92,23 +91,19 @@ export default class Header extends Component<{}, HeaderState> {
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
 
-        // Загружаем корзину при монтировании компонента только если пользователь авторизован
         const { isAuthenticated } = this.context || {};
         if (isAuthenticated) {
             this.fetchCartItemsCount();
         }
 
-        // Добавляем слушатель события обновления корзины
         window.addEventListener('cartUpdated', this.handleCartUpdate);
     }
 
     componentDidUpdate(prevProps: {}, prevState: HeaderState) {
-        // Если пользователь авторизовался или вышел, обновляем корзину
         const currentUser = this.context?.user;
         const prevUser = prevState.user;
 
         if (prevUser !== currentUser) {
-            // Проверяем, авторизован ли пользователь
             const { isAuthenticated } = this.context || {};
             if (isAuthenticated && currentUser) {
                 this.fetchCartItemsCount();
@@ -127,7 +122,6 @@ export default class Header extends Component<{}, HeaderState> {
         }
     }
 
-    // Обработчик события обновления корзины
     handleCartUpdate = () => {
         const { isAuthenticated, user } = this.context || {};
         if (isAuthenticated && user) {
@@ -135,26 +129,17 @@ export default class Header extends Component<{}, HeaderState> {
         }
     };
 
-    // Метод для получения количества товаров в корзине
     fetchCartItemsCount = async () => {
         const { user, isAuthenticated } = this.context || {};
 
-        // Если пользователь не авторизован, сбрасываем счетчик и не делаем запрос
         if (!isAuthenticated || !user) {
             this.setState({ cartItemsCount: 0 });
             return;
         }
 
-        // Предотвращаем множественные запросы
         const now = Date.now();
-        if (this.isFetching) {
-            return;
-        }
-
-        // Проверяем, не слишком ли часто вызывается функция
-        if (now - this.lastFetchTime < this.FETCH_DELAY) {
-            return;
-        }
+        if (this.isFetching) return;
+        if (now - this.lastFetchTime < this.FETCH_DELAY) return;
 
         this.isFetching = true;
         this.lastFetchTime = now;
@@ -169,8 +154,6 @@ export default class Header extends Component<{}, HeaderState> {
                 this.setState({ cartItemsCount: 0 });
             }
         } catch (error: any) {
-            console.error('Ошибка загрузки корзины в Header:', error);
-            // Показываем 0 при ошибке, но не выводим ошибку в консоль если это 404
             if (error.statusCode !== 404) {
                 console.error('Не удалось загрузить корзину:', error.message || error.serverMessage);
             }
@@ -180,7 +163,6 @@ export default class Header extends Component<{}, HeaderState> {
         }
     };
 
-    // ========== АВТОРИЗАЦИЯ ==========
     toggleAuthModal = () => {
         this.setState(prev => ({
             showAuth: !prev.showAuth,
@@ -227,10 +209,7 @@ export default class Header extends Component<{}, HeaderState> {
                 authFieldErrors: {}
             });
 
-            // Загружаем корзину после входа
             await this.fetchCartItemsCount();
-
-            // Отправляем событие обновления
             const event = new CustomEvent('cartUpdated');
             window.dispatchEvent(event);
         } catch (error: any) {
@@ -255,12 +234,10 @@ export default class Header extends Component<{}, HeaderState> {
             showUserMenu: false,
             cartItemsCount: 0
         });
-        // Отправляем событие об обновлении корзины
         const event = new CustomEvent('cartUpdated');
         window.dispatchEvent(event);
     };
 
-    // ========== РЕГИСТРАЦИЯ ==========
     switchToRegistration = () => {
         this.setState({
             showAuth: false,
@@ -282,18 +259,7 @@ export default class Header extends Component<{}, HeaderState> {
     };
 
     handleClickOutside = (event: MouseEvent) => {
-        if (this.authRef.current && !this.authRef.current.contains(event.target as Node)) {
-            this.setState({ showAuth: false, authError: null, authFieldErrors: {}, authForm: { login: '', password: '' } });
-        }
-        if (this.registrationRef.current && !this.registrationRef.current.contains(event.target as Node)) {
-            this.setState({
-                showRegistrationModal: false,
-                registrationError: null,
-                registrationFieldErrors: {},
-                registrationForm: { ...this.initialRegistrationForm },
-                registrationStep: 1
-            });
-        }
+        // Только для меню пользователя
         if (this.userMenuRef.current && !this.userMenuRef.current.contains(event.target as Node)) {
             this.setState({ showUserMenu: false });
         }
@@ -352,6 +318,17 @@ export default class Header extends Component<{}, HeaderState> {
         this.setState({ registrationStep: 1 });
     };
 
+    calculateAge = (birthDate: string): number => {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
     handleRegistrationSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!this.validateRegistrationStep2()) return;
@@ -360,35 +337,69 @@ export default class Header extends Component<{}, HeaderState> {
 
         try {
             const form = this.state.registrationForm;
+
+            // Рассчитываем возраст
+            const age = this.calculateAge(form.birthDay);
+
+            // Проверяем возраст
+            if (age < 0 || age > 100) {
+                this.setState({ registrationError: 'Возраст должен быть от 0 до 100 лет' });
+                this.setState({ registrationLoading: false });
+                return;
+            }
+
+            // Формируем данные для регистрации в соответствии с CreateUserDto на сервере
             const registerData = {
-                secondName: form.secondName,
-                firstName: form.firstName,
-                surName: form.surName,
-                phoneNumber: form.phone,
-                email: form.email,
-                login: form.email,
-                password: form.password
+                secondName: form.secondName,           // Фамилия
+                firstName: form.firstName,              // Имя
+                surName: form.surName || null,          // Отчество (может быть null)
+                gender: form.gender,                    // Пол (Мужской/Женский)
+                birthday: form.birthDay,                // Дата рождения (YYYY-MM-DD)
+                age: age,                               // Возраст (рассчитанный)
+                phoneNumber: form.phone,                // Телефон
+                email: form.email,                      // Email
+                login: form.email,                      // Логин (используем email как логин)
+                password: form.password,                // Пароль
+                role: "user",                           // Роль (по умолчанию "user")
+                position: "пользователь"                // Должность (заполняем как "пользователь")
             };
 
-            await authApi.register(registerData);
+            console.log('Отправка данных регистрации:', registerData);
+
+            // Используем clientApi.create для регистрации
+            await clientApi.create(registerData);
+
+            // После успешной регистрации автоматически входим
             await this.context!.login(form.email, form.password);
 
             this.setState({
                 showRegistrationModal: false,
                 registrationForm: { ...this.initialRegistrationForm },
-                registrationStep: 1
+                registrationStep: 1,
+                registrationError: null,
+                registrationFieldErrors: {}
             });
 
-            // Загружаем корзину после регистрации
             await this.fetchCartItemsCount();
-
             const event = new CustomEvent('cartUpdated');
             window.dispatchEvent(event);
+
+            console.log('Регистрация и вход выполнены успешно');
         } catch (error: any) {
-            if (error.response?.status === 409) {
-                this.setState({ registrationError: 'Пользователь с таким email или телефоном уже существует' });
+            console.error('Ошибка регистрации:', error);
+            if (error.statusCode === 409) {
+                this.setState({ registrationError: 'Пользователь с таким email, телефоном или логином уже существует' });
+            } else if (error.statusCode === 400) {
+                // Парсим валидационные ошибки
+                const errorData = error.data;
+                if (errorData?.errors) {
+                    const errorMessages = Object.values(errorData.errors).flat().join(', ');
+                    this.setState({ registrationError: `Ошибка валидации: ${errorMessages}` });
+                } else {
+                    this.setState({ registrationError: error.data?.message || 'Неверные данные. Проверьте правильность заполнения полей' });
+                }
             } else {
-                this.setState({ registrationError: 'Ошибка при регистрации. Попробуйте позже' });
+                this.setState({ registrationError: error.message || 'Ошибка при регистрации. Попробуйте позже' });
             }
         } finally {
             this.setState({ registrationLoading: false });
@@ -402,7 +413,7 @@ export default class Header extends Component<{}, HeaderState> {
         }));
     };
 
-    handleRegistrationChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    handleRegistrationChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
 
@@ -484,7 +495,6 @@ export default class Header extends Component<{}, HeaderState> {
                     onInputChange={this.handleAuthInputChange}
                     onSubmit={this.handleAuthSubmit}
                     onRegister={this.switchToRegistration}
-                    ref={this.authRef}
                 />
 
                 <RegistrationModal
@@ -502,7 +512,6 @@ export default class Header extends Component<{}, HeaderState> {
                     onBack={this.handleRegistrationBack}
                     onSubmit={this.handleRegistrationSubmit}
                     onTogglePassword={() => this.setState({ showPassword: !showPassword })}
-                    ref={this.registrationRef}
                 />
             </>
         );

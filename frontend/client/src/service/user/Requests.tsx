@@ -42,11 +42,31 @@ export const clientApi = {
     // Создать клиента - POST /api/Users/register
     create: async (data: CreateClientRequest): Promise<UserResponse> => {
         try {
-            const response = await api.post<UserResponse>('/Users/register', data);
+            // Формируем данные в том формате, который ожидает сервер
+            const requestData = {
+                secondName: data.secondName,
+                firstName: data.firstName,
+                surName: data.surName || null,
+                gender: data.gender,
+                birthday: data.birthday,
+                age: data.age,
+                phoneNumber: data.phoneNumber,
+                email: data.email,
+                login: data.login,
+                password: data.password,
+                role: data.role,
+                position: data.position  // Теперь всегда передаем строку "пользователь"
+            };
+
+            console.log('Отправляем данные на сервер:', requestData);
+
+            const response = await api.post<UserResponse>('/Users/register', requestData);
             return response.data;
         } catch (error: any) {
             console.error('Ошибка создания клиента:', error);
             if (error.response) {
+                console.error('Статус ошибки:', error.response.status);
+                console.error('Данные ошибки:', error.response.data);
                 throw {
                     message: error.response.data?.message || 'Не удалось создать клиента',
                     statusCode: error.response.status,

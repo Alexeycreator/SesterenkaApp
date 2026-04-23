@@ -36,7 +36,7 @@ export const AuthModal = React.forwardRef<HTMLDivElement, AuthModalProps>(({
     return (
         <div ref={ref} className={styles.authModal}>
             <h3 className={styles.authModalTitle}>
-                𓋴 Вход
+                Авторизация
             </h3>
 
             <form onSubmit={onSubmit}>
@@ -46,7 +46,7 @@ export const AuthModal = React.forwardRef<HTMLDivElement, AuthModalProps>(({
                         name="login"
                         value={authForm.login}
                         onChange={onInputChange}
-                        placeholder="Введите логин или Email"
+                        placeholder="Введите логин, телефон или Email"
                         className={`${styles.authInput} ${authFieldErrors.login ? styles.authInputError : ''}`}
                     />
                     {authFieldErrors.login && (
@@ -62,7 +62,7 @@ export const AuthModal = React.forwardRef<HTMLDivElement, AuthModalProps>(({
                         name="password"
                         value={authForm.password}
                         onChange={onInputChange}
-                        placeholder="Пароль"
+                        placeholder="Введите пароль"
                         className={`${styles.authInput} ${authFieldErrors.password ? styles.authInputError : ''}`}
                     />
                     {authFieldErrors.password && (
