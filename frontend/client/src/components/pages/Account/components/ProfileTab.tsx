@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { Card, Button, Form, Row, Col } from 'react-bootstrap';
 
-import styles from './ProdileTab.module.css';
+import { clientApi } from '../../../../service/IndexAuth';
+import { useAuth } from '../../../../contexts/AuthContext';
+
+import styles from './ProfileTab.module.css';
 
 interface ProfileTabProps {
     currentUser: any;
     onRefresh?: () => void;
 }
 
-export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser }) => {
+export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }) => {
+    const { refreshUserData } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [editedUser, setEditedUser] = useState({
         firstName: currentUser?.firstName || '',
         secondName: currentUser?.secondName || '',
@@ -20,9 +25,13 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser }) => {
     });
 
     const formatBirthdayDate = (dateString: string | Date | null | undefined) => {
-        if (!dateString) return 'Дата не указана';
+        if (!dateString) {
+            return 'Дата не указана';
+        }
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return 'Некорректная дата';
+        if (isNaN(date.getTime())) {
+            return 'Некорректная дата';
+        }
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
@@ -35,13 +44,23 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser }) => {
     };
 
     const saveProfile = async () => {
+        setLoading(true);
         try {
-            // TODO: API вызов для обновления профиля
+            await clientApi.update(currentUser?.id, editedUser);
+            if (refreshUserData) {
+                await refreshUserData();
+            }
+            if (onRefresh) {
+                onRefresh();
+            }
+
             setIsEditing(false);
             alert('Данные успешно обновлены');
         } catch (error) {
             console.error('Ошибка обновления:', error);
             alert('Не удалось обновить данные');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -55,6 +74,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser }) => {
                     <Button
                         className={styles.editButton}
                         onClick={() => setIsEditing(!isEditing)}
+                        variant="outline-secondary"
                     >
                         {isEditing ? 'Отмена' : '✎ Редактировать'}
                     </Button>
@@ -93,7 +113,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser }) => {
                                     <Form.Control
                                         type="text"
                                         name="surName"
-                                        value={editedUser.surName}
+                                        value={editedUser.surName || ''}
                                         onChange={handleInputChange}
                                         className={styles.formInput}
                                     />
@@ -138,25 +158,31 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser }) => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <Button className={styles.saveButton} onClick={saveProfile}>
-                            Сохранить изменения
-                        </Button>
+                        <div className={styles.buttonGroup}>
+                            <Button
+                                className={styles.saveButton}
+                                onClick={saveProfile}
+                                disabled={loading}
+                            >
+                                {loading ? 'Сохранение...' : 'Сохранить изменения'}
+                            </Button>
+                        </div>
                     </Form>
                 ) : (
                     <div className={styles.profileInfo}>
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>ФИО:</span>
                             <span className={styles.infoValue}>
-                                {currentUser?.secondName} {currentUser?.firstName} {currentUser?.surName}
+                                {`${currentUser?.secondName || ''} ${currentUser?.firstName || ''} ${currentUser?.surName || ''}`.trim() || 'Не указано'}
                             </span>
                         </div>
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>Email:</span>
-                            <span className={styles.infoValue}>{currentUser?.email}</span>
+                            <span className={styles.infoValue}>{currentUser?.email || 'Не указан'}</span>
                         </div>
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>Телефон:</span>
-                            <span className={styles.infoValue}>{currentUser?.phoneNumber}</span>
+                            <span className={styles.infoValue}>{currentUser?.phoneNumber || 'Не указан'}</span>
                         </div>
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>Дата рождения:</span>
