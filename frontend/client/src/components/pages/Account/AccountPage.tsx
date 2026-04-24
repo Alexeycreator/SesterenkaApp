@@ -19,11 +19,6 @@ const AccountPage = () => {
     const navigate = useNavigate();
     const { user: currentUser, isAuthenticated, role: userRole } = useAuth();
 
-    console.log('=== AccountPage Debug ===');
-    console.log('userRole from useAuth:', userRole);
-    console.log('currentUser?.role:', currentUser?.role);
-    console.log('currentUser:', currentUser);
-
     // Получаем параметры из URL
     const userId = searchParams.get('userId');
     const activeTab = searchParams.get('tab') || 'profile';
@@ -33,8 +28,12 @@ const AccountPage = () => {
     // Обновление вкладки с сохранением userId
     const handleTabChange = (tab: string) => {
         const params: Record<string, string> = {};
-        if (userId) params.userId = userId;
-        if (tab !== 'profile') params.tab = tab;
+        if (userId) {
+            params.userId = userId;
+        }
+        if (tab !== 'profile') {
+            params.tab = tab;
+        }
         setSearchParams(params);
     };
 
