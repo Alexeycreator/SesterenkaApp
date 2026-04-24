@@ -29,7 +29,7 @@ public sealed class OrdersModel
     public AddressesModel? Addresses { get; set; }
 
     [JsonIgnore]
-    [DeleteBehavior(DeleteBehavior.Restrict)]
+    [DeleteBehavior(DeleteBehavior.SetNull)]
     public UsersModel? Users { get; set; }
 
     [JsonIgnore] public ICollection<OrderItemsModel>? OrderItems { get; set; }

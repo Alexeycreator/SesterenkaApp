@@ -678,7 +678,7 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.DataBase.UsersModel", "Users")
                         .WithMany("Orders")
                         .HasForeignKey("Users_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Addresses");
 
