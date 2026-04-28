@@ -68,16 +68,16 @@ public sealed class UsersController(
                 SecondName = createDto.SecondName,
                 FirstName = createDto.FirstName,
                 SurName = createDto.SurName,
-                Gender = createDto.Gender, 
-                Birthday = createDto.Birthday, 
-                Age = createDto.Age, 
+                Gender = createDto.Gender,
+                Birthday = createDto.Birthday,
+                Age = createDto.Age,
                 PhoneNumber = createDto.PhoneNumber,
                 Email = createDto.Email,
                 Login = createDto.Login,
                 Password = createDto.Password,
                 PasswordHash = hashedPassword,
-                Role = createDto.Role, 
-                Position = createDto.Position, 
+                Role = createDto.Role,
+                Position = createDto.Position,
                 LoginAttempts = 0,
             };
 
@@ -433,5 +433,61 @@ public sealed class UsersController(
             DeletedId = id,
             Timestamp = DateTime.UtcNow
         });
+    }
+
+    [HttpPut("update-role-user")]
+    public async Task<IActionResult> UpdateUserRole(int userId, string newRole)
+    {
+        try
+        {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.Role == newRole)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                user.Role = newRole;
+                user = CheckPosition(user);
+                await dbContext.SaveChangesAsync();
+            }
+
+            return Ok(new
+            {
+                StatusCode = 200,
+                Message = $"Роль пользователя {user.Login} успешно изменена",
+                NewRole = newRole,
+                Timestamp = DateTime.Now
+            });
+        }
+        catch (Exception ex)
+        {
+            loggerUsersController.Error($"{ex.Message}");
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    private UsersModel CheckPosition(UsersModel user)
+    {
+        switch (user.Role)
+        {
+            case "user":
+                user.Position = "пользователь";
+                break;
+            case "employee":
+                user.Position = "сотрудник";
+                break;
+            case "admin":
+                user.Position = "администратор";
+                break;
+            default: throw new ArgumentException($"Роль {user.Role} не существует в БД. Для нее нет позиции.");
+        }
+
+        return user;
     }
 }
