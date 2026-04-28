@@ -125,10 +125,11 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
         return CreatedAtAction(nameof(GetAddresses), new { id = address.Id }, address);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAddress(int id, AddressesModel address)
+    [HttpPut("update-address")]
+    public async Task<IActionResult> UpdateAddress(int addressId, AddressesModel address, int userId)
     {
-        var existsAddress = await dbContext.Addresses.FindAsync(id);
+        var user = await dbContext.Users.FindAsync(userId);
+        var existsAddress = await dbContext.Addresses.FindAsync(addressId);
         if (existsAddress == null)
         {
             return NotFound(new
@@ -136,11 +137,45 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
                 StatusCode = 404,
                 Error = "NotFound",
                 Message = $"Адреса не существует!",
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTime.Now,
             });
         }
 
-        dbContext.Entry(address).State = EntityState.Modified;
+        if (existsAddress.Region != address.Region)
+        {
+            existsAddress.Region = address.Region;
+        }
+
+        if (existsAddress.City != address.City)
+        {
+            existsAddress.City = address.City;
+        }
+
+        if (existsAddress.Street != address.Street)
+        {
+            existsAddress.Street = address.Street;
+        }
+
+        if (existsAddress.House != address.House)
+        {
+            existsAddress.House = address.House;
+        }
+
+        if (existsAddress.IsShop != address.IsShop)
+        {
+            if (user != null && user.Role == "admin" && user.Position == "администратор")
+            {
+                existsAddress.IsShop = address.IsShop;
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    message = $"У пользователя {user?.Login} нет прав администратора для изменения состояния адреса (IsShop)"
+                });
+            }
+        }
+        
         await dbContext.SaveChangesAsync();
 
         return NoContent();
