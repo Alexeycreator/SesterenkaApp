@@ -1,10 +1,10 @@
-// components/SettingsTab.tsx
 import React, { useState } from 'react';
 import { Card, Button, Form, Modal } from 'react-bootstrap';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { changePassword } from '../../../../service/IndexAuth';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
+import { clientApi } from '../../../../service/IndexAuth';
 
 import styles from './SettingsTab.module.css';
 
@@ -21,6 +21,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh
     const handleDeleteAccount = async () => {
         try {
             // TODO: API вызов для удаления аккаунта
+            await clientApi.delete(currentUser?.id);
             await logout();
             window.location.href = '/';
         } catch (error) {
