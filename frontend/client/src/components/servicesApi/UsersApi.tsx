@@ -78,4 +78,28 @@ export const updateRoleUser = async (userId: number, newRole: string): Promise<v
             throw { message: error.message, isSetupError: true };
         }
     }
-}
+};
+
+export const deleteUser = async (userId: number): Promise<void> => {
+    try {
+        await api.delete<User>(`/Users/${userId}`);
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
