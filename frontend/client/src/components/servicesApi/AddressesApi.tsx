@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 import React from "react";
 import axios from "axios";
 
@@ -40,17 +41,14 @@ export const getShopAddress = async (): Promise<AddressOrder[]> => {
             console.log('Ошибка ответа:', error.response.data);
             console.log('Статус:', error.response.status);
 
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: error.response.data?.message || 'Неизвестная ошибка',
                 statusCode: error.response.status
             };
         } else if (error.request) {
-            // eslint-disable-next-line no-throw-literal
             throw { message: 'Нет ответа от сервера', isNetworkError: true };
         } else {
-            // eslint-disable-next-line no-throw-literal
             throw { message: error.message, isSetupError: true };
         }
     }
@@ -65,18 +63,42 @@ export const getAddressById = async (id: number): Promise<Address> => {
             console.log('Ошибка ответа:', error.response.data);
             console.log('Статус:', error.response.status);
 
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: error.response.data?.message || 'Неизвестная ошибка',
                 statusCode: error.response.status
             };
         } else if (error.request) {
-            // eslint-disable-next-line no-throw-literal
             throw { message: 'Нет ответа от сервера', isNetworkError: true };
         } else {
-            // eslint-disable-next-line no-throw-literal
             throw { message: error.message, isSetupError: true };
         }
+    }
+};
+
+export const updateAddress = async (addressId: number, data: {
+    region?: string;
+    city: string;
+    street: string;
+    house?: string;
+    isShop?: boolean;
+}, userId: number): Promise<void> => {
+    try {
+        const cleanedData = {
+            region: data.region || undefined,
+            city: data.city,
+            street: data.street,
+            house: data.house || undefined,
+            isShop: data.isShop
+        };
+        await api.put<Address>(`/Addresses/update-address?addressId=${addressId}&userId=${userId}`, cleanedData);
+    } catch (error: any) {
+        if (error.response) {
+            throw {
+                message: error.response.data?.message || 'Не удалось обновить адрес',
+                statusCode: error.response.status
+            };
+        }
+        throw { message: 'Нет ответа от сервера', isNetworkError: true };
     }
 };

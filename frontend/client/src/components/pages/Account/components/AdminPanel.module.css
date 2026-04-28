@@ -447,3 +447,107 @@
     color: white;
     transform: translateY(-2px);
 }
+
+.searchInfo {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+.listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s ease;
+}
+
+.listItem:hover {
+    background-color: #f8f9fa;
+}
+
+.itemInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.shopBadge {
+    display: inline-block;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.itemActions {
+    display: flex;
+    gap: 8px;
+}
+
+.editBtn {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+.editBtn:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-1px);
+}
+
+.deleteBtn {
+    background: #e74c3c;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+.deleteBtn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+.saveBtn {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.saveBtn:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.checkboxGroup {
+    padding: 8px 0;
+}
+
+.checkboxGroup :global(.form-check-input) {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkboxGroup :global(.form-check-input):checked {
+    background-color: #c49b6b;
+    border-color: #c49b6b;
+}
+
+.checkboxGroup :global(.form-check-label) {
+    margin-left: 8px;
+    cursor: pointer;
+    color: #2c3e50;
+}
