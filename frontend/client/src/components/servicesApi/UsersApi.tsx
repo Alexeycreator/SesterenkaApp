@@ -55,3 +55,27 @@ export const getUserById = async (id: number): Promise<User> => {
         }
     }
 };
+
+export const updateRoleUser = async (userId: number, newRole: string): Promise<void> => {
+    try {
+        await api.put<User>(`/Users/update-role-user?userId=${userId}&newRole=${newRole}`);
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+}

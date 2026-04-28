@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Button, Row, Col, Table, Badge, Modal, Alert, Form, InputGroup } from 'react-bootstrap';
-import { getUsers, User } from '../../../servicesApi/UsersApi';
+import { getUsers, User, updateRoleUser } from '../../../servicesApi/UsersApi';
 import { UserOrdersModal } from './common/UserOrdersModal';
 import { ProductManagement } from './common/ProductManagement';
 import { CategoryManagement } from './common/CategoryManagement';
@@ -59,7 +59,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
 
     const handleRoleChange = async (userId: number, newRole: string) => {
         try {
-            //await updateUserRole(userId, newRole);
+            await updateRoleUser(userId, newRole);
             await loadUsers();
             alert('Роль пользователя обновлена');
         } catch (error) {
