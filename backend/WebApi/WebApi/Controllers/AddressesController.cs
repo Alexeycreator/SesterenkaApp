@@ -166,25 +166,56 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
             if (user != null && user.Role == "admin" && user.Position == "администратор")
             {
                 existsAddress.IsShop = address.IsShop;
+                var addressInformation = await dbContext.Addresses.FindAsync(existsAddress.Id);
+                if (addressInformation != null)
+                {
+                    var information =
+                        await dbContext.Informations.FirstOrDefaultAsync(i => i.Addresses_Id == addressInformation.Id);
+                    if (existsAddress.IsShop)
+                    {
+                        if (information == null)
+                        {
+                            var newInformation = new InformationsModel()
+                            {
+                                AboutUs = null,
+                                Questions = null,
+                                OurMission = null,
+                                OurValues = null,
+                                Users_Id = null,
+                                Addresses_Id = addressInformation.Id
+                            };
+
+                            await dbContext.Informations.AddAsync(newInformation);
+                        }
+                    }
+                    else
+                    {
+                        if (information != null)
+                        {
+                            dbContext.Informations.Remove(information);
+                        }
+                    }
+                }
             }
             else
             {
                 return BadRequest(new
                 {
-                    message = $"У пользователя {user?.Login} нет прав администратора для изменения состояния адреса (IsShop)"
+                    message =
+                        $"У пользователя {user?.Login} нет прав администратора для изменения состояния адреса (IsShop)"
                 });
             }
         }
-        
+
         await dbContext.SaveChangesAsync();
 
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAddress(int id)
+    [HttpDelete("delete-address/{addressId}")]
+    public async Task<IActionResult> DeleteAddress(int addressId)
     {
-        var address = await dbContext.Addresses.FirstOrDefaultAsync(a => a.Id == id);
+        var address = await dbContext.Addresses.FirstOrDefaultAsync(a => a.Id == addressId);
         if (address == null)
         {
             return NotFound(new
@@ -192,7 +223,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
                 StatusCode = 404,
                 Error = "NotFound",
                 Message = $"Такого адреса не существует!",
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTime.Now,
             });
         }
 
@@ -203,8 +234,8 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
         {
             StatusCode = 200,
             Message = "Адрес успешно удален",
-            DeletedId = id,
-            Timestamp = DateTime.UtcNow
+            DeletedId = addressId,
+            Timestamp = DateTime.Now
         });
     }
 }

@@ -9,7 +9,7 @@ public sealed class AddressesModel
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; private set; }
+    public int Id { get; set; }
 
     [Required] [MaxLength(100)] public string Region { get; set; }
     [Required] [MaxLength(100)] public string City { get; set; }
