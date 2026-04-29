@@ -1,125 +1,76 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
+import { getInformations } from '../../servicesApi/InformationsApi';
 
 import styles from './InformationPage.module.css';
-import { useNavigate } from 'react-router-dom';
-import { getInformations, Information } from '../../servicesApi/InformationsApi';
-import { Address, getAddressById } from '../../servicesApi/AddressesApi';
-import { getUserById, User } from '../../servicesApi/UsersApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
 const InformationPage = () => {
     const navigate = useNavigate();
 
     // состояния информации
-    const [informationData, setInformationData] = useState<Information[] | null>();
-    const [loadingInfromation, setLoadingInformation] = useState(true);
-    const [errorInformation, setErrorInfromation] = useState<string | null>(null);
+    const [loadingInformation, setLoadingInformation] = useState(true);
+    const [errorInformation, setErrorInformation] = useState<string | null>(null);
 
-    const [infoAboutUs, setInfoAboutUs] = useState<string[]>([]);
-    const [infoQuestions, setInfoQuestions] = useState<string>();
-    const [infoUsers, setInfoUsers] = useState<(number | null | undefined)[]>();
-    const [infoAddresses, setInfoAddresses] = useState<(number | null | undefined)[]>();
+    // данные для отображения
+    const [aboutUsList, setAboutUsList] = useState<string[]>([]);
+    const [questionsList, setQuestionsList] = useState<string[]>([]);
+    const [ourMissionList, setOurMissionList] = useState<string[]>([]);
+    const [ourValuesList, setOurValuesList] = useState<string[]>([]);
 
-    // состояния сотрудников
-    const [usersEmployee, setUsersEmployee] = useState<User[] | null>([]);
-    const [loadingUsersEmployee, setLoadingUsersEmployee] = useState(true);
-    const [errorUsersEmployee, setErrorUsersEmployee] = useState<string | null>(null);
-
-    // состояние адресов
-    const [addressShops, setAddressShops] = useState<Address[] | null>([]);
-    const [loadingAddressShops, setLoadingAddressShops] = useState(true);
-    const [errorAddressShops, setErrorAddressShops] = useState<string | null>(null);
+    // сотрудники и адреса
+    const [employees, setEmployees] = useState<any[]>([]);
+    const [shops, setShops] = useState<any[]>([]);
 
     const fetchInformation = async () => {
         try {
             setLoadingInformation(true);
-            const informationData = await getInformations();
-            setInformationData(informationData);
-            if (setErrorInfromation.length > 0) {
-                let iAboutUs = informationData[0]?.aboutUs ?? '';
-                const aboutUsParts = iAboutUs.split(/\s*;\s*/).filter(part => part.trim() !== '');
-                setInfoAboutUs(aboutUsParts)
+            const data = await getInformations();
 
-                let iQuestions = informationData[0]?.questions ?? '';
-                setInfoQuestions(iQuestions);
+            if (data && data.length > 0) {
+                const firstItem = data[0];
 
-                let iUsers = informationData.map(users => users.users_Id);
-                setInfoUsers(iUsers);
+                if (firstItem.aboutUs && firstItem.aboutUs.length > 0) {
+                    setAboutUsList(firstItem.aboutUs);
+                }
 
-                let iAddresses = informationData.map(addresses => addresses.addresses_Id);
-                setInfoAddresses(iAddresses);
+                if (firstItem.questions && firstItem.questions.length > 0) {
+                    setQuestionsList(firstItem.questions);
+                }
+
+                if (firstItem.ourMission && firstItem.ourMission.length > 0) {
+                    setOurMissionList(firstItem.ourMission);
+                }
+
+                if (firstItem.ourValues && firstItem.ourValues.length > 0) {
+                    setOurValuesList(firstItem.ourValues);
+                }
+
+                if (firstItem.usersInfo && firstItem.usersInfo.length > 0) {
+                    setEmployees(firstItem.usersInfo);
+                }
+
+                if (firstItem.addressesInfo && firstItem.addressesInfo.length > 0) {
+                    const shopAddresses = firstItem.addressesInfo.filter(addr => addr.isShop === true);
+                    setShops(shopAddresses);
+                }
             }
-            else {
-                console.warn("Данные пустые");
-            }
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error('Ошибка загрузки страницы информации:', err);
             if (err.code === 'ERR_BAD_REQUEST') {
                 if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorInfromation(serverMessage);
+                    setErrorInformation('Информация не найдена');
                     navigate('/404', { replace: true });
                 } else {
-                    setErrorInfromation(err.response?.data?.message || 'Ошибка загрузки данных');
+                    setErrorInformation(err.response?.data?.message || 'Ошибка загрузки данных');
                 }
             } else {
-                setErrorInfromation('Ошибка соединения с сервером');
+                setErrorInformation('Ошибка соединения с сервером');
             }
-        }
-    };
-
-    const fetchUsers = async () => {
-        try {
-            setLoadingUsersEmployee(true);
-            if (infoUsers && infoUsers.length > 0) {
-                const user = await Promise.all(
-                    infoUsers.map(id => getUserById(Number(id)))
-                );
-                setUsersEmployee(user);
-                console.log("Users: ", user);
-            }
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки страницы информации:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorUsersEmployee(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setErrorUsersEmployee(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setErrorUsersEmployee('Ошибка соединения с сервером');
-            }
-        }
-    };
-
-    const fetchAddresses = async () => {
-        try {
-            setLoadingAddressShops(true);
-            if (infoAddresses && infoAddresses.length > 0) {
-                const addresses = await Promise.all(
-                    infoAddresses.map(id => getAddressById(Number(id)))
-                );
-                setAddressShops(addresses);
-                console.log("Address: ", addresses);
-            }
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки страницы информации:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setErrorAddressShops(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setErrorAddressShops(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setErrorAddressShops('Ошибка соединения с сервером');
-            }
+        } finally {
+            setLoadingInformation(false);
         }
     };
 
@@ -127,17 +78,19 @@ const InformationPage = () => {
         fetchInformation();
     }, []);
 
-    useEffect(() => {
-        if (infoUsers && infoUsers.length > 0) {
-            fetchUsers();
-        }
-    }, [infoUsers]);
+    if (loadingInformation) {
+        return (
+            <LoadingSpinner />
+        );
+    }
 
-    useEffect(() => {
-        if (infoAddresses && infoAddresses.length > 0) {
-            fetchAddresses();
-        }
-    }, [infoAddresses]);
+    if (errorInformation) {
+        return (
+            <Container fluid className={styles.pageContainer}>
+                <div className={styles.error}>{errorInformation}</div>
+            </Container>
+        );
+    }
 
     return (
         <Container fluid className={styles.pageContainer}>
@@ -151,87 +104,126 @@ const InformationPage = () => {
                 </Col>
             </Row>
 
-            {/* О компании */}
-            <Row className="mb-5">
-                <Col>
-                    <div className={styles.infoBlock}>
-                        <h2 className={styles.sectionTitle}>🚗 О нас</h2>
-                        <p className={styles.companyDescription}>{infoAboutUs[0]}</p>
-                        <p className={styles.companyMission}>{`Наша миссия — ${infoAboutUs[1]}`}</p>
-                        <h3 className={styles.valuesTitle}>Наши ценности</h3>
-                        <div className={styles.valuesGrid}>
-                            {Object.values(infoAboutUs).slice(2).map((value, index) => (
-                                <div key={index} className={styles.valueItem}>
-                                    <span className={styles.valueDot}>•</span>
-                                    <span className={styles.valueText}>{value}</span>
+            {/* О нас - AboutUs */}
+            {aboutUsList.length > 0 && (
+                <Row className="mb-5">
+                    <Col>
+                        <div className={styles.infoBlock}>
+                            <h2 className={styles.sectionTitle}>🚗 О нас</h2>
+                            <p className={styles.companyDescription}>{aboutUsList[0]}</p>
+
+                            {/* Миссия - OurMission */}
+                            {ourMissionList.length > 0 && (
+                                <p className={styles.companyMission}>
+                                    Наша миссия — {ourMissionList[0]}
+                                </p>
+                            )}
+
+                            {/* Ценности - OurValues */}
+                            {ourValuesList.length > 0 && (
+                                <>
+                                    <h3 className={styles.valuesTitle}>Наши ценности</h3>
+                                    <div className={styles.valuesGrid}>
+                                        {ourValuesList.map((value, index) => (
+                                            <div key={index} className={styles.valueItem}>
+                                                <span className={styles.valueDot}>•</span>
+                                                <span className={styles.valueText}>{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </Col>
+                </Row>
+            )}
+
+            {/* Вопросы и ответы */}
+            {questionsList.length > 0 && (
+                <Row className="mb-5">
+                    <Col>
+                        <h2 className={styles.sectionTitle}>❓ Часто задаваемые вопросы</h2>
+                        <div className={styles.faqBlock}>
+                            {questionsList.map((question, index) => (
+                                <div key={index} className={styles.faqItem}>
+                                    <div className={styles.questionHeader}>
+                                        <span className={styles.questionIcon}>❓</span>
+                                        <h3 className={styles.questionTitle}>Почему выбирают нас?</h3>
+                                    </div>
+                                    <div className={styles.questionContent}>
+                                        <span className={styles.answerIcon}>📝</span>
+                                        <p className={styles.questionText}>{question}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
-                </Col>
-            </Row>
-
-            {/* Команда */}
-            <Row className="mb-5">
-                <Col>
-                    <h2 className={styles.sectionTitle}>👥 Наша команда</h2>
-                </Col>
-            </Row>
-            <Row xs={1} md={2} lg={4} className="g-4 mb-5 justify-content-center">
-                {usersEmployee?.map((user, index) => (
-                    <Col key={index}>
-                        <div className={styles.teamCard}>
-                            <div className={styles.teamIcon}>
-                                {"👨‍💼"}{/* {user.icon} */}
-                            </div>
-                            <h3 className={styles.teamName}>
-                                {`${user.secondName} ${user.firstName}`}
-                            </h3>
-                            <div className={styles.teamPosition}>
-                                {user.position}
-                            </div>
-                        </div>
                     </Col>
-                ))}
-            </Row>
+                </Row>
+            )}
+
+            {/* Команда - сотрудники */}
+            {employees.length > 0 && (
+                <>
+                    <Row className="mb-4">
+                        <Col>
+                            <h2 className={styles.sectionTitle}>👥 Наша команда</h2>
+                        </Col>
+                    </Row>
+                    <Row xs={1} md={2} lg={4} className="g-4 mb-5 justify-content-center">
+                        {employees.map((user, index) => (
+                            <Col key={user.id || index}>
+                                <div className={styles.teamCard}>
+                                    <div className={styles.teamIcon}>
+                                        {user.gender === 'Женский' ? '👩‍💼' : '👨‍💼'}
+                                    </div>
+                                    <h3 className={styles.teamName}>
+                                        {`${user.secondName} ${user.firstName}`}
+                                    </h3>
+                                    <div className={styles.teamPosition}>
+                                        {user.position === 'администратор' ? 'администратор' : (user.position || 'сотрудник')}
+                                    </div>
+                                    {user.email && (
+                                        <div className={styles.teamEmailWrapper}>
+                                            <span className={styles.teamEmailIcon}>📧</span>
+                                            <div className={styles.teamEmail} title={user.email}>
+                                                {user.email}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                </>
+            )}
 
             {/* Магазины */}
-            <Row className="mb-4">
-                <Col>
-                    <h2 className={styles.sectionTitle}>🏪 Наши магазины</h2>
-                </Col>
-            </Row>
-            <Row xs={1} md={2} lg={3} className="g-4 mb-5 justify-content-center">
-                {addressShops?.map((store, index) => {
-                    return (
-                        <Col key={index}>
-                            <div className={styles.storeCard}>
-                                <h3 className={styles.storeCity}>{store.city}</h3>
-                                <div className={styles.storeAddress}>
-                                    <span className={styles.storeIcon}>📍</span>
-                                    {`ул. ${store.street}, д. ${store.house}`}
-                                </div>
-                                <div className={styles.storeSchedule}>
-                                    <span className={styles.storeIcon}>🕐</span>
-                                    Круглосуточно
-                                </div>
-                            </div>
+            {shops.length > 0 && (
+                <>
+                    <Row className="mb-4">
+                        <Col>
+                            <h2 className={styles.sectionTitle}>🏪 Наши магазины</h2>
                         </Col>
-                    )
-                })}
-            </Row>
-
-            {/* Дополнительная информация */}
-            <Row className="mb-4">
-                <Col>
-                    <div className={styles.extraInfo}>
-                        <h3 className={styles.extraTitle}>Почему выбирают нас?</h3>
-                        <p className={styles.extraText}>
-                            {infoQuestions}
-                        </p>
-                    </div>
-                </Col>
-            </Row>
+                    </Row>
+                    <Row xs={1} md={2} lg={3} className="g-4 mb-5 justify-content-center">
+                        {shops.map((store, index) => (
+                            <Col key={store.id || index}>
+                                <div className={styles.storeCard}>
+                                    <h3 className={styles.storeCity}>{store.city}</h3>
+                                    <div className={styles.storeAddress}>
+                                        <span className={styles.storeIcon}>📍</span>
+                                        <span>{`ул. ${store.street}, д. ${store.house || ''}`}</span>
+                                    </div>
+                                    <div className={styles.storeSchedule}>
+                                        <span className={styles.storeIcon}>🕐</span>
+                                        <span>Круглосуточно</span>
+                                    </div>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                </>
+            )}
         </Container>
     );
 };
