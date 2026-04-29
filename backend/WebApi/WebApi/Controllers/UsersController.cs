@@ -454,6 +454,32 @@ public sealed class UsersController(
             {
                 user.Role = newRole;
                 user = CheckPosition(user);
+                var information = await dbContext.Informations.FirstOrDefaultAsync(i => i.Users_Id == user.Id);
+                if (user.Position == "администратор" || user.Position == "сотрудник")
+                {
+                    if (information == null)
+                    {
+                        var newInformation = new InformationsModel()
+                        {
+                            AboutUs = null,
+                            Questions = null,
+                            OurMission = null,
+                            OurValues = null,
+                            Users_Id = user.Id,
+                            Addresses_Id = null
+                        };
+
+                        await dbContext.Informations.AddAsync(newInformation);
+                    }
+                }
+                else
+                {
+                    if (information != null)
+                    {
+                        dbContext.Informations.Remove(information);
+                    }
+                }
+
                 await dbContext.SaveChangesAsync();
             }
 
