@@ -23,7 +23,7 @@ public sealed class WarehousesAddressesModel
     public int? Warehouses_Id { get; set; }
 
     [JsonIgnore]
-    [DeleteBehavior(DeleteBehavior.Restrict)]
+    [DeleteBehavior(DeleteBehavior.SetNull)]
     public AddressesModel? Addresses { get; set; }
 
     [JsonIgnore]
