@@ -26,6 +26,7 @@ export interface UserData {
     age: number;
     birthday: string;
     role: string;
+    position: string;
     // Пароля здесь НЕТ!
 }
 
