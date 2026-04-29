@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
-import { getAddresses, Address, updateAddress } from '../../../../servicesApi/AddressesApi';
+import { getAddresses, Address, updateAddress, deleteAddress } from '../../../../servicesApi/AddressesApi';
 import styles from '../AdminPanel.module.css';
 import { useAuth } from '../../../../../contexts/AuthContext';
 
@@ -155,7 +155,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         if (window.confirm('Удалить адрес?')) {
             setSaving(true);
             try {
-                //await deleteAddress(id, currentUser.id);
+                await deleteAddress(id);
                 alert('Адрес удален');
                 await loadAddresses();
                 if (onRefresh) onRefresh();

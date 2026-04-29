@@ -119,3 +119,23 @@ export const updateAddress = async (addressId: number, data: {
         throw { message: 'Нет ответа от сервера', isNetworkError: true };
     }
 };
+
+export const deleteAddress = async (addressId: number): Promise<void> => {
+    try {
+        await api.delete<Address>(`/Addresses/delete-address/${addressId}`);
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
