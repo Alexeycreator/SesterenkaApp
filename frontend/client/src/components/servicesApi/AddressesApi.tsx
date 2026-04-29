@@ -28,8 +28,25 @@ export interface AddressOrder {
 };
 
 export const getAddresses = async (): Promise<Address[]> => {
-    const response = await api.get<Address[]>('/Addresses');
-    return response.data;
+    try {
+        const response = await api.get<Address[]>('/Addresses');
+        return response.data;
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
+        }
+    }
 };
 
 export const getShopAddress = async (): Promise<AddressOrder[]> => {
