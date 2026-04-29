@@ -214,6 +214,14 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Addresses_Id");
 
+                    b.Property<string>("OurMission")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("OurValues")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Questions")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -741,7 +749,7 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.DataBase.AddressesModel", "Addresses")
                         .WithMany("WarehousesAddresses")
                         .HasForeignKey("Addresses_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("WebApi.Models.DataBase.WarehousesModel", "Warehouses")
                         .WithMany("WarehousesAddresses")
