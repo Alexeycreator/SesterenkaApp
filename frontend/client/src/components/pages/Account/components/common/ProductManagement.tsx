@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Row, Col, Table, Alert, InputGroup } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+
 import { getProducts, Product } from '../../../../servicesApi/ProductsApi';
 import { getCategories, Categories } from '../../../../servicesApi/CategoriesApi';
 import { getManufacturers, Manufacturer } from '../../../../servicesApi/ManufacturersApi';
+
 import styles from '../AdminPanel.module.css';
 
 interface ProductManagementProps {
@@ -16,6 +18,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
     const [categories, setCategories] = useState<Categories[]>([]);
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [formData, setFormData] = useState({
@@ -31,8 +34,27 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
     useEffect(() => {
         if (show) {
             loadData();
+        } else {
+            resetAllStates();
         }
     }, [show]);
+
+    const resetAllStates = () => {
+        setFormData({
+            name: '',
+            partNumber: '',
+            price: 0,
+            image: '',
+            details: '',
+            categories_Id: 0,
+            manufacturers_Id: 0
+        });
+        setEditingProduct(null);
+        setSearchTerm('');
+        setProducts([]);
+        setCategories([]);
+        setManufacturers([]);
+    };
 
     const loadData = async () => {
         try {
@@ -52,12 +74,11 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         }
     };
 
-    // Фильтрация товаров по поисковому запросу (по всем полям)
     const filteredProducts = useMemo(() => {
         if (!searchTerm.trim()) return products;
-        
+
         const term = searchTerm.toLowerCase().trim();
-        return products.filter(product => 
+        return products.filter(product =>
             product.name.toLowerCase().includes(term) ||
             product.partNumber.toLowerCase().includes(term) ||
             product.price.toString().includes(term) ||
@@ -68,18 +89,24 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
     }, [products, searchTerm, categories, manufacturers]);
 
     const handleSave = async () => {
-        if (!formData.name || !formData.partNumber || formData.price <= 0) {
-            alert('Заполните обязательные поля');
+        if (!formData.name.trim() || !formData.partNumber.trim() || formData.price <= 0) {
+            alert('Заполните обязательные поля (название, артикул, цена)');
             return;
         }
 
+        if (!formData.categories_Id || !formData.manufacturers_Id) {
+            alert('Выберите категорию и бренд');
+            return;
+        }
+
+        setSaving(true);
         try {
             if (editingProduct) {
                 //await updateProduct(editingProduct.id, formData);
-                alert('Товар обновлен');
+                alert('Товар успешно обновлен');
             } else {
                 //await createProduct(formData);
-                alert('Товар добавлен');
+                alert('Товар успешно добавлен');
             }
             resetForm();
             await loadData();
@@ -87,6 +114,8 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         } catch (error) {
             console.error('Ошибка сохранения:', error);
             alert('Не удалось сохранить товар');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -103,29 +132,48 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         setEditingProduct(null);
     };
 
+    const clearForm = () => {
+        setFormData({
+            name: '',
+            partNumber: '',
+            price: 0,
+            image: '',
+            details: '',
+            categories_Id: 0,
+            manufacturers_Id: 0
+        });
+        if (editingProduct) {
+            setEditingProduct(null);
+        }
+        alert('Форма очищена');
+    };
+
     const handleEdit = (product: Product) => {
         setEditingProduct(product);
-        // setFormData({
-        //     name: product.name,
-        //     partNumber: product.partNumber,
-        //     price: product.price,
-        //     image: product.image || '',
-        //     details: product.details || '',
-        //     categories_Id: product.categories_Id,
-        //     manufacturers_Id: product.manufacturers_Id
-        // });
+        setFormData({
+            name: product.name,
+            partNumber: product.partNumber,
+            price: product.price,
+            image: product.image || '',
+            details: product.details || '',
+            categories_Id: product.categories_Id ?? 0,
+            manufacturers_Id: product.manufacturers_Id ?? 0
+        });
     };
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить товар?')) {
+            setSaving(true);
             try {
                 //await deleteProduct(id);
-                alert('Товар удален');
+                alert('Товар успешно удален');
                 await loadData();
                 if (onRefresh) onRefresh();
             } catch (error) {
                 console.error('Ошибка удаления:', error);
                 alert('Не удалось удалить товар');
+            } finally {
+                setSaving(false);
             }
         }
     };
@@ -134,8 +182,21 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         setSearchTerm('');
     };
 
+    const handleClose = () => {
+        resetAllStates();
+        onHide();
+    };
+
+    const getCategoryName = (id: number) => {
+        return categories.find(c => c.id === id)?.name || '—';
+    };
+
+    const getManufacturerName = (id: number) => {
+        return manufacturers.find(m => m.id === id)?.name || '—';
+    };
+
     return (
-        <Modal show={show} onHide={onHide} size="xl" centered>
+        <Modal show={show} onHide={handleClose} size="xl" centered>
             <Modal.Header closeButton>
                 <Modal.Title>Управление товарами</Modal.Title>
             </Modal.Header>
@@ -144,17 +205,16 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                     <Col md={5}>
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h5>Список товаров</h5>
-                            <Button 
-                                size="sm" 
-                                variant="outline-primary" 
+                            <Button
+                                size="sm"
+                                variant="outline-primary"
                                 onClick={loadData}
                                 disabled={loading}
                             >
                                 🔄 Обновить
                             </Button>
                         </div>
-                        
-                        {/* Поисковая строка */}
+
                         <InputGroup className="mb-3">
                             <Form.Control
                                 type="text"
@@ -168,8 +228,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                 </Button>
                             )}
                         </InputGroup>
-                        
-                        {/* Результаты поиска */}
+
                         <div className={styles.itemsList}>
                             {loading ? (
                                 <p className="text-center">Загрузка...</p>
@@ -186,25 +245,26 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                         <div key={product.id} className={styles.listItem}>
                                             <div className={styles.itemInfo}>
                                                 <strong>{product.name}</strong>
-                                                <span className="text-muted">Арт: {product.partNumber}</span>
-                                                <span>{product.price} ₽</span>
-                                                <span className="text-muted small">
-                                                    {categories.find(c => c.id === product.categories_Id)?.name} / 
-                                                    {manufacturers.find(m => m.id === product.manufacturers_Id)?.name}
+                                                <span className={styles.itemArticle}>Арт: {product.partNumber}</span>
+                                                <span className={styles.itemPrice}>{product.price} ₽</span>
+                                                <span className={styles.itemMeta}>
+                                                    {/* {getCategoryName(product.categories_Id)} / {getManufacturerName(product.manufacturers_Id)} */}
                                                 </span>
                                             </div>
                                             <div className={styles.itemActions}>
-                                                <Button 
-                                                    size="sm" 
-                                                    variant="outline-primary" 
+                                                <Button
+                                                    size="sm"
+                                                    className={styles.editBtn}
                                                     onClick={() => handleEdit(product)}
+                                                    disabled={saving}
                                                 >
                                                     ✎
                                                 </Button>
-                                                <Button 
-                                                    size="sm" 
-                                                    variant="outline-danger" 
+                                                <Button
+                                                    size="sm"
+                                                    className={styles.deleteBtn}
                                                     onClick={() => handleDelete(product.id)}
+                                                    disabled={saving}
                                                 >
                                                     ✕
                                                 </Button>
@@ -216,7 +276,14 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                         </div>
                     </Col>
                     <Col md={7}>
-                        <h5>{editingProduct ? 'Редактирование товара' : 'Добавление товара'}</h5>
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <h5>{editingProduct ? 'Редактирование товара' : 'Добавление товара'}</h5>
+                            {!editingProduct && (
+                                <Button size="sm" variant="outline-secondary" onClick={clearForm} disabled={saving}>
+                                    🗑️ Очистить
+                                </Button>
+                            )}
+                        </div>
                         <Form>
                             <Row>
                                 <Col md={6}>
@@ -227,6 +294,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             placeholder="Введите название"
+                                            disabled={saving}
                                         />
                                     </Form.Group>
                                 </Col>
@@ -238,6 +306,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                             value={formData.partNumber}
                                             onChange={(e) => setFormData({ ...formData, partNumber: e.target.value })}
                                             placeholder="Введите артикул"
+                                            disabled={saving}
                                         />
                                     </Form.Group>
                                 </Col>
@@ -251,6 +320,9 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                             value={formData.price}
                                             onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
                                             placeholder="Введите цену"
+                                            min="0"
+                                            step="0.01"
+                                            disabled={saving}
                                         />
                                     </Form.Group>
                                 </Col>
@@ -261,8 +333,10 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                             type="text"
                                             value={formData.image}
                                             onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                            placeholder="https://..."
+                                            placeholder="https://example.com/image.jpg"
+                                            disabled={saving}
                                         />
+                                        <small className="text-muted">Ссылка на изображение товара</small>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -273,6 +347,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                         <Form.Select
                                             value={formData.categories_Id}
                                             onChange={(e) => setFormData({ ...formData, categories_Id: Number(e.target.value) })}
+                                            disabled={saving}
                                         >
                                             <option value={0}>Выберите категорию</option>
                                             {categories.map(cat => (
@@ -287,6 +362,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                         <Form.Select
                                             value={formData.manufacturers_Id}
                                             onChange={(e) => setFormData({ ...formData, manufacturers_Id: Number(e.target.value) })}
+                                            disabled={saving}
                                         >
                                             <option value={0}>Выберите бренд</option>
                                             {manufacturers.map(m => (
@@ -300,23 +376,34 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                 <Form.Label>Описание</Form.Label>
                                 <Form.Control
                                     as="textarea"
-                                    rows={3}
+                                    rows={4}
                                     value={formData.details}
                                     onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                                     placeholder="Введите описание товара"
+                                    disabled={saving}
                                 />
                             </Form.Group>
+                            <div className="d-flex gap-2 mt-3">
+                                {!editingProduct && (
+                                    <Button variant="secondary" onClick={clearForm} className="flex-grow-1" disabled={saving}>
+                                        🗑️ Очистить форму
+                                    </Button>
+                                )}
+                                <Button
+                                    className={styles.saveBtn}
+                                    onClick={handleSave}
+                                    disabled={saving || !formData.name.trim() || !formData.partNumber.trim() || formData.price <= 0 || !formData.categories_Id || !formData.manufacturers_Id}
+                                    style={{ flex: editingProduct ? 1 : 2 }}
+                                >
+                                    {saving ? 'Сохранение...' : (editingProduct ? 'Сохранить изменения' : '➕ Добавить товар')}
+                                </Button>
+                            </div>
                         </Form>
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>Закрыть</Button>
-                {editingProduct ? (
-                    <Button variant="primary" onClick={handleSave}>Сохранить изменения</Button>
-                ) : (
-                    <Button variant="primary" onClick={handleSave}>Добавить товар</Button>
-                )}
+                <Button variant="secondary" onClick={handleClose} disabled={saving}>Закрыть</Button>
             </Modal.Footer>
         </Modal>
     );

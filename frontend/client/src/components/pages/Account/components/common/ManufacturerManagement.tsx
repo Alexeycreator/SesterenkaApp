@@ -14,6 +14,7 @@ interface ManufacturerManagementProps {
 export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ show, onHide, onRefresh }) => {
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [editingManufacturer, setEditingManufacturer] = useState<Manufacturer | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [formData, setFormData] = useState({ name: '' });
@@ -21,8 +22,17 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
     useEffect(() => {
         if (show) {
             loadManufacturers();
+        } else {
+            resetAllStates();
         }
     }, [show]);
+
+    const resetAllStates = () => {
+        setFormData({ name: '' });
+        setEditingManufacturer(null);
+        setSearchTerm('');
+        setManufacturers([]);
+    };
 
     const loadManufacturers = async () => {
         try {
@@ -43,18 +53,19 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
     }, [manufacturers, searchTerm]);
 
     const handleSave = async () => {
-        if (!formData.name) {
+        if (!formData.name.trim()) {
             alert('Введите название бренда');
             return;
         }
 
+        setSaving(true);
         try {
             if (editingManufacturer) {
                 //await updateManufacturer(editingManufacturer.id, formData);
-                alert('Бренд обновлен');
+                alert('Бренд успешно обновлен');
             } else {
                 //await createManufacturer(formData);
-                alert('Бренд добавлен');
+                alert('Бренд успешно добавлен');
             }
             resetForm();
             await loadManufacturers();
@@ -62,12 +73,22 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
         } catch (error) {
             console.error('Ошибка сохранения:', error);
             alert('Не удалось сохранить бренд');
+        } finally {
+            setSaving(false);
         }
     };
 
     const resetForm = () => {
         setFormData({ name: '' });
         setEditingManufacturer(null);
+    };
+
+    const clearForm = () => {
+        setFormData({ name: '' });
+        if (editingManufacturer) {
+            setEditingManufacturer(null);
+        }
+        alert('Форма очищена');
     };
 
     const handleEdit = (manufacturer: Manufacturer) => {
@@ -77,22 +98,30 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить бренд?')) {
+            setSaving(true);
             try {
                 //await deleteManufacturer(id);
-                alert('Бренд удален');
+                alert('Бренд успешно удален');
                 await loadManufacturers();
                 if (onRefresh) onRefresh();
             } catch (error) {
                 console.error('Ошибка удаления:', error);
                 alert('Не удалось удалить бренд');
+            } finally {
+                setSaving(false);
             }
         }
     };
 
     const clearSearch = () => setSearchTerm('');
 
+    const handleClose = () => {
+        resetAllStates();
+        onHide();
+    };
+
     return (
-        <Modal show={show} onHide={onHide} size="lg" centered>
+        <Modal show={show} onHide={handleClose} size="lg" centered>
             <Modal.Header closeButton>
                 <Modal.Title>Управление брендами</Modal.Title>
             </Modal.Header>
@@ -126,8 +155,8 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
                                         <div key={m.id} className={styles.listItem}>
                                             <div className={styles.itemInfo}><strong>{m.name}</strong></div>
                                             <div className={styles.itemActions}>
-                                                <Button size="sm" className={styles.editBtn} onClick={() => handleEdit(m)}>✎</Button>
-                                                <Button size="sm" className={styles.deleteBtn} onClick={() => handleDelete(m.id)}>✕</Button>
+                                                <Button size="sm" className={styles.editBtn} onClick={() => handleEdit(m)} disabled={saving}>✎</Button>
+                                                <Button size="sm" className={styles.deleteBtn} onClick={() => handleDelete(m.id)} disabled={saving}>✕</Button>
                                             </div>
                                         </div>
                                     ))}
@@ -136,7 +165,14 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
                         </div>
                     </Col>
                     <Col md={7}>
-                        <h5>{editingManufacturer ? 'Редактирование бренда' : 'Добавление бренда'}</h5>
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <h5>{editingManufacturer ? 'Редактирование бренда' : 'Добавление бренда'}</h5>
+                            {!editingManufacturer && (
+                                <Button size="sm" variant="outline-secondary" onClick={clearForm} disabled={saving}>
+                                    🗑️ Очистить
+                                </Button>
+                            )}
+                        </div>
                         <Form>
                             <Form.Group className="mb-3">
                                 <Form.Label>Название бренда *</Form.Label>
@@ -145,17 +181,30 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="Введите название бренда"
+                                    disabled={saving}
                                 />
                             </Form.Group>
+                            <div className="d-flex gap-2 mt-3">
+                                {!editingManufacturer && (
+                                    <Button variant="secondary" onClick={clearForm} className="flex-grow-1" disabled={saving}>
+                                        🗑️ Очистить форму
+                                    </Button>
+                                )}
+                                <Button
+                                    className={styles.saveBtn}
+                                    onClick={handleSave}
+                                    disabled={saving || !formData.name.trim()}
+                                    style={{ flex: editingManufacturer ? 1 : 2 }}
+                                >
+                                    {saving ? 'Сохранение...' : (editingManufacturer ? 'Сохранить изменения' : '➕ Добавить бренд')}
+                                </Button>
+                            </div>
                         </Form>
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>Закрыть</Button>
-                <Button className={styles.saveBtn} onClick={handleSave}>
-                    {editingManufacturer ? 'Сохранить изменения' : 'Добавить бренд'}
-                </Button>
+                <Button variant="secondary" onClick={handleClose} disabled={saving}>Закрыть</Button>
             </Modal.Footer>
         </Modal>
     );
