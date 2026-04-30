@@ -63,66 +63,73 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
         }
     }
 
-    [HttpPost]
-    public async Task<ActionResult<AddressesModel>> CreateAddress(AddressesModel address)
+    [HttpPost("create-address")]
+    public async Task<ActionResult<AddressesModel>> CreateAddress([FromBody] AddressesModel address,
+        [FromQuery] int userId)
     {
         var errorMessage = new List<string>();
-        if (string.IsNullOrWhiteSpace(address.Region))
+        var user = await dbContext.Users.FindAsync(userId);
+        if (user != null)
         {
-            errorMessage.Add($"Регион обязателен для заполнения");
-        }
-
-        if (string.IsNullOrWhiteSpace(address.City))
-        {
-            errorMessage.Add($"Город обязателен для заполнения");
-        }
-
-        if (string.IsNullOrWhiteSpace(address.Street))
-        {
-            errorMessage.Add($"Улица обязательна для заполнения");
-        }
-
-        if (string.IsNullOrWhiteSpace(address.House))
-        {
-            errorMessage.Add($"Номер дома обязателен для заполнения");
-        }
-
-        if (errorMessage.Any())
-        {
-            return BadRequest(new
+            if (user.Role == "admin" || user.Role == "employee")
             {
-                StatusCode = 400,
-                Message = "Ошибка валидации",
-                Errors = errorMessage,
-                Timestamp = DateTime.UtcNow,
-            });
-        }
-
-        var existsFullAddress = await dbContext.Addresses.AnyAsync(a =>
-            a.Region == address.Region && a.City == address.City && a.Street == address.Street &&
-            a.House == address.House);
-
-        if (existsFullAddress)
-        {
-            return Conflict(new
-            {
-                StatusCode = 409,
-                Message = "Такой адрес уже существует!",
-                ExistingClient = new
+                if (string.IsNullOrWhiteSpace(address.Region))
                 {
-                    address.Region,
-                    address.City,
-                    address.Street,
-                    address.House
-                },
-                Timestamp = DateTime.UtcNow
-            });
+                    errorMessage.Add($"Регион обязателен для заполнения");
+                }
+
+                if (string.IsNullOrWhiteSpace(address.City))
+                {
+                    errorMessage.Add($"Город обязателен для заполнения");
+                }
+
+                if (string.IsNullOrWhiteSpace(address.Street))
+                {
+                    errorMessage.Add($"Улица обязательна для заполнения");
+                }
+
+                if (errorMessage.Any())
+                {
+                    return BadRequest(new
+                    {
+                        StatusCode = 400,
+                        Message = "Ошибка валидации",
+                        Errors = errorMessage,
+                        Timestamp = DateTime.Now,
+                    });
+                }
+
+                var existsFullAddress = await dbContext.Addresses.AnyAsync(a =>
+                    a.Region == address.Region && a.City == address.City && a.Street == address.Street &&
+                    a.House == address.House);
+
+                if (existsFullAddress)
+                {
+                    return Conflict(new
+                    {
+                        StatusCode = 409,
+                        Message = "Такой адрес уже существует!",
+                        ExistingClient = new
+                        {
+                            address.Region,
+                            address.City,
+                            address.Street,
+                            address.House
+                        },
+                        Timestamp = DateTime.Now
+                    });
+                }
+
+                dbContext.Addresses.Add(address);
+                await dbContext.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetAddresses), new { id = address.Id }, address);
+            }
+
+            errorMessage.Add($"У пользователя {user.Login} недостаточно прав");
         }
 
-        dbContext.Addresses.Add(address);
-        await dbContext.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetAddresses), new { id = address.Id }, address);
+        return BadRequest(errorMessage);
     }
 
     [HttpPut("update-address")]
