@@ -139,3 +139,24 @@ export const deleteAddress = async (addressId: number): Promise<void> => {
         }
     }
 };
+
+export const createAddress = async (addressData: Address, userId: number): Promise<Address> => {
+    try {
+        const response = await api.post<Address>(`/Addresses/create-address?userId=${userId}`, addressData);
+        return response.data;
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Не удалось создать адрес',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};

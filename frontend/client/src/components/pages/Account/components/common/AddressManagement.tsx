@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
-import { getAddresses, Address, updateAddress, deleteAddress } from '../../../../servicesApi/AddressesApi';
+import { getAddresses, Address, updateAddress, deleteAddress, createAddress } from '../../../../servicesApi/AddressesApi';
 import styles from '../AdminPanel.module.css';
 import { useAuth } from '../../../../../contexts/AuthContext';
 
@@ -36,7 +36,6 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         if (show) {
             loadAddresses();
         } else {
-            // При закрытии модального окна сбрасываем все состояния
             resetAllStates();
         }
     }, [show]);
@@ -70,6 +69,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         if (!searchTerm.trim()) return addresses;
         const term = searchTerm.toLowerCase().trim();
         return addresses.filter(addr =>
+            String(addr.region || '').toLowerCase().includes(term) ||
             String(addr.city).toLowerCase().includes(term) ||
             String(addr.street).toLowerCase().includes(term)
         );
@@ -93,18 +93,22 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
 
         setSaving(true);
         try {
+            // Формируем данные для отправки
             const addressData: any = {
                 city: formData.city,
                 street: formData.street
             };
 
+            // Добавляем область/регион, если заполнено
             if (formData.region && formData.region.trim()) {
                 addressData.region = formData.region;
             }
+            // Добавляем номер дома, если заполнено
             if (formData.house && formData.house.trim()) {
                 addressData.house = formData.house;
             }
 
+            // Только администратор может устанавливать isShop
             if (isAdmin) {
                 addressData.isShop = formData.isShop;
             }
@@ -117,7 +121,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                 await updateAddress(editingAddress.id, addressData, currentUser.id);
                 alert('Адрес успешно обновлен');
             } else {
-                //await createAddress(addressData, currentUser.id);
+                await createAddress(addressData, currentUser.id);
                 alert('Адрес успешно добавлен');
             }
             resetForm();
@@ -227,7 +231,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                         <InputGroup className="mb-3">
                             <Form.Control
                                 type="text"
-                                placeholder="🔍 Поиск по городу, улице..."
+                                placeholder="🔍 Поиск по области, городу, улице..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -253,7 +257,10 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                                     {filteredAddresses.map(addr => (
                                         <div key={addr.id} className={styles.listItem}>
                                             <div className={styles.itemInfo}>
-                                                <strong>{String(addr.city)}, {String(addr.street)} {addr.house ? String(addr.house) : ''}</strong>
+                                                <strong>
+                                                    {addr.region ? `${addr.region}, ` : ''}
+                                                    {String(addr.city)}, {String(addr.street)} {addr.house ? String(addr.house) : ''}
+                                                </strong>
                                                 {addr.isShop && (
                                                     <span className={styles.shopBadge}>🏪 Магазин</span>
                                                 )}
@@ -300,6 +307,20 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                                 <Row>
                                     <Col md={12}>
                                         <Form.Group className="mb-3">
+                                            <Form.Label>Область / Регион</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                value={formData.region}
+                                                onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                                                placeholder="Введите область или регион"
+                                                disabled={saving}
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md={12}>
+                                        <Form.Group className="mb-3">
                                             <Form.Label>Город *</Form.Label>
                                             <Form.Control
                                                 type="text"
@@ -333,7 +354,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                                                 type="text"
                                                 value={formData.house}
                                                 onChange={(e) => setFormData({ ...formData, house: e.target.value })}
-                                                placeholder="Номер дома"
+                                                placeholder="Номер дома (необязательно)"
                                                 disabled={saving}
                                             />
                                         </Form.Group>
