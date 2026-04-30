@@ -35,8 +35,24 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
     useEffect(() => {
         if (show) {
             loadAddresses();
+        } else {
+            // При закрытии модального окна сбрасываем все состояния
+            resetAllStates();
         }
     }, [show]);
+
+    const resetAllStates = () => {
+        setFormData({
+            region: '',
+            city: '',
+            street: '',
+            house: '',
+            isShop: false
+        });
+        setEditingAddress(null);
+        setSearchTerm('');
+        setAddresses([]);
+    };
 
     const loadAddresses = async () => {
         try {
@@ -126,6 +142,20 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         setEditingAddress(null);
     };
 
+    const clearForm = () => {
+        setFormData({
+            region: '',
+            city: '',
+            street: '',
+            house: '',
+            isShop: false
+        });
+        if (editingAddress) {
+            setEditingAddress(null);
+        }
+        alert('Форма очищена');
+    };
+
     const handleEdit = (address: Address) => {
         if (!canEdit) {
             alert('У вас нет прав для редактирования адресов');
@@ -170,8 +200,13 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
 
     const clearSearch = () => setSearchTerm('');
 
+    const handleClose = () => {
+        resetAllStates();
+        onHide();
+    };
+
     return (
-        <Modal show={show} onHide={onHide} size="lg" centered>
+        <Modal show={show} onHide={handleClose} size="lg" centered>
             <Modal.Header closeButton>
                 <Modal.Title>Управление адресами магазинов</Modal.Title>
             </Modal.Header>
@@ -253,7 +288,14 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                     </Col>
                     {(canAdd || canEdit) && (
                         <Col md={6}>
-                            <h5>{editingAddress ? 'Редактирование адреса' : 'Добавление адреса'}</h5>
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <h5>{editingAddress ? 'Редактирование адреса' : 'Добавление адреса'}</h5>
+                                {!editingAddress && (
+                                    <Button size="sm" variant="outline-secondary" onClick={clearForm}>
+                                        🗑️ Очистить
+                                    </Button>
+                                )}
+                            </div>
                             <Form>
                                 <Row>
                                     <Col md={12}>
@@ -320,22 +362,29 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                                         </Col>
                                     </Row>
                                 )}
+
+                                <div className="d-flex gap-2 mt-3">
+                                    {!editingAddress && (
+                                        <Button variant="secondary" onClick={clearForm} className="flex-grow-1" disabled={saving}>
+                                            🗑️ Очистить форму
+                                        </Button>
+                                    )}
+                                    <Button
+                                        className={styles.saveBtn}
+                                        onClick={handleSave}
+                                        disabled={saving}
+                                        style={{ flex: editingAddress ? 1 : 2 }}
+                                    >
+                                        {saving ? 'Сохранение...' : (editingAddress ? 'Сохранить изменения' : '➕ Добавить адрес')}
+                                    </Button>
+                                </div>
                             </Form>
                         </Col>
                     )}
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide} disabled={saving}>Закрыть</Button>
-                {(canAdd || (editingAddress && canEdit)) && (
-                    <Button
-                        className={styles.saveBtn}
-                        onClick={handleSave}
-                        disabled={saving}
-                    >
-                        {saving ? 'Сохранение...' : (editingAddress ? 'Сохранить изменения' : 'Добавить адрес')}
-                    </Button>
-                )}
+                <Button variant="secondary" onClick={handleClose} disabled={saving}>Закрыть</Button>
             </Modal.Footer>
         </Modal>
     );
