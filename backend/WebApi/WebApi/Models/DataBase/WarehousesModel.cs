@@ -9,7 +9,7 @@ public sealed class WarehousesModel
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; private set; }
+    public int Id { get; set; }
 
     [Required] public int Code { get; set; }
     [Required] [MaxLength(100)] public string Name { get; set; }
