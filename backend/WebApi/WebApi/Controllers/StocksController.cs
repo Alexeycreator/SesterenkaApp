@@ -110,7 +110,7 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPut("update-stock")]
-    public async Task<IActionResult> CreateStock(int stockId, int quantity)
+    public async Task<IActionResult> UpdateStock(int stockId, int quantity)
     {
         try
         {
