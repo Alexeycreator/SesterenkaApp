@@ -136,4 +136,53 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
             return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
         }
     }
+
+    [HttpDelete("delete-stock")]
+    public async Task<IActionResult> DeleteStock(int stockId)
+    {
+        try
+        {
+            var stocks = await dbContext.Stocks.FindAsync(stockId);
+            if (stocks != null)
+            {
+                dbContext.Stocks.Remove(stocks);
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    [HttpPost("create-stock")]
+    public async Task<IActionResult> CreateStock([FromBody] StocksModel request)
+    {
+        try
+        {
+            var stocks = await dbContext.Stocks.Where(s => s.Products_Id == request.Products_Id && s.Warehouses_Id == request.Warehouses_Id)
+                .ToListAsync();
+            if (stocks.Count > 0)
+            {
+                return BadRequest();
+            }
+
+            var newStock = new StocksModel()
+            {
+                Products_Id = request.Products_Id,
+                Warehouses_Id = request.Warehouses_Id,
+                Quantity = request.Quantity
+            };
+            await dbContext.Stocks.AddAsync(newStock);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
 }
