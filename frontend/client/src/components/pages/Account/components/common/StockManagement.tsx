@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 
-import { getManagementStocks } from '../../../../servicesApi/StocksApi';
+import { getManagementStocks, updateStock } from '../../../../servicesApi/StocksApi';
 
 import styles from '../AdminPanel.module.css';
 
@@ -98,9 +98,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
 
         try {
             if (editingStock) {
-                // await updateStock(editingStock.id, {
-                //     quantity: formData.quantity
-                // });
+                await updateStock(editingStock.id, formData.quantity);
                 alert('Остатки обновлены');
             } else {
                 // await createStock({

@@ -119,3 +119,23 @@ export const getManagementStocks = async (): Promise<StockManagementDto> => {
         }
     }
 };
+
+export const updateStock = async (stockId: number, quantity: number): Promise<void> => {
+    try {
+        await api.put(`/Stocks/update-stock?stockId=${stockId}&quantity=${quantity}`);
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
