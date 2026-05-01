@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 
-import { getManagementStocks, updateStock } from '../../../../servicesApi/StocksApi';
+import { createStock, deleteStock, getManagementStocks, updateStock } from '../../../../servicesApi/StocksApi';
 
 import styles from '../AdminPanel.module.css';
 
@@ -101,11 +101,11 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                 await updateStock(editingStock.id, formData.quantity);
                 alert('Остатки обновлены');
             } else {
-                // await createStock({
-                //     productId: formData.productId,
-                //     warehouseId: formData.warehouseId,
-                //     quantity: formData.quantity
-                // });
+                await createStock({
+                    products_Id: formData.productId,
+                    warehouses_Id: formData.warehouseId,
+                    quantity: formData.quantity
+                });
                 alert('Остатки добавлены');
             }
             resetForm();
@@ -142,7 +142,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить запись об остатках?')) {
             try {
-                // await deleteStock(id);
+                await deleteStock(id);
                 alert('Запись удалена');
                 await loadData();
                 if (onRefresh) onRefresh();

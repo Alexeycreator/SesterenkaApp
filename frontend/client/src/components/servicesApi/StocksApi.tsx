@@ -98,7 +98,6 @@ export const getStockWarehousesQuantity = async (): Promise<StockWarehousesQuant
 export const getManagementStocks = async (): Promise<StockManagementDto> => {
     try {
         const response = await api.get<StockManagementDto>('/Stocks/management-stocks');
-        // Так как сервер возвращает массив, берем первый элемент
         const data = Array.isArray(response.data) && response.data.length > 0
             ? response.data[0]
             : response.data;
@@ -130,6 +129,50 @@ export const updateStock = async (stockId: number, quantity: number): Promise<vo
             throw {
                 ...error,
                 serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
+
+export const createStock = async (stockData: {
+    products_Id: number;
+    warehouses_Id: number;
+    quantity: number;
+}): Promise<void> => {
+    try {
+        await api.post('/Stocks/create-stock', stockData);
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Не удалось создать остаток',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
+
+export const deleteStock = async (stockId: number): Promise<void> => {
+    try {
+        await api.delete(`/Stocks/delete-stock?stockId=${stockId}`);
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Не удалось удалить остаток',
                 statusCode: error.response.status
             };
         } else if (error.request) {
