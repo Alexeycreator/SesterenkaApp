@@ -108,4 +108,32 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
             return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
         }
     }
+
+    [HttpPut("update-stock")]
+    public async Task<IActionResult> CreateStock(int stockId, int quantity)
+    {
+        try
+        {
+            var stocks = await dbContext.Stocks.FindAsync(stockId);
+            if (stocks != null)
+            {
+                if (quantity <= 0)
+                {
+                    return BadRequest();
+                }
+
+                stocks.Quantity = quantity;
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
 }
