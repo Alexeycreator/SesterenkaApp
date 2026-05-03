@@ -10,7 +10,7 @@ public sealed class ProductsModel
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; private set; }
+    public int Id { get; set; }
 
     [Required] [MaxLength(100)] public string Name { get; set; }
     [Required] [MaxLength(100)] public string PartNumber { get; set; }

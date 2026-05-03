@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client.Utils;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
 using WebApi.Models.DTOs.Product;
+using WebApi.Models.DTOs.Product.ControlPanel;
 
 namespace WebApi.Controllers;
 
@@ -85,7 +87,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
             return StatusCode(500, new { message = "Ошибка получения остатков по складам", error = ex.Message });
         }
     }
-    
+
     [HttpGet("catalog-data")]
     public async Task<IActionResult> GetCatalogData()
     {
@@ -108,7 +110,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
                 }).ToList()
             })
             .ToListAsync();
-    
+
         return Ok(new
         {
             products,
@@ -116,5 +118,224 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
             manufacturers,
             stocks
         });
+    }
+
+    [HttpGet("admin-or-employee-panel-control-products")]
+    public async Task<IActionResult> GetControlProducts()
+    {
+        try
+        {
+            var products = await dbContext.Products.ToListAsync();
+            var categories = await dbContext.Categories.ToListAsync();
+            var manufacturers = await dbContext.Manufacturers.ToListAsync();
+
+            if (!products.Any())
+            {
+                return NotFound(new { message = "Данные о продуктах пустые" });
+            }
+
+            if (!categories.Any())
+            {
+                return NotFound(new { message = "Данные о категориях пустые" });
+            }
+
+            if (!manufacturers.Any())
+            {
+                return NotFound(new { message = "Данные о брендах пустые" });
+            }
+
+            var responseDataProducts = new ControlProductsDataDto()
+            {
+                Products = products,
+                Categories = categories,
+                Manufacturers = manufacturers
+            };
+
+            return Ok(responseDataProducts);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    [HttpPost("admin-or-employee-panel-create-product")]
+    public async Task<IActionResult> CreateProductControlPanel([FromBody] ProductsModel? request)
+    {
+        try
+        {
+            if (request == null)
+            {
+                return BadRequest(new { message = "Данные пустые" });
+            }
+
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                return BadRequest(new { message = "Название товара не может быть пустым" });
+            }
+
+            if (string.IsNullOrEmpty(request.PartNumber))
+            {
+                return BadRequest(new { message = "Артикул товара не может быть пустым" });
+            }
+
+            if (request.Price <= 0)
+            {
+                return BadRequest(new { message = "Цена товара не может быть отрицательной или равна 0" });
+            }
+
+            var existingProduct = await dbContext.Products.FirstOrDefaultAsync(p => p.PartNumber == request.PartNumber);
+            if (existingProduct != null)
+            {
+                return Conflict(new { message = $"Товар с артикулом '{request.PartNumber}' уже существует" });
+            }
+
+            if (request.Categories_Id.HasValue)
+            {
+                var category = await dbContext.Categories.FindAsync(request.Categories_Id.Value);
+                if (category == null)
+                {
+                    return BadRequest(new { message = "Указанная категория не существует" });
+                }
+            }
+
+            if (request.Manufacturers_Id.HasValue)
+            {
+                var manufacturer = await dbContext.Manufacturers.FindAsync(request.Manufacturers_Id.Value);
+                if (manufacturer == null)
+                {
+                    return BadRequest(new { message = "Указанный бренд не существует" });
+                }
+            }
+
+            var newProduct = new ProductsModel()
+            {
+                Name = request.Name,
+                PartNumber = request.PartNumber,
+                Price = request.Price,
+                Details = request.Details,
+                Image = string.IsNullOrEmpty(request.Image)
+                    ? "Images/Products/Default/default_product.jpg"
+                    : request.Image.Trim(),
+                Categories_Id = request.Categories_Id,
+                Manufacturers_Id = request.Manufacturers_Id
+            };
+
+            await dbContext.Products.AddAsync(newProduct);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Товар успешно создан" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    [HttpPut("admin-or-employee-panel-update-product")]
+    public async Task<IActionResult> UpdateProductControlPanel(int productId, ProductsModel? request)
+    {
+        try
+        {
+            if (request == null)
+            {
+                return BadRequest(new { message = "Данные не предоставлены" });
+            }
+
+            var product = await dbContext.Products.FindAsync(productId);
+            if (product == null)
+            {
+                return NotFound(new { message = "Товар не найден" });
+            }
+
+            if (request.Price <= 0)
+            {
+                return BadRequest(new { message = "Цена товара должна быть больше 0" });
+            }
+            else
+            {
+                product.Price = request.Price;
+            }
+
+            if (!string.IsNullOrEmpty(request.PartNumber) && request.PartNumber != product.PartNumber)
+            {
+                var existingProduct = await dbContext.Products
+                    .AnyAsync(p => p.PartNumber == request.PartNumber && p.Id != productId);
+
+                if (existingProduct)
+                {
+                    return Conflict(new { message = $"Товар с артикулом '{request.PartNumber}' уже существует" });
+                }
+
+                product.PartNumber = request.PartNumber;
+            }
+
+            if (request.Categories_Id.HasValue && request.Categories_Id != product.Categories_Id)
+            {
+                var category = await dbContext.Categories.FindAsync(request.Categories_Id.Value);
+                if (category == null)
+                {
+                    return BadRequest(new { message = "Указанная категория не существует" });
+                }
+
+                product.Categories_Id = request.Categories_Id;
+            }
+
+            if (request.Manufacturers_Id.HasValue && request.Manufacturers_Id != product.Manufacturers_Id)
+            {
+                var manufacturer = await dbContext.Manufacturers.FindAsync(request.Manufacturers_Id.Value);
+                if (manufacturer == null)
+                {
+                    return BadRequest(new { message = "Указанный бренд не существует" });
+                }
+
+                product.Manufacturers_Id = request.Manufacturers_Id;
+            }
+
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                product.Name = request.Name;
+            }
+
+            if (!string.IsNullOrEmpty(request.Details))
+            {
+                product.Details = request.Details;
+            }
+
+            if (!string.IsNullOrEmpty(request.Image))
+            {
+                product.Image = request.Image;
+            }
+            
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Товар успешно обновлен" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    [HttpDelete("admin-or-employee-panel-delete-product")]
+    public async Task<IActionResult> DeleteProductControlPanel(int productId)
+    {
+        try
+        {
+            var product = await dbContext.Products.FindAsync(productId);
+            if (product == null)
+            {
+                return NotFound(new { message = "Товар не найден" });
+            }
+
+            dbContext.Products.Remove(product);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
     }
 }
