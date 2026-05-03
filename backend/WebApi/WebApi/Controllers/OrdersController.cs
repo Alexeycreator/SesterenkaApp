@@ -286,4 +286,31 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
             return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }
+
+    [HttpPut("update-status-order")]
+    public async Task<IActionResult> UpdateStatusOrder([FromBody] UpdateStatusOrderDto? request)
+    {
+        try
+        {
+            if (request == null)
+            {
+                return BadRequest(new { message = "Данные пустые" });
+            }
+
+            var order = await dbContext.Orders.FindAsync(request.Id);
+            if (order == null)
+            {
+                return NotFound(new { message = "Такого заказа не существует" });
+            }
+
+            order.Status = request.Status;
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Статус заказа успешно обновлен" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
+        }
+    }
 }

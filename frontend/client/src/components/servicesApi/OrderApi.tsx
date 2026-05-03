@@ -55,7 +55,7 @@ export interface AddOrder {
     orderItems: OrderItemsOrderDataDto[]
 };
 
-export interface ProductsCurrentOrder{
+export interface ProductsCurrentOrder {
     id: number;
     quantity: number;
     price: number;
@@ -76,6 +76,11 @@ export interface CurrentOrder {
     products: ProductsCurrentOrder[];
     totalPriceOrder: number;
 }
+
+export interface UpdateStatusOrderDto {
+    id: number;
+    status: string;
+};
 
 // получение данных всех заказов
 export const getOrderData = async (): Promise<Order[]> => {
@@ -156,10 +161,34 @@ export const createOrder = async (orderData: AddOrder): Promise<AddOrder> => {
 };
 
 // вывод информации о конкретной заказе
-export const getCurrentOrderData = async(orderId: number):Promise<CurrentOrder>=>{
-try {
+export const getCurrentOrderData = async (orderId: number): Promise<CurrentOrder> => {
+    try {
         const response = await api.get<CurrentOrder>(`Orders/current-order?id=${orderId}`);
         return response.data;
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+
+            // eslint-disable-next-line no-throw-literal
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            // eslint-disable-next-line no-throw-literal
+            throw { message: error.message, isSetupError: true };
+        }
+    }
+};
+
+export const updateStatusOrder = async (updateData: UpdateStatusOrderDto): Promise<void> => {
+    try {
+        await api.put<UpdateStatusOrderDto>(`Orders/update-status-order`, updateData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);

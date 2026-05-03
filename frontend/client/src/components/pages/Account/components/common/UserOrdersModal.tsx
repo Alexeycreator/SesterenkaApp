@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Table, Badge, Button, Form } from 'react-bootstrap';
 
-import { getOrderUser, OrderData, Orders } from '../../../../servicesApi/OrderApi';
-// import { updateOrderStatus } from '../../../../servicesApi/OrderApi';
+import { getOrderUser, OrderData, Orders, updateStatusOrder } from '../../../../servicesApi/OrderApi';
 
 import styles from '../AdminPanel.module.css';
 
@@ -51,6 +50,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
             setAllOrders(extractedOrders);
         } catch (error) {
             console.error('Ошибка загрузки заказов:', error);
+            alert('Не удалось загрузить заказы');
         } finally {
             setLoading(false);
         }
@@ -59,12 +59,13 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
     const handleStatusChange = async (orderId: number, newStatus: string) => {
         try {
             setUpdatingStatus(orderId);
-            //await updateOrderStatus(orderId, newStatus);
+            // Исправлено: передаем объект с id и status
+            await updateStatusOrder({ id: orderId, status: newStatus });
             alert('Статус заказа обновлен');
             await loadOrders();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка обновления статуса:', error);
-            alert('Не удалось обновить статус заказа');
+            alert(error.serverMessage || 'Не удалось обновить статус заказа');
         } finally {
             setUpdatingStatus(null);
         }
@@ -123,7 +124,7 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>Закрыть</Button>
-                <Button variant="primary" onClick={loadOrders}>🔄 Обновить</Button>
+                <Button variant="primary" onClick={loadOrders} disabled={loading}>🔄 Обновить</Button>
             </Modal.Footer>
         </Modal>
     );
