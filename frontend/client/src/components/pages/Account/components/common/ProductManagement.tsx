@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 
-import { getProducts, Product } from '../../../../servicesApi/ProductsApi';
+import { createProduct, deleteProduct, getProducts, Product, updateProduct } from '../../../../servicesApi/ProductsApi';
 import { getCategories, Categories } from '../../../../servicesApi/CategoriesApi';
 import { getManufacturers, Manufacturer } from '../../../../servicesApi/ManufacturersApi';
 
@@ -67,8 +67,9 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
             setProducts(productsData);
             setCategories(categoriesData);
             setManufacturers(manufacturersData);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки данных:', error);
+            alert(error.serverMessage || 'Не удалось загрузить список товаров');
         } finally {
             setLoading(false);
         }
@@ -102,18 +103,24 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         setSaving(true);
         try {
             if (editingProduct) {
-                //await updateProduct(editingProduct.id, formData);
+                await updateProduct(editingProduct.id, formData);
                 alert('Товар успешно обновлен');
             } else {
-                //await createProduct(formData);
+                await createProduct(formData);
                 alert('Товар успешно добавлен');
             }
             resetForm();
             await loadData();
             if (onRefresh) onRefresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            alert('Не удалось сохранить товар');
+            if (error.serverMessage) {
+                alert(error.serverMessage);
+            } else if (error.message) {
+                alert(error.message);
+            } else {
+                alert('Не удалось сохранить товар');
+            }
         } finally {
             setSaving(false);
         }
@@ -145,7 +152,6 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         if (editingProduct) {
             setEditingProduct(null);
         }
-        alert('Форма очищена');
     };
 
     const handleEdit = (product: Product) => {
@@ -165,13 +171,19 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         if (window.confirm('Удалить товар?')) {
             setSaving(true);
             try {
-                //await deleteProduct(id);
+                await deleteProduct(id);
                 alert('Товар успешно удален');
                 await loadData();
                 if (onRefresh) onRefresh();
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                alert('Не удалось удалить товар');
+                if (error.serverMessage) {
+                    alert(error.serverMessage);
+                } else if (error.message) {
+                    alert(error.message);
+                } else {
+                    alert('Не удалось удалить товар');
+                }
             } finally {
                 setSaving(false);
             }
@@ -248,7 +260,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                                 <span className={styles.itemArticle}>Арт: {product.partNumber}</span>
                                                 <span className={styles.itemPrice}>{product.price} ₽</span>
                                                 <span className={styles.itemMeta}>
-                                                    {/* {getCategoryName(product.categories_Id)} / {getManufacturerName(product.manufacturers_Id)} */}
+                                                    {getCategoryName(product.categories_Id)} / {getManufacturerName(product.manufacturers_Id)}
                                                 </span>
                                             </div>
                                             <div className={styles.itemActions}>

@@ -58,8 +58,9 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
             setLoading(true);
             const data = await getAddresses();
             setAddresses(data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки адресов:', error);
+            alert(error.serverMessage || 'Не удалось загрузить список адресов');
         } finally {
             setLoading(false);
         }
@@ -93,22 +94,18 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
 
         setSaving(true);
         try {
-            // Формируем данные для отправки
             const addressData: any = {
                 city: formData.city,
                 street: formData.street
             };
 
-            // Добавляем область/регион, если заполнено
             if (formData.region && formData.region.trim()) {
                 addressData.region = formData.region;
             }
-            // Добавляем номер дома, если заполнено
             if (formData.house && formData.house.trim()) {
                 addressData.house = formData.house;
             }
 
-            // Только администратор может устанавливать isShop
             if (isAdmin) {
                 addressData.isShop = formData.isShop;
             }
@@ -129,7 +126,13 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
             if (onRefresh) onRefresh();
         } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            alert(error.message || 'Не удалось сохранить адрес');
+            if (error.serverMessage) {
+                alert(error.serverMessage);
+            } else if (error.message) {
+                alert(error.message);
+            } else {
+                alert('Не удалось сохранить адрес');
+            }
         } finally {
             setSaving(false);
         }
@@ -157,7 +160,6 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         if (editingAddress) {
             setEditingAddress(null);
         }
-        alert('Форма очищена');
     };
 
     const handleEdit = (address: Address) => {
@@ -190,12 +192,18 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
             setSaving(true);
             try {
                 await deleteAddress(id);
-                alert('Адрес удален');
+                alert('Адрес успешно удален');
                 await loadAddresses();
                 if (onRefresh) onRefresh();
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                alert('Не удалось удалить адрес');
+                if (error.serverMessage) {
+                    alert(error.serverMessage);
+                } else if (error.message) {
+                    alert(error.message);
+                } else {
+                    alert('Не удалось удалить адрес');
+                }
             } finally {
                 setSaving(false);
             }
@@ -298,7 +306,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                             <div className="d-flex justify-content-between align-items-center mb-3">
                                 <h5>{editingAddress ? 'Редактирование адреса' : 'Добавление адреса'}</h5>
                                 {!editingAddress && (
-                                    <Button size="sm" variant="outline-secondary" onClick={clearForm}>
+                                    <Button size="sm" variant="outline-secondary" onClick={clearForm} disabled={saving}>
                                         🗑️ Очистить
                                     </Button>
                                 )}
@@ -354,7 +362,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                                                 type="text"
                                                 value={formData.house}
                                                 onChange={(e) => setFormData({ ...formData, house: e.target.value })}
-                                                placeholder="Номер дома (необязательно)"
+                                                placeholder="Номер дома"
                                                 disabled={saving}
                                             />
                                         </Form.Group>
@@ -393,7 +401,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                                     <Button
                                         className={styles.saveBtn}
                                         onClick={handleSave}
-                                        disabled={saving}
+                                        disabled={saving || !formData.city || !formData.street}
                                         style={{ flex: editingAddress ? 1 : 2 }}
                                     >
                                         {saving ? 'Сохранение...' : (editingAddress ? 'Сохранить изменения' : '➕ Добавить адрес')}

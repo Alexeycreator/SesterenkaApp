@@ -14,6 +14,7 @@ interface StockManagementProps {
 export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, onRefresh }) => {
     const [stockData, setStockData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [editingStock, setEditingStock] = useState<any | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [formData, setFormData] = useState({
@@ -30,7 +31,6 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
         }
     }, [show]);
 
-    // Функция для сброса всех состояний
     const resetAllStates = () => {
         setFormData({ productId: 0, warehouseId: 0, quantity: 0 });
         setEditingStock(null);
@@ -51,8 +51,9 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
             }
 
             setStockData(extractedData);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки данных:', error);
+            alert(error.serverMessage || 'Не удалось загрузить данные об остатках');
         } finally {
             setLoading(false);
         }
@@ -96,24 +97,33 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
             return;
         }
 
+        setSaving(true);
         try {
             if (editingStock) {
                 await updateStock(editingStock.id, formData.quantity);
-                alert('Остатки обновлены');
+                alert('Остатки успешно обновлены');
             } else {
                 await createStock({
                     products_Id: formData.productId,
                     warehouses_Id: formData.warehouseId,
                     quantity: formData.quantity
                 });
-                alert('Остатки добавлены');
+                alert('Остатки успешно добавлены');
             }
             resetForm();
             await loadData();
             if (onRefresh) onRefresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            alert('Не удалось сохранить остатки');
+            if (error.serverMessage) {
+                alert(error.serverMessage);
+            } else if (error.message) {
+                alert(error.message);
+            } else {
+                alert('Не удалось сохранить остатки');
+            }
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -127,7 +137,6 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
         if (editingStock) {
             setEditingStock(null);
         }
-        alert('Форма очищена');
     };
 
     const handleEdit = (stock: any) => {
@@ -141,14 +150,23 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить запись об остатках?')) {
+            setSaving(true);
             try {
                 await deleteStock(id);
-                alert('Запись удалена');
+                alert('Запись успешно удалена');
                 await loadData();
                 if (onRefresh) onRefresh();
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                alert('Не удалось удалить запись');
+                if (error.serverMessage) {
+                    alert(error.serverMessage);
+                } else if (error.message) {
+                    alert(error.message);
+                } else {
+                    alert('Не удалось удалить запись');
+                }
+            } finally {
+                setSaving(false);
             }
         }
     };
@@ -208,8 +226,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                                                 <span className={styles.itemQuantity}>Кол-во: {stock.quantity} шт.</span>
                                             </div>
                                             <div className={styles.itemActions}>
-                                                <Button size="sm" className={styles.editBtn} onClick={() => handleEdit(stock)}>✎</Button>
-                                                <Button size="sm" className={styles.deleteBtn} onClick={() => handleDelete(stock.id)}>✕</Button>
+                                                <Button size="sm" className={styles.editBtn} onClick={() => handleEdit(stock)} disabled={saving}>✎</Button>
+                                                <Button size="sm" className={styles.deleteBtn} onClick={() => handleDelete(stock.id)} disabled={saving}>✕</Button>
                                             </div>
                                         </div>
                                     ))}
@@ -221,7 +239,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h5>{editingStock ? 'Редактирование остатков' : 'Добавление остатков'}</h5>
                             {!editingStock && (
-                                <Button size="sm" variant="outline-secondary" onClick={clearForm}>
+                                <Button size="sm" variant="outline-secondary" onClick={clearForm} disabled={saving}>
                                     🗑️ Очистить
                                 </Button>
                             )}
@@ -232,7 +250,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                                 <Form.Select
                                     value={formData.productId}
                                     onChange={(e) => setFormData({ ...formData, productId: Number(e.target.value) })}
-                                    disabled={!!editingStock}
+                                    disabled={!!editingStock || saving}
                                 >
                                     <option value={0}>Выберите товар</option>
                                     {stockData?.products?.map((product: any) => (
@@ -247,7 +265,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                                 <Form.Select
                                     value={formData.warehouseId}
                                     onChange={(e) => setFormData({ ...formData, warehouseId: Number(e.target.value) })}
-                                    disabled={!!editingStock}
+                                    disabled={!!editingStock || saving}
                                 >
                                     <option value={0}>Выберите склад</option>
                                     {stockData?.warehouses?.map((warehouse: any) => (
@@ -265,20 +283,22 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                                     onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
                                     placeholder="Введите количество"
                                     min="0"
+                                    disabled={saving}
                                 />
                             </Form.Group>
                             <div className="d-flex gap-2 mt-3">
                                 {!editingStock && (
-                                    <Button variant="secondary" onClick={clearForm} className="flex-grow-1">
+                                    <Button variant="secondary" onClick={clearForm} className="flex-grow-1" disabled={saving}>
                                         🗑️ Очистить форму
                                     </Button>
                                 )}
                                 <Button
                                     className={styles.saveBtn}
                                     onClick={handleSave}
+                                    disabled={saving || !formData.productId || !formData.warehouseId}
                                     style={{ flex: editingStock ? 1 : 2 }}
                                 >
-                                    {editingStock ? 'Сохранить изменения' : '➕ Добавить остатки'}
+                                    {saving ? 'Сохранение...' : (editingStock ? 'Сохранить изменения' : '➕ Добавить остатки')}
                                 </Button>
                             </div>
                         </Form>
@@ -286,7 +306,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>Закрыть</Button>
+                <Button variant="secondary" onClick={handleClose} disabled={saving}>Закрыть</Button>
             </Modal.Footer>
         </Modal>
     );
