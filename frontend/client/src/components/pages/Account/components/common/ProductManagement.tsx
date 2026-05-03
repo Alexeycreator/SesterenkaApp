@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 
-import { createProduct, deleteProduct, getProducts, Product, updateProduct } from '../../../../servicesApi/ProductsApi';
-import { getCategories, Categories } from '../../../../servicesApi/CategoriesApi';
-import { getManufacturers, Manufacturer } from '../../../../servicesApi/ManufacturersApi';
+import {
+    getControlProducts,
+    createProductControlPanel,
+    updateProductControlPanel,
+    deleteProductControlPanel,
+    Product
+} from '../../../../servicesApi/ProductsApi';
+import { Manufacturer } from '../../../../servicesApi/ManufacturersApi';
+import { Categories } from '../../../../servicesApi/CategoriesApi';
 
 import styles from '../AdminPanel.module.css';
 
@@ -59,14 +65,10 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
     const loadData = async () => {
         try {
             setLoading(true);
-            const [productsData, categoriesData, manufacturersData] = await Promise.all([
-                getProducts(),
-                getCategories(),
-                getManufacturers()
-            ]);
-            setProducts(productsData);
-            setCategories(categoriesData);
-            setManufacturers(manufacturersData);
+            const data = await getControlProducts();
+            setProducts(data.products);
+            setCategories(data.categories);
+            setManufacturers(data.manufacturers);
         } catch (error: any) {
             console.error('Ошибка загрузки данных:', error);
             alert(error.serverMessage || 'Не удалось загрузить список товаров');
@@ -102,11 +104,21 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
 
         setSaving(true);
         try {
+            const productData = {
+                name: formData.name,
+                partNumber: formData.partNumber,
+                price: formData.price,
+                details: formData.details || null,
+                image: formData.image || '',
+                categories_Id: formData.categories_Id,
+                manufacturers_Id: formData.manufacturers_Id
+            };
+
             if (editingProduct) {
-                await updateProduct(editingProduct.id, formData);
+                await updateProductControlPanel(editingProduct.id, productData);
                 alert('Товар успешно обновлен');
             } else {
-                await createProduct(formData);
+                await createProductControlPanel(productData);
                 alert('Товар успешно добавлен');
             }
             resetForm();
@@ -171,7 +183,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         if (window.confirm('Удалить товар?')) {
             setSaving(true);
             try {
-                await deleteProduct(id);
+                await deleteProductControlPanel(id);
                 alert('Товар успешно удален');
                 await loadData();
                 if (onRefresh) onRefresh();
@@ -260,7 +272,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                                                 <span className={styles.itemArticle}>Арт: {product.partNumber}</span>
                                                 <span className={styles.itemPrice}>{product.price} ₽</span>
                                                 <span className={styles.itemMeta}>
-                                                    {getCategoryName(product.categories_Id)} / {getManufacturerName(product.manufacturers_Id)}
+                                                    {getCategoryName(product.categories_Id || 0)} / {getManufacturerName(product.manufacturers_Id || 0)}
                                                 </span>
                                             </div>
                                             <div className={styles.itemActions}>
