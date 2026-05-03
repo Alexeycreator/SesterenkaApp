@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, InputGroup, Row, Col } from 'react-bootstrap';
 
-import { getManufacturers, Manufacturer } from '../../../../servicesApi/ManufacturersApi';
+import { createManufacturer, deleteManufacturer, getManufacturers, Manufacturer, updateManufacturer } from '../../../../servicesApi/ManufacturersApi';
 
 import styles from '../AdminPanel.module.css';
 
@@ -39,8 +39,9 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
             setLoading(true);
             const data = await getManufacturers();
             setManufacturers(data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки брендов:', error);
+            alert(error.serverMessage || 'Не удалось загрузить список брендов');
         } finally {
             setLoading(false);
         }
@@ -61,18 +62,24 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
         setSaving(true);
         try {
             if (editingManufacturer) {
-                //await updateManufacturer(editingManufacturer.id, formData);
+                await updateManufacturer(editingManufacturer.id, { name: formData.name });
                 alert('Бренд успешно обновлен');
             } else {
-                //await createManufacturer(formData);
+                await createManufacturer({ name: formData.name });
                 alert('Бренд успешно добавлен');
             }
             resetForm();
             await loadManufacturers();
             if (onRefresh) onRefresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            alert('Не удалось сохранить бренд');
+            if (error.serverMessage) {
+                alert(error.serverMessage);
+            } else if (error.message) {
+                alert(error.message);
+            } else {
+                alert('Не удалось сохранить бренд');
+            }
         } finally {
             setSaving(false);
         }
@@ -88,7 +95,6 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
         if (editingManufacturer) {
             setEditingManufacturer(null);
         }
-        alert('Форма очищена');
     };
 
     const handleEdit = (manufacturer: Manufacturer) => {
@@ -100,13 +106,19 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
         if (window.confirm('Удалить бренд?')) {
             setSaving(true);
             try {
-                //await deleteManufacturer(id);
+                await deleteManufacturer(id);
                 alert('Бренд успешно удален');
                 await loadManufacturers();
                 if (onRefresh) onRefresh();
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                alert('Не удалось удалить бренд');
+                if (error.serverMessage) {
+                    alert(error.serverMessage);
+                } else if (error.message) {
+                    alert(error.message);
+                } else {
+                    alert('Не удалось удалить бренд');
+                }
             } finally {
                 setSaving(false);
             }
