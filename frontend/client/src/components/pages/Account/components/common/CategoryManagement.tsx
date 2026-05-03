@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 
-import { getCategories, Categories } from '../../../../servicesApi/CategoriesApi';
+import { createCategory, deleteCategory, getCategories, Categories, updateCategory } from '../../../../servicesApi/CategoriesApi';
 
 import styles from '../AdminPanel.module.css';
 
@@ -19,7 +19,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
     const [searchTerm, setSearchTerm] = useState('');
     const [formData, setFormData] = useState({
         name: '',
-        icon: '',
+        icon: '🛢️',
         description: ''
     });
 
@@ -32,7 +32,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
     }, [show]);
 
     const resetAllStates = () => {
-        setFormData({ name: '', icon: '', description: '' });
+        setFormData({ name: '', icon: '🛢️', description: '' });
         setEditingCategory(null);
         setSearchTerm('');
         setCategories([]);
@@ -43,8 +43,9 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
             setLoading(true);
             const data = await getCategories();
             setCategories(data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки категорий:', error);
+            alert(error.serverMessage || 'Не удалось загрузить список категорий');
         } finally {
             setLoading(false);
         }
@@ -65,44 +66,64 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
             return;
         }
 
+        if (!formData.description.trim()) {
+            alert('Введите описание категории');
+            return;
+        }
+
+        const iconToSend = formData.icon.trim() || '🛢️';
+
         setSaving(true);
         try {
             if (editingCategory) {
-                //await updateCategory(editingCategory.id, formData);
+                await updateCategory(editingCategory.id, {
+                    name: formData.name,
+                    icon: iconToSend,
+                    description: formData.description
+                });
                 alert('Категория успешно обновлена');
             } else {
-                //await createCategory(formData);
+                await createCategory({
+                    name: formData.name,
+                    icon: iconToSend,
+                    description: formData.description
+                });
                 alert('Категория успешно добавлена');
             }
             resetForm();
             await loadCategories();
             if (onRefresh) onRefresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            alert('Не удалось сохранить категорию');
+            if (error.serverMessage) {
+                alert(error.serverMessage);
+            } else if (error.message) {
+                alert(error.message);
+            } else {
+                alert('Не удалось сохранить категорию');
+            }
         } finally {
             setSaving(false);
         }
     };
 
     const resetForm = () => {
-        setFormData({ name: '', icon: '', description: '' });
+        setFormData({ name: '', icon: '🛢️', description: '' });
         setEditingCategory(null);
     };
 
     const clearForm = () => {
-        setFormData({ name: '', icon: '', description: '' });
+        setFormData({ name: '', icon: '🛢️', description: '' });
         if (editingCategory) {
             setEditingCategory(null);
         }
-        alert('Форма очищена');
     };
 
     const handleEdit = (category: Categories) => {
         setEditingCategory(category);
         setFormData({
             name: category.name,
-            icon: category.icon || '',
+            icon: category.icon || '🛢️',
             description: category.description || ''
         });
     };
@@ -111,13 +132,19 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
         if (window.confirm('Удалить категорию?')) {
             setSaving(true);
             try {
-                //await deleteCategory(id);
+                await deleteCategory(id);
                 alert('Категория успешно удалена');
                 await loadCategories();
                 if (onRefresh) onRefresh();
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                alert('Не удалось удалить категорию');
+                if (error.serverMessage) {
+                    alert(error.serverMessage);
+                } else if (error.message) {
+                    alert(error.message);
+                } else {
+                    alert('Не удалось удалить категорию');
+                }
             } finally {
                 setSaving(false);
             }
@@ -212,14 +239,15 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
                                 <small className="text-muted">Например: 🔧, 🚗, 🛢️, ⚙️</small>
                             </Form.Group>
                             <Form.Group className="mb-3">
-                                <Form.Label>Описание</Form.Label>
+                                <Form.Label>Описание *</Form.Label>
                                 <Form.Control
                                     as="textarea"
                                     rows={3}
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Введите описание"
+                                    placeholder="Введите описание категории"
                                     disabled={saving}
+                                    required
                                 />
                             </Form.Group>
                             <div className="d-flex gap-2 mt-3">
@@ -231,7 +259,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
                                 <Button
                                     className={styles.saveBtn}
                                     onClick={handleSave}
-                                    disabled={saving || !formData.name.trim()}
+                                    disabled={saving || !formData.name.trim() || !formData.description.trim()}
                                     style={{ flex: editingCategory ? 1 : 2 }}
                                 >
                                     {saving ? 'Сохранение...' : (editingCategory ? 'Сохранить изменения' : '➕ Добавить категорию')}
