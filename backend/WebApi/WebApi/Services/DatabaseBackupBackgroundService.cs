@@ -82,7 +82,7 @@ public sealed class DatabaseBackupBackgroundService : BackgroundService
                 databaseName = connection.Database;
                 backupPath = Path.Combine(dirPath, $"backup_{databaseName}_{backupDateTime}.bak");
                 typePath = "application";
-                await ExecutingBackupCommand(connection, backupPath, typePath);
+                await ExecutingBackupCommandAsync(connection, backupPath, typePath);
             }
             catch (SqlException ex)
             {
@@ -91,7 +91,7 @@ public sealed class DatabaseBackupBackgroundService : BackgroundService
                 typePath = "default";
                 loggerDatabaseBackupBackgroundService.Error(
                     $"Ошибка при создании резервной копии по пути {backupPath}: {ex.Message}. Будет применен путь по умолчанию: {defaultBackupsPath}");
-                await ExecutingBackupCommand(connection, defaultBackupsPath, typePath);
+                await ExecutingBackupCommandAsync(connection, defaultBackupsPath, typePath);
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ public sealed class DatabaseBackupBackgroundService : BackgroundService
         }
     }
 
-    private async Task ExecutingBackupCommand(SqlConnection connection, string backupDatabasePath, string typeSavePath)
+    private async Task ExecutingBackupCommandAsync(SqlConnection connection, string backupDatabasePath, string typeSavePath)
     {
         if (File.Exists(backupDatabasePath))
         {

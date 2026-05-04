@@ -10,13 +10,13 @@ namespace WebApi.Controllers;
 public sealed class CarModificationsController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CarModificationsModel>>> GetCarModifications()
+    public async Task<ActionResult<IEnumerable<CarModificationsModel>>> GetCarModificationsAsync()
     {
         return await dbContext.CarModifications.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CarModificationsModel>> GetCarModification(int id)
+    public async Task<ActionResult<CarModificationsModel>> GetCarModificationByIdAsync(int id)
     {
         var carModification = await dbContext.CarModifications.FindAsync(id);
         if (carModification == null)

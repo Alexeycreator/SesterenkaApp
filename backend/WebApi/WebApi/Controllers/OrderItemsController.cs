@@ -305,7 +305,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
     }
 
     [HttpGet("get-number-order")]
-    public async Task<IActionResult> GetNumberOrder(int userId)
+    public async Task<IActionResult> GetNumberOrderAsync(int userId)
     {
         try
         {

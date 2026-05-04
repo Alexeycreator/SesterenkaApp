@@ -11,13 +11,13 @@ namespace WebApi.Controllers;
 public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<StocksModel>>> GetStocks()
+    public async Task<ActionResult<IEnumerable<StocksModel>>> GetStocksAsync()
     {
         return await dbContext.Stocks.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<StocksModel>> GetStock(int id)
+    public async Task<ActionResult<StocksModel>> GetStockByIdAsync(int id)
     {
         var stock = await dbContext.Stocks.FindAsync(id);
         if (stock == null)
@@ -34,7 +34,7 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpGet("management-stocks")]
-    public async Task<IActionResult> GetManagementStocks()
+    public async Task<IActionResult> GetManagementStocksAsync()
     {
         try
         {
@@ -110,7 +110,7 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPut("update-stock")]
-    public async Task<IActionResult> UpdateStock(int stockId, int quantity)
+    public async Task<IActionResult> UpdateStockAsync(int stockId, int quantity)
     {
         try
         {
@@ -138,7 +138,7 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpDelete("delete-stock")]
-    public async Task<IActionResult> DeleteStock(int stockId)
+    public async Task<IActionResult> DeleteStockAsync(int stockId)
     {
         try
         {
@@ -159,7 +159,7 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPost("create-stock")]
-    public async Task<IActionResult> CreateStock([FromBody] StocksModel request)
+    public async Task<IActionResult> CreateStockAsync([FromBody] StocksModel request)
     {
         try
         {

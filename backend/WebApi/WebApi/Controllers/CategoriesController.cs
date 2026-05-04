@@ -10,13 +10,13 @@ namespace WebApi.Controllers;
 public sealed class CategoriesController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CategoriesModel>>> GetCategories()
+    public async Task<ActionResult<IEnumerable<CategoriesModel>>> GetCategoriesAsync()
     {
         return await dbContext.Categories.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CategoriesModel>> GetCategorie(int id)
+    public async Task<ActionResult<CategoriesModel>> GetCategoriesByIdAsync(int id)
     {
         var categorie = await dbContext.Categories.FindAsync(id);
         if (categorie == null)
@@ -33,7 +33,7 @@ public sealed class CategoriesController(ServerDbContext dbContext) : Controller
     }
 
     [HttpPost("create-category")]
-    public async Task<IActionResult> CreateCategories([FromBody] CategoriesModel? request)
+    public async Task<IActionResult> CreateCategoriesAsync([FromBody] CategoriesModel? request)
     {
         try
         {
@@ -74,7 +74,7 @@ public sealed class CategoriesController(ServerDbContext dbContext) : Controller
     }
 
     [HttpPut("update-category")]
-    public async Task<IActionResult> UpdateCategories(int categoryId, [FromBody] CategoriesModel request)
+    public async Task<IActionResult> UpdateCategoriesAsync(int categoryId, [FromBody] CategoriesModel request)
     {
         try
         {
@@ -105,7 +105,7 @@ public sealed class CategoriesController(ServerDbContext dbContext) : Controller
     }
 
     [HttpDelete("delete-category")]
-    public async Task<IActionResult> DeleteCategories(int categoryId)
+    public async Task<IActionResult> DeleteCategoriesAsync(int categoryId)
     {
         try
         {

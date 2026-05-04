@@ -24,7 +24,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<OrdersModel>> GetOrderAsync(int id)
+    public async Task<ActionResult<OrdersModel>> GetOrderByIdAsync(int id)
     {
         var order = await dbContext.Orders.FindAsync(id);
         if (order == null)
@@ -97,7 +97,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpGet("current-order")]
-    public async Task<IActionResult> GetCurrentOrder(int id)
+    public async Task<IActionResult> GetCurrentOrderAsync(int id)
     {
         try
         {
@@ -184,7 +184,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPost("create-order")]
-    public async Task<IActionResult> CreateOrder([FromBody] AddOrderDto? request)
+    public async Task<IActionResult> CreateOrderAsync([FromBody] AddOrderDto? request)
     {
         try
         {
@@ -265,7 +265,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPut("update-status-order")]
-    public async Task<IActionResult> UpdateStatusOrder([FromBody] UpdateStatusOrderDto? request)
+    public async Task<IActionResult> UpdateStatusOrderAsync([FromBody] UpdateStatusOrderDto? request)
     {
         try
         {

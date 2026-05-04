@@ -10,13 +10,13 @@ namespace WebApi.Controllers;
 public sealed class ManufacturersController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ManufacturersModel>>> GetManufacturers()
+    public async Task<ActionResult<IEnumerable<ManufacturersModel>>> GetManufacturersAsync()
     {
         return await dbContext.Manufacturers.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ManufacturersModel>> GetManufacturer(int id)
+    public async Task<ActionResult<ManufacturersModel>> GetManufacturerByIdAsync(int id)
     {
         var manufacturer = await dbContext.Manufacturers.FindAsync(id);
         if (manufacturer == null)
@@ -33,7 +33,7 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
     }
 
     [HttpPost("create-manufacturer")]
-    public async Task<IActionResult> CreateManufacturer([FromBody] ManufacturersModel? request)
+    public async Task<IActionResult> CreateManufacturerAsync([FromBody] ManufacturersModel? request)
     {
         try
         {
@@ -71,7 +71,7 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
     }
 
     [HttpPut("update-manufacturer")]
-    public async Task<IActionResult> UpdateManufacturer(int manufacturerId, [FromBody] ManufacturersModel request)
+    public async Task<IActionResult> UpdateManufacturerAsync(int manufacturerId, [FromBody] ManufacturersModel request)
     {
         try
         {
@@ -97,7 +97,7 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
     }
 
     [HttpDelete("delete-manufacturer")]
-    public async Task<IActionResult> DeleteManufacturer(int manufacturerId)
+    public async Task<IActionResult> DeleteManufacturerAsync(int manufacturerId)
     {
         try
         {

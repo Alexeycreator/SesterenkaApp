@@ -24,13 +24,13 @@ public sealed class UsersController(
     private Logger loggerUsersController = LogManager.GetCurrentClassLogger();
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UsersModel>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UsersModel>>> GetUsersAsync()
     {
         return await dbContext.Users.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UsersModel>> GetUser(int id)
+    public async Task<ActionResult<UsersModel>> GetUsersByIdAsync(int id)
     {
         var user = await dbContext.Users.FindAsync(id);
         if (user == null)
@@ -47,7 +47,7 @@ public sealed class UsersController(
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserResponseDto>> Register(CreateUserDto createDto)
+    public async Task<ActionResult<UserResponseDto>> RegisterAsync(CreateUserDto createDto)
     {
         try
         {
@@ -111,7 +111,7 @@ public sealed class UsersController(
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto loginDto)
+    public async Task<ActionResult<LoginResponseDto>> LoginAsync(LoginRequestDto loginDto)
     {
         try
         {
@@ -274,16 +274,8 @@ public sealed class UsersController(
         return age;
     }
 
-    private bool IsPasswordHashed(string password)
-    {
-        return !string.IsNullOrEmpty(password) &&
-               (password.StartsWith("$2a$") ||
-                password.StartsWith("$2b$") ||
-                password.StartsWith("$2y$"));
-    }
-
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, UpdateUserDto userDto)
+    public async Task<IActionResult> UpdateUserAsync(int id, UpdateUserDto userDto)
     {
         var existsUser = await dbContext.Users.FindAsync(id);
         if (existsUser == null)
@@ -359,7 +351,7 @@ public sealed class UsersController(
     }
 
     [HttpPut("changePassword")]
-    public async Task<IActionResult> UpdatePasswordUser(int userId, string oldPassword, string newPassword)
+    public async Task<IActionResult> UpdatePasswordUserAsync(int userId, string oldPassword, string newPassword)
     {
         try
         {
@@ -409,7 +401,7 @@ public sealed class UsersController(
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
+    public async Task<IActionResult> DeleteUserAsync(int id)
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
         if (user == null)
@@ -436,7 +428,7 @@ public sealed class UsersController(
     }
 
     [HttpPut("update-role-user")]
-    public async Task<IActionResult> UpdateUserRole(int userId, string newRole)
+    public async Task<IActionResult> UpdateUserRoleAsync(int userId, string newRole)
     {
         try
         {

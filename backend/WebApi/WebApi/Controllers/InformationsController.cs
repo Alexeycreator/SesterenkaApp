@@ -13,13 +13,13 @@ namespace WebApi.Controllers;
 public sealed class InformationsController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<InformationsModel>>> GetInformations()
+    public async Task<ActionResult<IEnumerable<InformationsModel>>> GetInformationsAsync()
     {
         return await dbContext.Informations.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<InformationsModel>> GetInformation(int id)
+    public async Task<ActionResult<InformationsModel>> GetInformationByIdAsync(int id)
     {
         var information = await dbContext.Informations.FindAsync(id);
         if (information == null)
@@ -36,7 +36,7 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
     }
 
     [HttpGet("data-information-page")]
-    public async Task<IActionResult> GetInformationsContent()
+    public async Task<IActionResult> GetInformationsContentAsync()
     {
         try
         {

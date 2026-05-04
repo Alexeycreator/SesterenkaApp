@@ -13,13 +13,13 @@ namespace WebApi.Controllers;
 public sealed class ProductsController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductsModel>>> GetProducts()
+    public async Task<ActionResult<IEnumerable<ProductsModel>>> GetProductsAsync()
     {
         return await dbContext.Products.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProductsModel>> GetProducts(int id)
+    public async Task<ActionResult<ProductsModel>> GetProductsByIdAsync(int id)
     {
         var product = await dbContext.Products.FindAsync(id);
         if (product == null)
@@ -36,7 +36,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpGet("stock-summary")]
-    public async Task<IActionResult> GetProductStockSummary()
+    public async Task<IActionResult> GetProductStockSummaryAsync()
     {
         try
         {
@@ -59,7 +59,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpGet("stock-warehouses")]
-    public async Task<IActionResult> GetProductStockWarehouses()
+    public async Task<IActionResult> GetProductStockWarehousesAsync()
     {
         try
         {
@@ -89,7 +89,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpGet("catalog-data")]
-    public async Task<IActionResult> GetCatalogData()
+    public async Task<IActionResult> GetCatalogDataAsync()
     {
         var products = await dbContext.Products.ToListAsync();
         var categories = await dbContext.Categories.ToListAsync();
@@ -121,7 +121,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpGet("admin-or-employee-panel-control-products")]
-    public async Task<IActionResult> GetControlProducts()
+    public async Task<IActionResult> GetControlProductsAsync()
     {
         try
         {
@@ -160,7 +160,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpPost("admin-or-employee-panel-create-product")]
-    public async Task<IActionResult> CreateProductControlPanel([FromBody] ProductsModel? request)
+    public async Task<IActionResult> CreateProductControlPanelAsync([FromBody] ProductsModel? request)
     {
         try
         {
@@ -233,7 +233,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpPut("admin-or-employee-panel-update-product")]
-    public async Task<IActionResult> UpdateProductControlPanel(int productId, ProductsModel? request)
+    public async Task<IActionResult> UpdateProductControlPanelAsync(int productId, ProductsModel? request)
     {
         try
         {
@@ -318,7 +318,7 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpDelete("admin-or-employee-panel-delete-product")]
-    public async Task<IActionResult> DeleteProductControlPanel(int productId)
+    public async Task<IActionResult> DeleteProductControlPanelAsync(int productId)
     {
         try
         {

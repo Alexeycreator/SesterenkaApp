@@ -10,13 +10,13 @@ namespace WebApi.Controllers;
 public sealed class ProductCarApplicabilityController(ServerDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductCarApplicabilityModel>>> GetProductCarApplicabilitys()
+    public async Task<ActionResult<IEnumerable<ProductCarApplicabilityModel>>> GetProductCarApplicabilitysAsync()
     {
         return await dbContext.ProductCarApplicability.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProductCarApplicabilityModel>> GetProductCarApplicability(int id)
+    public async Task<ActionResult<ProductCarApplicabilityModel>> GetProductCarApplicabilityByIdAsync(int id)
     {
         var productCarApplicability = await dbContext.ProductCarApplicability.FindAsync(id);
         if (productCarApplicability == null)

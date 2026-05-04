@@ -13,13 +13,13 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
     private List<AddressesOrderDataDto> addressShop = new List<AddressesOrderDataDto>();
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AddressesModel>>> GetAddresses()
+    public async Task<ActionResult<IEnumerable<AddressesModel>>> GetAddressesAsync()
     {
         return await dbContext.Addresses.ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<AddressesModel>> GetAddress(int id)
+    public async Task<ActionResult<AddressesModel>> GetAddressByIdAsync(int id)
     {
         var address = await dbContext.Addresses.FindAsync(id);
         if (address == null)
@@ -36,7 +36,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
     }
 
     [HttpGet("shop-address")]
-    public async Task<IActionResult> GetAddressShop()
+    public async Task<IActionResult> GetAddressShopAsync()
     {
         try
         {
@@ -64,7 +64,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
     }
 
     [HttpPost("create-address")]
-    public async Task<ActionResult<AddressesModel>> CreateAddress([FromBody] AddressesModel address,
+    public async Task<ActionResult<AddressesModel>> CreateAddressAsync([FromBody] AddressesModel address,
         [FromQuery] int userId)
     {
         var errorMessage = new List<string>();
@@ -123,7 +123,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
                 dbContext.Addresses.Add(address);
                 await dbContext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetAddresses), new { id = address.Id }, address);
+                return CreatedAtAction(nameof(GetAddressesAsync), new { id = address.Id }, address);
             }
 
             errorMessage.Add($"У пользователя {user.Login} недостаточно прав");
@@ -133,7 +133,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
     }
 
     [HttpPut("update-address")]
-    public async Task<IActionResult> UpdateAddress(int addressId, AddressesModel address, int userId)
+    public async Task<IActionResult> UpdateAddressAsync(int addressId, AddressesModel address, int userId)
     {
         var user = await dbContext.Users.FindAsync(userId);
         var existsAddress = await dbContext.Addresses.FindAsync(addressId);
@@ -220,7 +220,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
     }
 
     [HttpDelete("delete-address/{addressId}")]
-    public async Task<IActionResult> DeleteAddress(int addressId)
+    public async Task<IActionResult> DeleteAddressAsync(int addressId)
     {
         var address = await dbContext.Addresses.FirstOrDefaultAsync(a => a.Id == addressId);
         if (address == null)
