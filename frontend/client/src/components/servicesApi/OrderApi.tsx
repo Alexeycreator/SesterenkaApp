@@ -15,7 +15,9 @@ export interface Order {
     id: number;
     orderDate: Date;
     status: string;
-    user_Id?: number | null;
+    users_Id?: number | null;
+    addresses_Id?: number | null;
+    nameOrder: string;
 };
 
 export interface OrderItems {
