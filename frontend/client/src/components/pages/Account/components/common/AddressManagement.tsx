@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+
 import { getAddresses, Address, updateAddress, deleteAddress, createAddress } from '../../../../servicesApi/AddressesApi';
-import styles from '../AdminPanel.module.css';
 import { useAuth } from '../../../../../contexts/AuthContext';
+
+import styles from '../AdminPanel.module.css';
 
 interface AddressManagementProps {
     show: boolean;
@@ -11,7 +13,7 @@ interface AddressManagementProps {
 }
 
 export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHide, onRefresh }) => {
-    const { user: currentUser, role: userRole, isAuthenticated } = useAuth();
+    const { user: currentUser, role: userRole } = useAuth();
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);

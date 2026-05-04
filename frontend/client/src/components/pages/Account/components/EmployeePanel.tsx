@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Card, Button, Row, Col, Table, Badge, Form, InputGroup } from 'react-bootstrap';
+import { Card, Button, Row, Col, Table, Form, InputGroup } from 'react-bootstrap';
 
 import { getUsers, User } from '../../../servicesApi/UsersApi';
 import { UserOrdersModal } from './common/UserOrdersModal';

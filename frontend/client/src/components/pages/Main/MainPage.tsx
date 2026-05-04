@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { getCategories, Categories } from '../../servicesApi/CategoriesApi';

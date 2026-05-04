@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 import { getShopAddress, AddressOrder } from '../../servicesApi/AddressesApi';
 import { getUsers, User } from '../../servicesApi/UsersApi';

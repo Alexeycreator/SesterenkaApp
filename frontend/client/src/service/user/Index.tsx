@@ -1,4 +1,3 @@
-// src/Services/Client/Index.tsx
 import { clientApi } from './Requests';
 import type { 
   UserResponse, 
@@ -27,12 +26,3 @@ export const deleteClient = clientApi.delete;
 export const checkLoginUnique = clientApi.checkLoginUnique;
 export const checkEmailUnique = clientApi.checkEmailUnique;
 export const searchClientsBySurname = clientApi.searchBySurname;
-
-// НЕ НАДО повторно экспортировать createClient еще раз!
-// Уберите этот блок, если он есть:
-/*
-export {
-  getAllClients as getClients,  // Если это createClient - ошибка!
-  // ...
-}
-*/

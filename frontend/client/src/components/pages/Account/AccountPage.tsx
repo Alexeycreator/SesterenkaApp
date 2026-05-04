@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Container, Row, Col, Nav } from 'react-bootstrap';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '../../../contexts/AuthContext';
-import { getOrderUser, OrderData } from '../../servicesApi/OrderApi';
 import LoadingSpinner from '../../LoadingSpinner';
 import { ProfileTab } from './components/ProfileTab';
 import { OrdersTab } from './components/OrdersTab';
@@ -16,14 +15,13 @@ import styles from './AccountPage.module.css';
 
 const AccountPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
     const { user: currentUser, isAuthenticated, role: userRole } = useAuth();
 
     // Получаем параметры из URL
     const userId = searchParams.get('userId');
     const activeTab = searchParams.get('tab') || 'profile';
 
-    const { ordersData, orderItemsData, loading, error, fetchOrders } = useAccountData(currentUser?.login);
+    const { ordersData, orderItemsData, loading, fetchOrders } = useAccountData(currentUser?.login);
 
     // Обновление вкладки с сохранением userId
     const handleTabChange = (tab: string) => {
