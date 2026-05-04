@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Route, Routes, useLocation, Location } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, useLocation, Location, useNavigate } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
 import {
@@ -19,6 +19,8 @@ import Footer from './components/footer/Footer';
 import OrderPage from './components/pages/Order/OrderPage';
 import NotFoundPage from './components/pages/NotFound/NotFoundPage';
 import OrderDetailsPage from './components/pages/Order/OrderDetailsPage';
+import ServerUnavailablePage from './components/pages/ServerUnavailable/ServerUnavailablePage';
+import { useServerStatus } from './components/pages/ServerUnavailable/hooks/useServerStatus';
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -41,6 +43,40 @@ const ScrollToTop = ({ location }: ScrollToTopProps) => {
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isServerAvailable, checking } = useServerStatus();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!checking && isServerAvailable && !isInitialized) {
+      setIsInitialized(true);
+      navigate('/', { replace: true });
+    }
+  }, [checking, isServerAvailable, navigate, isInitialized]);
+
+  if (checking) {
+    return (
+      <div className="app-container">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          background: 'linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%)'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔄</div>
+            <p>Проверка соединения с сервером...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isServerAvailable) {
+    return <ServerUnavailablePage />;
+  }
+
   return (
     <AuthProvider>
       <div className="app-container">
