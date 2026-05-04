@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 import React from "react";
 import axios from "axios";
 
@@ -43,18 +44,14 @@ export const getOrderItemData = async (loginUser: string, roleUser: string): Pro
                 console.log('Ошибка ответа:', error.response.data);
                 console.log('Статус:', error.response.status);
             }
-
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: error.response.data?.message || 'Неизвестная ошибка',
                 statusCode: error.response.status
             };
         } else if (error.request) {
-            // eslint-disable-next-line no-throw-literal
             throw { message: 'Нет ответа от сервера', isNetworkError: true };
         } else {
-            // eslint-disable-next-line no-throw-literal
             throw { message: error.message, isSetupError: true };
         }
     }
@@ -73,8 +70,6 @@ export const updateOrderItemQuantity = async (productId: number, quantity: numbe
             const serverMessage = error.response.data?.message ||
                 error.response.data?.title ||
                 'Неизвестная ошибка';
-
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: serverMessage,
@@ -82,13 +77,11 @@ export const updateOrderItemQuantity = async (productId: number, quantity: numbe
                 data: error.response.data
             };
         } else if (error.request) {
-            // eslint-disable-next-line no-throw-literal
             throw {
                 message: 'Нет ответа от сервера',
                 isNetworkError: true
             };
         } else {
-            // eslint-disable-next-line no-throw-literal
             throw {
                 message: error.message,
                 isSetupError: true
@@ -97,22 +90,17 @@ export const updateOrderItemQuantity = async (productId: number, quantity: numbe
     }
 };
 
-export const deleteOrderItem = async (id: number): Promise<void> => {
+export const deleteOrderItem = async (orderId: number, productId: number, userId: number): Promise<void> => {
     try {
-        await api.delete(`/OrderItems/${id}`);
+        await api.delete(`/OrderItems/delete-product-in-order-items?orderId=${orderId}&productId=${productId}&userId=${userId}`);
     }
     catch (error: any) {
         if (error.response) {
-            // Сервер ответил с ошибкой (4xx, 5xx)
             console.error('Ошибка ответа:', error.response.data);
             console.log('Статус:', error.response.status);
-
-            // Извлекаем сообщение от сервера
             const serverMessage = error.response.data?.message ||
                 error.response.data?.title ||
                 'Неизвестная ошибка';
-
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: serverMessage,
@@ -120,19 +108,36 @@ export const deleteOrderItem = async (id: number): Promise<void> => {
                 data: error.response.data
             };
         } else if (error.request) {
-            // Запрос был отправлен, но нет ответа
-            // eslint-disable-next-line no-throw-literal
             throw {
                 message: 'Нет ответа от сервера',
                 isNetworkError: true
             };
         } else {
-            // Ошибка при настройке запроса
-            // eslint-disable-next-line no-throw-literal
             throw {
                 message: error.message,
                 isSetupError: true
             };
+        }
+    }
+};
+
+export const getNumberOrder = async (userId: number): Promise<number> => {
+    try {
+        const response = await api.get<number>(`OrderItems/get-number-order?userId=${userId}`);
+        return response.data;
+    } catch (error: any) {
+        if (error.response) {
+            console.log('Ошибка ответа:', error.response.data);
+            console.log('Статус:', error.response.status);
+            throw {
+                ...error,
+                serverMessage: error.response.data?.message || 'Неизвестная ошибка',
+                statusCode: error.response.status
+            };
+        } else if (error.request) {
+            throw { message: 'Нет ответа от сервера', isNetworkError: true };
+        } else {
+            throw { message: error.message, isSetupError: true };
         }
     }
 };

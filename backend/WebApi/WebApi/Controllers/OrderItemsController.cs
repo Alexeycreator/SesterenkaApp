@@ -163,7 +163,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                         OrderDate = DateTime.Now,
                         Status = statusBasket,
                         Users_Id = user.Id,
-                        NameOrder = $"{DateTime.Now.ToShortDateString()}"
+                        NameOrder = GenerateOrderNumber()
                     };
                     dbContext.Orders.Add(order);
                     await dbContext.SaveChangesAsync();
@@ -206,25 +206,57 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOrderItemAsync(int id)
+    private string GenerateOrderNumber()
     {
-        var orderItem = await dbContext.OrderItems.FirstOrDefaultAsync(o => o.Products_Id == id);
-        if (orderItem == null)
-        {
-            return NotFound();
-        }
+        var now = DateTime.Now;
+        var timestamp = now.ToString("yyyyMMdd-HHmmss");
+        var random = new Random().Next(1000, 9999);
 
-        dbContext.OrderItems.Remove(orderItem);
-        await dbContext.SaveChangesAsync();
-        var anyItems = await dbContext.OrderItems.AnyAsync();
-        if (!anyItems)
-        {
-            await dbContext.Database.ExecuteSqlRawAsync(
-                "DBCC CHECKIDENT ('dbo.OrderItems', RESEED, 0)");
-        }
+        return $"{timestamp}-{random}";
+    }
 
-        return Ok();
+    [HttpDelete("delete-product-in-order-items")]
+    public async Task<IActionResult> DeleteOrderItemAsync(int orderId, int productId, int userId)
+    {
+        try
+        {
+            var orderItem = await dbContext.OrderItems.FindAsync(productId);
+            if (orderItem == null)
+            {
+                return NotFound(new { message = "Товар не найден в корзине" });
+            }
+
+            var order = await dbContext.Orders.FirstOrDefaultAsync(o =>
+                o.Id == orderId && o.Users_Id == userId && o.Status == statusBasket);
+            if (order == null)
+            {
+                return NotFound(new { message = "Корзина не найдена" });
+            }
+
+            dbContext.OrderItems.Remove(orderItem);
+            await dbContext.SaveChangesAsync();
+
+            var remainingItems = await dbContext.OrderItems
+                .AnyAsync(oi => oi.Orders_Id == orderId);
+            if (!remainingItems)
+            {
+                dbContext.Orders.Remove(order);
+                await dbContext.SaveChangesAsync();
+
+                var anyItems = await dbContext.OrderItems.AnyAsync();
+                if (!anyItems)
+                {
+                    await dbContext.Database.ExecuteSqlRawAsync(
+                        "DBCC CHECKIDENT ('dbo.OrderItems', RESEED, 0)");
+                }
+            }
+            
+            return Ok(new { message = "Товар успешно удален из корзины" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
     }
 
     [HttpPut("product/{id}")]
@@ -265,6 +297,21 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
             }
 
             return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+        }
+    }
+
+    [HttpGet("get-number-order")]
+    public async Task<IActionResult> GetNumberOrder(int userId)
+    {
+        try
+        {
+            var order = await dbContext.Orders.FirstOrDefaultAsync(
+                o => o.Users_Id == userId && o.Status == statusBasket);
+            return order == null ? Ok(-1) : Ok(order.Id);
         }
         catch (Exception ex)
         {

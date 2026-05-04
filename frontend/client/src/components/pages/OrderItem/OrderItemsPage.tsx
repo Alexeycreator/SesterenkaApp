@@ -6,6 +6,7 @@ import LoadingSpinner from '../../LoadingSpinner';
 import { getOrderItemData, OrderItem, OrderItemDto, updateOrderItemQuantity, deleteOrderItem } from '../../servicesApi/OrderItemsApi';
 import { getProducts, Product } from '../../servicesApi/ProductsApi';
 import { useAuth } from '../../../contexts/AuthContext';
+import { getNumberOrder } from '../../servicesApi/OrderItemsApi';
 
 import styles from './OrderItemsPage.module.css';
 
@@ -22,6 +23,7 @@ const OrderItemsPage = () => {
 
     // состояние корзины
     const [orderItemData, setOrderItemData] = useState<OrderItem | null>(null);
+    const [currentOrderId, setCurrentOrderId] = useState<number>();
     const [loadingOrderItem, setLoadingOrderItem] = useState(true);
     const [errorOrderItem, setErrorOrderItem] = useState<string | null>(null);
 
@@ -36,46 +38,44 @@ const OrderItemsPage = () => {
     const [authError, setAuthError] = useState('');
     const [authLoading, setAuthLoading] = useState(false);
 
-    // флаг для отслеживания первого рендера и предотвращения лишних вызовов
+    // состояние для отслеживания операций
+    const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
+    const [updatingQuantityId, setUpdatingQuantityId] = useState<number | null>(null);
+
+    // флаг для отслеживания первого рендера
     const isFirstRender = useRef(true);
     const previousAuthState = useRef(isAuthenticated);
+    const isInitialLoadDone = useRef(false);
 
     // получение позиций корзины
-    const fetchOrderItem = async (skipAuthCheck: boolean = false) => {
-        // Проверка авторизации перед запросом (если не пропущена проверка)
+    const fetchOrderItem = async (skipAuthCheck: boolean = false, showLoader: boolean = true) => {
         if (!skipAuthCheck && (!isAuthenticated || !currentUser)) {
             setLoadingOrderItem(false);
-            // Показываем модальное окно только если пользователь не авторизован
             if (!isAuthenticated) {
                 setShowAuthModal(true);
             }
             return;
         }
 
-        try {
+        if (showLoader) {
             setLoadingOrderItem(true);
+        }
+
+        try {
             const orderItem = await getOrderItemData(currentUser?.login || '', currentUser?.role || '');
             setOrderItemData(orderItem);
             if (orderItem != null) {
-                const products = orderItem.items;
-                setProductData(products);
-                // Уведомляем об обновлении корзины
-                notifyCartUpdate();
+                setProductData(orderItem.items);
             } else {
-                // Если корзина пуста или не найдена, устанавливаем пустой массив
                 setProductData([]);
-                notifyCartUpdate();
             }
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error('Ошибка загрузки данных корзины:', err);
             if (err.code === 'ERR_BAD_REQUEST') {
                 if (err.response?.status === 404) {
-                    // Если корзина не найдена - это не ошибка, просто пустая корзина
                     setOrderItemData(null);
                     setProductData([]);
                     setErrorOrderItem(null);
-                    notifyCartUpdate();
                 } else if (err.response?.status === 401) {
                     setShowAuthModal(true);
                 } else {
@@ -84,9 +84,10 @@ const OrderItemsPage = () => {
             } else {
                 setErrorOrderItem('Ошибка соединения с сервером');
             }
-        }
-        finally {
-            setLoadingOrderItem(false);
+        } finally {
+            if (showLoader) {
+                setLoadingOrderItem(false);
+            }
         }
     };
 
@@ -94,9 +95,21 @@ const OrderItemsPage = () => {
         try {
             const products = await getProducts();
             setProductIdData(products);
-        }
-        catch (err: any) {
+        } catch (err: any) {
             console.error('Ошибка загрузки данных товара:', err);
+        }
+    };
+
+    const fetchOrderId = async () => {
+        if (!currentUser?.id) return;
+
+        try {
+            const orderId = await getNumberOrder(currentUser.id);
+            if (orderId > 0) {
+                setCurrentOrderId(orderId);
+            }
+        } catch (error) {
+            console.error('Ошибка получения ID заказа:', error);
         }
     };
 
@@ -112,14 +125,10 @@ const OrderItemsPage = () => {
                 setShowAuthModal(false);
                 setAuthLogin('');
                 setAuthPassword('');
-                // Очищаем предыдущие данные перед загрузкой
                 setOrderItemData(null);
                 setProductData([]);
-                // После успешной авторизации перезагружаем корзину
-                await fetchOrderItem(true);
-                // Обновляем список товаров
+                await fetchOrderItem(true, true);
                 await fetchProductIdData();
-                // Уведомляем об обновлении корзины
                 notifyCartUpdate();
             } else {
                 setAuthError('Неверный логин или пароль');
@@ -133,115 +142,85 @@ const OrderItemsPage = () => {
 
     // хуки
     useEffect(() => {
-        // Отслеживаем изменение состояния авторизации
         if (!isFirstRender.current) {
-            // Если пользователь вышел из системы
             if (previousAuthState.current === true && isAuthenticated === false) {
                 setOrderItemData(null);
                 setProductData([]);
                 setLoadingOrderItem(false);
                 setShowAuthModal(false);
-                notifyCartUpdate(); // Уведомляем об очистке корзины
+                notifyCartUpdate();
                 navigate('/', { replace: true });
                 return;
             }
 
-            // Если пользователь только что авторизовался
             if (previousAuthState.current === false && isAuthenticated === true) {
-                fetchOrderItem(true);
+                fetchOrderItem(true, true);
                 fetchProductIdData();
                 return;
             }
         }
 
-        // Сохраняем предыдущее состояние
         previousAuthState.current = isAuthenticated;
         isFirstRender.current = false;
 
-        // Первоначальная загрузка
-        if (isAuthenticated) {
-            fetchOrderItem(false);
+        if (isAuthenticated && !isInitialLoadDone.current) {
+            isInitialLoadDone.current = true;
+            fetchOrderItem(false, true);
             fetchProductIdData();
-        } else {
+        } else if (!isAuthenticated) {
             setLoadingOrderItem(false);
         }
     }, [isAuthenticated, currentUser]);
 
-    // метод для поиска товара
-    const findProduct = (partNumber: string) => {
-        try {
-            const product = productIdData.find((p) => p.partNumber === partNumber);
-            if (product) {
-                return product.id;
-            } else {
-                console.warn('Товар с артикулом: ', partNumber, ' не найден');
-                return null;
-            }
+    useEffect(() => {
+        if (isAuthenticated && currentUser?.id) {
+            fetchOrderId();
         }
-        catch (error: any) {
-            console.error(error);
-        }
-    };
+    }, [isAuthenticated, currentUser]);
 
     // функция обновления количества одного товара
     const updateQuantity = async (id: number, newQuantity: number) => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || !currentUser?.id) {
             setShowAuthModal(true);
             return;
         }
 
-        if (newQuantity < 1) {
-            return;
-        }
+        if (newQuantity < 1) return;
 
-        setProductData(prevItems =>
-            prevItems.map(item =>
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            )
-        );
+        setUpdatingQuantityId(id);
 
         try {
-            const result = await updateOrderItemQuantity(id, newQuantity);
-            if (result) {
-                setProductData(result.items);
-                setOrderItemData(result);
-                // Уведомляем об обновлении корзины
-                notifyCartUpdate();
-            }
+            await updateOrderItemQuantity(id, newQuantity);
+            notifyCartUpdate();
+            await fetchOrderItem(true, true);
         } catch (error: any) {
-            setProductData(prevItems =>
-                prevItems.map(item =>
-                    item.id === id ? { ...item, quantity: item.quantity } : item
-                )
-            );
-            console.error('Не удалось обновить количество');
+            console.error('Не удалось обновить количество:', error);
+            alert(error.serverMessage || 'Не удалось обновить количество');
+            await fetchOrderItem(true, true);
+        } finally {
+            setUpdatingQuantityId(null);
         }
-        await fetchOrderItem(true);
     };
 
     // метод удаления товара из корзины
-    const removeItem = async (partNumber: string) => {
-        if (!isAuthenticated) {
+    const removeItem = async (orderId: number, productId: number) => {
+        if (!isAuthenticated || !currentUser?.id) {
             setShowAuthModal(true);
             return;
         }
 
+        setDeletingItemId(productId);
+
         try {
-            setLoadingOrderItem(true);
-            const id = findProduct(partNumber);
-            if (id != null) {
-                await deleteOrderItem(id);
-                // Уведомляем об обновлении корзины
-                notifyCartUpdate();
-            }
-            await fetchOrderItem(true);
+            await deleteOrderItem(orderId, productId, currentUser.id);
+            notifyCartUpdate();
+            await fetchOrderItem(true, false);
         } catch (error: any) {
             console.error('Ошибка удаления:', error);
-            if (error.statusCode === 404) {
-                await fetchOrderItem(true);
-            }
+            alert(error.serverMessage || 'Не удалось удалить товар из корзины');
+            await fetchOrderItem(true, false);
         } finally {
-            setLoadingOrderItem(false);
+            setDeletingItemId(null);
         }
     };
 
@@ -253,9 +232,8 @@ const OrderItemsPage = () => {
         navigate('/order');
     };
 
-    // Если идет загрузка и пользователь авторизован
     if (loadingOrderItem && isAuthenticated) {
-        return <LoadingSpinner />
+        return <LoadingSpinner />;
     }
 
     return (
@@ -276,16 +254,10 @@ const OrderItemsPage = () => {
                         <h2>Требуется авторизация</h2>
                         <p>Пожалуйста, войдите в аккаунт, чтобы просмотреть корзину</p>
                         <div className={styles.buttonGroup}>
-                            <Button
-                                onClick={() => setShowAuthModal(true)}
-                                className={styles.primaryButton}
-                            >
+                            <Button onClick={() => setShowAuthModal(true)} className={styles.primaryButton}>
                                 Войти в аккаунт
                             </Button>
-                            <Button
-                                onClick={() => navigate('/')}
-                                className={styles.secondaryButton}
-                            >
+                            <Button onClick={() => navigate('/')} className={styles.secondaryButton}>
                                 На главную
                             </Button>
                         </div>
@@ -295,10 +267,7 @@ const OrderItemsPage = () => {
                         <div className={styles.emptyIcon}>🛒</div>
                         <h2>Корзина пуста</h2>
                         <p>Добавьте товары в корзину, чтобы оформить заказ</p>
-                        <Button
-                            onClick={() => navigate('/catalog')}
-                            className={styles.primaryButton}
-                        >
+                        <Button onClick={() => navigate('/catalog')} className={styles.primaryButton}>
                             Перейти в каталог
                         </Button>
                     </div>
@@ -331,14 +300,17 @@ const OrderItemsPage = () => {
                                                 <Button
                                                     className={styles.quantityBtn}
                                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    disabled={item.quantity <= 1}
+                                                    disabled={item.quantity <= 1 || updatingQuantityId === item.id}
                                                 >
                                                     −
                                                 </Button>
-                                                <span className={styles.quantityValue}>{item.quantity}</span>
+                                                <span className={styles.quantityValue}>
+                                                    {updatingQuantityId === item.id ? '...' : item.quantity}
+                                                </span>
                                                 <Button
                                                     className={styles.quantityBtn}
                                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                    disabled={updatingQuantityId === item.id}
                                                 >
                                                     +
                                                 </Button>
@@ -348,9 +320,10 @@ const OrderItemsPage = () => {
                                             </div>
                                             <Button
                                                 className={styles.removeBtn}
-                                                onClick={() => removeItem(item.partNumber)}
+                                                onClick={() => removeItem(currentOrderId || 0, item.id)}
+                                                disabled={deletingItemId === item.id}
                                             >
-                                                ✕
+                                                {deletingItemId === item.id ? '...' : '✕'}
                                             </Button>
                                         </div>
                                     ))}
@@ -370,17 +343,10 @@ const OrderItemsPage = () => {
                                             <span>Итого</span>
                                             <span className={styles.totalAmount}>{orderItemData?.totalAmount || 0} ₽</span>
                                         </div>
-                                        <Button
-                                            className={styles.checkoutButton}
-                                            size="lg"
-                                            onClick={handleOrders}
-                                        >
+                                        <Button className={styles.checkoutButton} size="lg" onClick={handleOrders}>
                                             Оформить заказ
                                         </Button>
-                                        <Link
-                                            to="/catalog"
-                                            className={styles.continueLink}
-                                        >
+                                        <Link to="/catalog" className={styles.continueLink}>
                                             Продолжить покупки
                                         </Link>
                                     </Card.Body>
@@ -391,15 +357,20 @@ const OrderItemsPage = () => {
                 )}
             </Container>
 
-            <Modal show={showAuthModal} onHide={() => {
-                if (!isAuthenticated) {
-                    navigate('/');
-                }
-                setShowAuthModal(false);
-                setAuthError('');
-                setAuthLogin('');
-                setAuthPassword('');
-            }} centered backdrop="static">
+            <Modal
+                show={showAuthModal}
+                onHide={() => {
+                    if (!isAuthenticated) {
+                        navigate('/');
+                    }
+                    setShowAuthModal(false);
+                    setAuthError('');
+                    setAuthLogin('');
+                    setAuthPassword('');
+                }}
+                centered
+                backdrop="static"
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Вход в аккаунт</Modal.Title>
                 </Modal.Header>
@@ -426,16 +397,8 @@ const OrderItemsPage = () => {
                                 required
                             />
                         </Form.Group>
-                        {authError && (
-                            <div className="text-danger mb-3">
-                                {authError}
-                            </div>
-                        )}
-                        <Button
-                            type="submit"
-                            className={styles.modalSubmitButton}
-                            disabled={authLoading}
-                        >
+                        {authError && <div className="text-danger mb-3">{authError}</div>}
+                        <Button type="submit" className={styles.modalSubmitButton} disabled={authLoading}>
                             {authLoading ? 'Вход...' : 'Войти'}
                         </Button>
                     </Form>
