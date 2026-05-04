@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap';
 
 import { Product } from '../../../servicesApi/ProductsApi';
@@ -14,7 +14,7 @@ interface ProductDetailsProps {
     manufacturerData: Manufacturer[];
     getProductStock: (productId: number) => StockWarehousesQuantity | undefined;
     onClose: () => void;
-    onAddToCart: (productId: number) => void;
+    onAddToCart: (productId: number) => Promise<void>;
     apiUrl: string;
     isAuthenticated: boolean;
 }
@@ -29,9 +29,28 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
     apiUrl,
     isAuthenticated
 }) => {
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+
     const productStock = getProductStock(selectedProduct.id);
     const quantity = productStock?.totalQuantity ?? 0;
     const isInStock = quantity > 0;
+
+    const handleAddToCart = async () => {
+        if (addingToCart) return;
+
+        setAddingToCart(true);
+        try {
+            await onAddToCart(selectedProduct.id);
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 2000);
+        } catch (error) {
+            console.error('Ошибка добавления в корзину:', error);
+            alert('Не удалось добавить товар в корзину');
+        } finally {
+            setAddingToCart(false);
+        }
+    };
 
     return (
         <Container fluid className={styles.pageContainer}>
@@ -46,6 +65,16 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
                     </Button>
                 </Col>
             </Row>
+
+            {showSuccess && (
+                <Row className="mb-3">
+                    <Col>
+                        <div className={styles.successMessage}>
+                            ✅ Товар успешно добавлен в корзину!
+                        </div>
+                    </Col>
+                </Row>
+            )}
 
             <Row className="justify-content-center">
                 <Col md={10} lg={8}>
@@ -88,10 +117,19 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
                                     <div className={styles.fullProductActions}>
                                         <Button
                                             className={styles.fullProductAddToCartButton}
-                                            disabled={!isInStock}
-                                            onClick={() => onAddToCart(selectedProduct.id)}
+                                            disabled={!isInStock || addingToCart}
+                                            onClick={handleAddToCart}
                                         >
-                                            {isInStock ? `🛒 Добавить в корзину` : '❌ Нет в наличии'}
+                                            {addingToCart
+                                                ? 'Добавление...'
+                                                : (isInStock ? `🛒 Добавить в корзину` : '❌ Нет в наличии')}
+                                        </Button>
+                                        <Button
+                                            className={styles.fullProductBuyButton}
+                                            variant="outline-primary"
+                                            onClick={() => window.location.href = '/orderItems'}
+                                        >
+                                            🚀 Перейти в корзину
                                         </Button>
                                     </div>
                                 </Card.Body>
