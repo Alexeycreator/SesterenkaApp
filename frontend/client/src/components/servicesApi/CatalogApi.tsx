@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 import React from "react";
 import axios from "axios";
 import { Product } from "./ProductsApi";
@@ -35,18 +36,14 @@ export const getCatalogData = async (): Promise<Catalog> => {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
             console.log('Статус:', error.response.status);
-
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: error.response.data?.message || 'Неизвестная ошибка',
                 statusCode: error.response.status
             };
         } else if (error.request) {
-            // eslint-disable-next-line no-throw-literal
             throw { message: 'Нет ответа от сервера', isNetworkError: true };
         } else {
-            // eslint-disable-next-line no-throw-literal
             throw { message: error.message, isSetupError: true };
         }
     }
@@ -63,16 +60,11 @@ export const addToOrderItem = async (product_Id: number, userLogin: string, quan
     }
     catch (error: any) {
         if (error.response) {
-            // Сервер ответил с ошибкой (4xx, 5xx)
             console.error('Ошибка ответа:', error.response.data);
             console.log('Статус:', error.response.status);
-
-            // Извлекаем сообщение от сервера
             const serverMessage = error.response.data?.message ||
                 error.response.data?.title ||
                 'Неизвестная ошибка';
-
-            // eslint-disable-next-line no-throw-literal
             throw {
                 ...error,
                 serverMessage: serverMessage,
@@ -80,15 +72,11 @@ export const addToOrderItem = async (product_Id: number, userLogin: string, quan
                 data: error.response.data
             };
         } else if (error.request) {
-            // Запрос был отправлен, но нет ответа
-            // eslint-disable-next-line no-throw-literal
             throw {
                 message: 'Нет ответа от сервера',
                 isNetworkError: true
             };
         } else {
-            // Ошибка при настройке запроса
-            // eslint-disable-next-line no-throw-literal
             throw {
                 message: error.message,
                 isSetupError: true

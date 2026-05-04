@@ -11,7 +11,6 @@ import {
   AccountPage,
   PrivacyPolicyPage,
   TermsOfUsePage,
-  SaleItemsPage,
   OrderItemsPage,
 } from './components/pages/Index';
 import Header from './components/header/Header';
@@ -95,7 +94,6 @@ function App() {
             <Route path='/order/:id' element={<OrderDetailsPage />} />
             <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
             <Route path='/terms_of_use' element={<TermsOfUsePage />} />
-            <Route path='/sale_items' element={<SaleItemsPage />} />
             <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </main>

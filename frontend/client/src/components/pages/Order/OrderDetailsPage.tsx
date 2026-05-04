@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
-import styles from './OrderDetailsPage.module.css';
 import { CurrentOrder, getCurrentOrderData } from '../../servicesApi/OrderApi';
 import LoadingSpinner from '../../LoadingSpinner';
+
+import styles from './OrderDetailsPage.module.css';
 
 const OrderDetailsPage = () => {
     const { id } = useParams<{ id: string }>();

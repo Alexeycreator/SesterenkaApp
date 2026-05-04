@@ -28,7 +28,6 @@ const normalizeString = (str: string) => str.toLowerCase().replace(/\s+/g, '');
 
 const CatalogPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
-    const navigate = useNavigate();
     const { user: currentUser, isAuthenticated } = useAuth();
 
     // Состояния

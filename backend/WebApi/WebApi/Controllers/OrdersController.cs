@@ -13,11 +13,8 @@ namespace WebApi.Controllers;
 public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
 {
     private List<AddressesOrderDataDto> addressesDto = new List<AddressesOrderDataDto>();
-    private List<OrderItemsOrderDataDto> orderItemsDto = new List<OrderItemsOrderDataDto>();
-    private List<OrderResponseDto> orderResponse = new List<OrderResponseDto>();
     private readonly string statusBasket = OrdersEnum.Basket.GetDescription();
     private readonly string statusProcessing = OrdersEnum.Processing.GetDescription();
-    private readonly string statusCompleted = OrdersEnum.Completed.GetDescription();
     private CurrentOrderDto currentOrderDto = new CurrentOrderDto();
 
     [HttpGet]

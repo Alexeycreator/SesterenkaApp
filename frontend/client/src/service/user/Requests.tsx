@@ -1,6 +1,6 @@
 /* eslint-disable no-throw-literal */
 import api from '../core/Axios.config';
-import { UserResponse, CreateClientRequest, UpdateClientRequest, SearchClientsParams, ChangePasswordRequest } from './Types';
+import { UserResponse, CreateClientRequest, UpdateClientRequest } from './Types';
 
 export const clientApi = {
     // Получить всех клиентов - GET /api/Users

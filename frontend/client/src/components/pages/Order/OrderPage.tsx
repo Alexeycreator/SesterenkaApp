@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { AddressOrder, getShopAddress } from '../../servicesApi/AddressesApi';
 import { getOrderItemData, OrderItem, OrderItemDto } from '../../servicesApi/OrderItemsApi';
+import { AddOrder, createOrder, OrderItemsOrderDataDto } from '../../servicesApi/OrderApi';
 
 import styles from './OrderPage.module.css';
-import { AddOrder, createOrder, OrderItemsOrderDataDto } from '../../servicesApi/OrderApi';
 
 const OrderPage = () => {
     // для навигации
@@ -38,8 +38,6 @@ const OrderPage = () => {
     // Состояние для модального окна подтверждения оплаты
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
-
-    const [itemsData, setItemsData] = useState<OrderItemsOrderDataDto[]>([]);
 
     // получение адресов пунктов выдачи
     const fetchAddresses = async () => {
