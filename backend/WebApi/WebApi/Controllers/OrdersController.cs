@@ -48,35 +48,46 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
     {
         try
         {
-            var orderProducts = await dbContext.Products.ToListAsync();
-            var orderOrderData = await dbContext.Orders.ToListAsync();
-            var orderUsers = await dbContext.Users.ToListAsync();
-            var orderAddresses = await dbContext.Addresses.ToListAsync();
-            var orderOrderItems = await dbContext.OrderItems.ToListAsync();
-
-            addressesDto = FillingAddressesOrderData(orderAddresses);
-            orderItemsDto = FillingOrderItemsOrderData(orderOrderItems, currentUserLogin);
-
-            var orderData = await dbContext.Orders
-                .Select(o => new OrderDataDto()
+            var addresses = await dbContext.Addresses.ToListAsync();
+            var addressesDto = FillingAddressesOrderData(addresses);
+        
+            var orderDataList = await dbContext.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Products)
+                .Include(o => o.Users)
+                .Where(o => o.Users.Login == currentUserLogin)
+                .Select(o => new OrderDataDto
                 {
                     Id = o.Id,
                     NameOrder = o.NameOrder,
                     LoginUser = o.Users.Login,
                     Status = o.Status,
                     OrderDate = o.OrderDate,
-                    OrderItems = orderItemsDto,
-                }).Where(o => o.LoginUser == currentUserLogin).ToListAsync();
+                    OrderItems = o.OrderItems.Select(oi => new OrderItemsOrderDataDto
+                    {
+                        Id = oi.Id,
+                        Quantity = oi.Quantity,
+                        Price = oi.PriceAtMoment,
+                        NameProduct = oi.Products != null ? oi.Products.Name : string.Empty,
+                    }).ToList()
+                })
+                .ToListAsync();
 
-            var totalPriceAllOrders = orderData.Sum(o => o.OrderItems.Sum(oi => oi.TotalPrice));
-            orderResponse.Add(new OrderResponseDto()
+            if (!orderDataList.Any())
             {
-                Orders = orderData,
+                return Ok(new List<OrderResponseDto>());
+            }
+
+            var totalPriceAllOrders = orderDataList.Sum(o => o.OrderItems.Sum(oi => oi.TotalPrice));
+        
+            var orderResponse = new OrderResponseDto
+            {
+                Orders = orderDataList,
                 Addresses = addressesDto,
                 TotalPrice = totalPriceAllOrders
-            });
+            };
 
-            return Ok(orderResponse);
+            return Ok(new List<OrderResponseDto> { orderResponse });
         }
         catch (NullReferenceException ex)
         {
@@ -161,49 +172,18 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
 
     private List<AddressesOrderDataDto> FillingAddressesOrderData(List<AddressesModel> addresses)
     {
-        foreach (var address in addresses)
+        foreach (var address in addresses.Where(address => address.IsShop))
         {
-            if (address.IsShop)
+            addressesDto.Add(new AddressesOrderDataDto()
             {
-                addressesDto.Add(new AddressesOrderDataDto()
-                {
-                    Id = address.Id,
-                    City = address.City,
-                    Street = address.Street,
-                    House = address.House
-                });
-            }
+                Id = address.Id,
+                City = address.City,
+                Street = address.Street,
+                House = address.House
+            });
         }
 
         return addressesDto;
-    }
-
-    private List<OrderItemsOrderDataDto> FillingOrderItemsOrderData(List<OrderItemsModel> orderItems,
-        string currentUserLogin)
-    {
-        foreach (var items in orderItems)
-        {
-            if (items.Orders_Id != null)
-            {
-                if (items.Orders != null && items.Orders.Users != null && items.Orders.Users.Login == currentUserLogin)
-                {
-                    if (items.Products != null)
-                        orderItemsDto.Add(new OrderItemsOrderDataDto()
-                        {
-                            Id = items.Id,
-                            Quantity = items.Quantity,
-                            Price = items.PriceAtMoment,
-                            NameProduct = items.Products.Name
-                        });
-                }
-            }
-            else
-            {
-                throw new NullReferenceException();
-            }
-        }
-
-        return orderItemsDto;
     }
 
     [HttpPost("create-order")]
