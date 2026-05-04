@@ -363,9 +363,10 @@ const CatalogPage = () => {
         try {
             setLoadingCatalogData(true);
             await addToOrderItem(productId, currentUser?.login || '');
-            navigate('/orderItems');
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
         } catch (error) {
             console.error('Ошибка добавления:', error);
+            throw error;
         } finally {
             setLoadingCatalogData(false);
         }

@@ -52,8 +52,8 @@ export default class Header extends Component<{}, HeaderState> {
     private userMenuRef = createRef<HTMLDivElement>();
     private fetchTimeout: NodeJS.Timeout | null = null;
     private isFetching = false;
-    private lastFetchTime = 0;
-    private readonly FETCH_DELAY = 1000;
+    private debounceTimeout: NodeJS.Timeout | null = null;
+    private readonly DEBOUNCE_DELAY = 300;
 
     private readonly initialRegistrationForm: RegistrationFormData = {
         firstName: '',
@@ -96,7 +96,7 @@ export default class Header extends Component<{}, HeaderState> {
             this.fetchCartItemsCount();
         }
 
-        window.addEventListener('cartUpdated', this.handleCartUpdate);
+        window.addEventListener('cartUpdated', this.handleCartUpdateDebounced);
     }
 
     componentDidUpdate(prevProps: {}, prevState: HeaderState) {
@@ -115,18 +115,26 @@ export default class Header extends Component<{}, HeaderState> {
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
-        window.removeEventListener('cartUpdated', this.handleCartUpdate);
+        window.removeEventListener('cartUpdated', this.handleCartUpdateDebounced);
 
         if (this.fetchTimeout) {
             clearTimeout(this.fetchTimeout);
         }
+        if (this.debounceTimeout) {
+            clearTimeout(this.debounceTimeout);
+        }
     }
 
-    handleCartUpdate = () => {
-        const { isAuthenticated, user } = this.context || {};
-        if (isAuthenticated && user) {
-            this.fetchCartItemsCount();
+    handleCartUpdateDebounced = () => {
+        if (this.debounceTimeout) {
+            clearTimeout(this.debounceTimeout);
         }
+        this.debounceTimeout = setTimeout(() => {
+            const { isAuthenticated, user } = this.context || {};
+            if (isAuthenticated && user) {
+                this.fetchCartItemsCount();
+            }
+        }, this.DEBOUNCE_DELAY);
     };
 
     fetchCartItemsCount = async () => {
@@ -137,32 +145,32 @@ export default class Header extends Component<{}, HeaderState> {
             return;
         }
 
-        const now = Date.now();
         if (this.isFetching) return;
-        if (now - this.lastFetchTime < this.FETCH_DELAY) return;
 
         this.isFetching = true;
-        this.lastFetchTime = now;
 
         try {
             const orderItem = await getOrderItemData(user.login || '', user.role || '');
-
             if (orderItem && orderItem.items && orderItem.items.length > 0) {
                 const totalCount = orderItem.items.reduce((sum, item) => sum + item.quantity, 0);
-                this.setState({ cartItemsCount: totalCount });
+                if (this.state.cartItemsCount !== totalCount) {
+                    this.setState({ cartItemsCount: totalCount });
+                }
             } else {
-                this.setState({ cartItemsCount: 0 });
+                if (this.state.cartItemsCount !== 0) {
+                    this.setState({ cartItemsCount: 0 });
+                }
             }
         } catch (error: any) {
             if (error.statusCode !== 404) {
                 console.error('Не удалось загрузить корзину:', error.message || error.serverMessage);
             }
-            this.setState({ cartItemsCount: 0 });
         } finally {
             this.isFetching = false;
         }
     };
 
+    // Остальные методы без изменений...
     toggleAuthModal = () => {
         this.setState(prev => ({
             showAuth: !prev.showAuth,
@@ -259,7 +267,6 @@ export default class Header extends Component<{}, HeaderState> {
     };
 
     handleClickOutside = (event: MouseEvent) => {
-        // Только для меню пользователя
         if (this.userMenuRef.current && !this.userMenuRef.current.contains(event.target as Node)) {
             this.setState({ showUserMenu: false });
         }
@@ -337,39 +344,30 @@ export default class Header extends Component<{}, HeaderState> {
 
         try {
             const form = this.state.registrationForm;
-
-            // Рассчитываем возраст
             const age = this.calculateAge(form.birthDay);
 
-            // Проверяем возраст
             if (age < 0 || age > 100) {
                 this.setState({ registrationError: 'Возраст должен быть от 0 до 100 лет' });
                 this.setState({ registrationLoading: false });
                 return;
             }
 
-            // Формируем данные для регистрации в соответствии с CreateUserDto на сервере
             const registerData = {
-                secondName: form.secondName,           // Фамилия
-                firstName: form.firstName,              // Имя
-                surName: form.surName || null,          // Отчество (может быть null)
-                gender: form.gender,                    // Пол (Мужской/Женский)
-                birthday: form.birthDay,                // Дата рождения (YYYY-MM-DD)
-                age: age,                               // Возраст (рассчитанный)
-                phoneNumber: form.phone,                // Телефон
-                email: form.email,                      // Email
-                login: form.email,                      // Логин (используем email как логин)
-                password: form.password,                // Пароль
-                role: "user",                           // Роль (по умолчанию "user")
-                position: "пользователь"                // Должность (заполняем как "пользователь")
+                secondName: form.secondName,
+                firstName: form.firstName,
+                surName: form.surName || null,
+                gender: form.gender,
+                birthday: form.birthDay,
+                age: age,
+                phoneNumber: form.phone,
+                email: form.email,
+                login: form.email,
+                password: form.password,
+                role: "user",
+                position: "пользователь"
             };
 
-            console.log('Отправка данных регистрации:', registerData);
-
-            // Используем clientApi.create для регистрации
             await clientApi.create(registerData);
-
-            // После успешной регистрации автоматически входим
             await this.context!.login(form.email, form.password);
 
             this.setState({
@@ -383,14 +381,11 @@ export default class Header extends Component<{}, HeaderState> {
             await this.fetchCartItemsCount();
             const event = new CustomEvent('cartUpdated');
             window.dispatchEvent(event);
-
-            console.log('Регистрация и вход выполнены успешно');
         } catch (error: any) {
             console.error('Ошибка регистрации:', error);
             if (error.statusCode === 409) {
                 this.setState({ registrationError: 'Пользователь с таким email, телефоном или логином уже существует' });
             } else if (error.statusCode === 400) {
-                // Парсим валидационные ошибки
                 const errorData = error.data;
                 if (errorData?.errors) {
                     const errorMessages = Object.values(errorData.errors).flat().join(', ');
