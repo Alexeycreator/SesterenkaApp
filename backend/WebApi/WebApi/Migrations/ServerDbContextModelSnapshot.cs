@@ -54,7 +54,22 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("City", "Region", "Street", "House")
+                    b.HasIndex("City")
+                        .HasDatabaseName("IX_Addresses_City");
+
+                    b.HasIndex("House")
+                        .HasDatabaseName("IX_Addresses_House");
+
+                    b.HasIndex("IsShop")
+                        .HasDatabaseName("IX_Addresses_IsShop");
+
+                    b.HasIndex("Region")
+                        .HasDatabaseName("IX_Addresses_Region");
+
+                    b.HasIndex("Street")
+                        .HasDatabaseName("IX_Addresses_Street");
+
+                    b.HasIndex("Region", "City", "Street", "House")
                         .IsUnique()
                         .HasDatabaseName("IX_Addresses_FullAddress")
                         .HasFilter("[House] IS NOT NULL");
@@ -191,6 +206,12 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Description")
+                        .HasDatabaseName("IX_Categories_Description");
+
+                    b.HasIndex("Icon")
+                        .HasDatabaseName("IX_Categories_Icon");
+
                     b.HasIndex("Name")
                         .IsUnique()
                         .HasDatabaseName("IX_Categories_Name");
@@ -285,12 +306,14 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Orders_Id");
+                    b.HasIndex("Orders_Id")
+                        .HasDatabaseName("IX_OrderItems_Orders_Id");
 
                     b.HasIndex("PriceAtMoment")
                         .HasDatabaseName("IX_OrderItems_PriceAtMoment");
 
-                    b.HasIndex("Products_Id");
+                    b.HasIndex("Products_Id")
+                        .HasDatabaseName("IX_OrderItems_Products_Id");
 
                     b.HasIndex("Quantity")
                         .HasDatabaseName("IX_OrderItems_Quantity");
@@ -329,7 +352,11 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Addresses_Id");
+                    b.HasIndex("Addresses_Id")
+                        .HasDatabaseName("IX_Orders_Addresses_Id");
+
+                    b.HasIndex("NameOrder")
+                        .HasDatabaseName("IX_Orders_NameOrder");
 
                     b.HasIndex("OrderDate")
                         .HasDatabaseName("IX_Orders_OrderDate");
@@ -337,7 +364,8 @@ namespace WebApi.Migrations
                     b.HasIndex("Status")
                         .HasDatabaseName("IX_Orders_Status");
 
-                    b.HasIndex("Users_Id");
+                    b.HasIndex("Users_Id")
+                        .HasDatabaseName("IX_Orders_Users_Id");
 
                     b.ToTable("Orders");
                 });
@@ -407,9 +435,17 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Categories_Id");
+                    b.HasIndex("Categories_Id")
+                        .HasDatabaseName("IX_Products_Categories_Id)");
 
-                    b.HasIndex("Manufacturers_Id");
+                    b.HasIndex("Details")
+                        .HasDatabaseName("IX_Products_Details");
+
+                    b.HasIndex("Image")
+                        .HasDatabaseName("IX_Products_Image");
+
+                    b.HasIndex("Manufacturers_Id")
+                        .HasDatabaseName("IX_Products_Manufacturers_Id");
 
                     b.HasIndex("Name")
                         .HasDatabaseName("IX_Products_Name");
@@ -445,12 +481,14 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Products_Id");
+                    b.HasIndex("Products_Id")
+                        .HasDatabaseName("IX_Stocks_Products_Id");
 
                     b.HasIndex("Quantity")
-                        .HasDatabaseName("IX_Stocks_Qantity");
+                        .HasDatabaseName("IX_Stocks_Quantity");
 
-                    b.HasIndex("Warehouses_Id");
+                    b.HasIndex("Warehouses_Id")
+                        .HasDatabaseName("IX_Stocks_Warehouses_Id");
 
                     b.ToTable("Stocks");
                 });
@@ -539,20 +577,44 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Age")
+                        .HasDatabaseName("IX_Users_Age");
+
+                    b.HasIndex("Birthday")
+                        .HasDatabaseName("IX_Users_Birthday");
+
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("IX_Clients_Email");
+                        .HasDatabaseName("IX_Users_Email");
+
+                    b.HasIndex("FirstName")
+                        .HasDatabaseName("IX_Users_FirstName");
+
+                    b.HasIndex("Gender")
+                        .HasDatabaseName("IX_Users_Gender");
 
                     b.HasIndex("Login")
                         .IsUnique()
-                        .HasDatabaseName("IX_Clients_Login");
+                        .HasDatabaseName("IX_Users_Login");
 
                     b.HasIndex("PhoneNumber")
                         .IsUnique()
-                        .HasDatabaseName("IX_Clients_PhoneNumber");
+                        .HasDatabaseName("IX_Users_PhoneNumber");
+
+                    b.HasIndex("Position")
+                        .HasDatabaseName("IX_Users_Position");
+
+                    b.HasIndex("Role")
+                        .HasDatabaseName("IX_Users_Role");
+
+                    b.HasIndex("SecondName")
+                        .HasDatabaseName("IX_Users_SecondName");
+
+                    b.HasIndex("SurName")
+                        .HasDatabaseName("IX_Users_SurName");
 
                     b.HasIndex("SecondName", "FirstName", "SurName")
-                        .HasDatabaseName("IX_Clients_FullName");
+                        .HasDatabaseName("IX_Users_FullName");
 
                     b.ToTable("Users");
                 });
@@ -612,8 +674,15 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Warehouses_Code");
+
                     b.HasIndex("IsActive")
                         .HasDatabaseName("IX_Warehouses_IsActive");
+
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Warehouses_Name");
 
                     b.HasIndex("Type")
                         .HasDatabaseName("IX_Warehouses_Type");
