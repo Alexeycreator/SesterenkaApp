@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Swashbuckle.Swagger.Model;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
@@ -12,6 +13,8 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public sealed class InformationsController(ServerDbContext dbContext) : ControllerBase
 {
+    private Logger loggerInformationsController = LogManager.GetCurrentClassLogger();
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<InformationsModel>>> GetInformationsAsync()
     {
@@ -24,6 +27,7 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
         var information = await dbContext.Informations.FindAsync(id);
         if (information == null)
         {
+            loggerInformationsController.Error($"Данной информации с id = {id} не существует");
             return NotFound(new
             {
                 StatusCode = 404,
@@ -55,6 +59,7 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
                 {
                     if (info.Users != null)
                     {
+                        loggerInformationsController.Info($"Заполнение данных о сотруднике");
                         usersDto.Add(new UserResponseDto()
                         {
                             Id = info.Users.Id,
@@ -71,9 +76,14 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
                             Login = info.Users.Login
                         });
                     }
+                    else
+                    {
+                        loggerInformationsController.Warn($"Список сотрудников не получен для страницы информации");
+                    }
 
                     if (info.Addresses != null)
                     {
+                        loggerInformationsController.Info($"Заполнение данных о адресах");
                         addressesDto.Add(new AddressesModel()
                         {
                             Id = info.Addresses.Id,
@@ -84,25 +94,53 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
                             IsShop = info.Addresses.IsShop,
                         });
                     }
+                    else
+                    {
+                        loggerInformationsController.Warn($"Список адресов не получен для страницы информации");
+                    }
 
                     if (info.OurValues != null)
                     {
+                        loggerInformationsController.Info($"Заполнение данных о задачах");
                         ourValuesDto.Add(new string(info.OurValues));
+                    }
+                    else
+                    {
+                        loggerInformationsController.Warn(
+                            $"Текст для блока 'наши задачи' не получен для страницы информации");
                     }
 
                     if (info.OurMission != null)
                     {
+                        loggerInformationsController.Info($"Заполнение данных о миссиях");
                         ourMissionDto.Add(new string(info.OurMission));
+                    }
+
+                    {
+                        loggerInformationsController.Warn(
+                            $"Текст для блока 'наша миссия' не получен для страницы информации");
                     }
 
                     if (info.AboutUs != null)
                     {
+                        loggerInformationsController.Info($"Заполнение данных информации о компании");
                         aboutUsDto.Add(new string(info.AboutUs));
+                    }
+                    else
+                    {
+                        loggerInformationsController.Warn(
+                            $"Текст для блока 'о нас' не получен для страницы информации");
                     }
 
                     if (info.Questions != null)
                     {
+                        loggerInformationsController.Info($"Заполнение данных о вопросах");
                         questionsDto.Add(new string(info.Questions));
+                    }
+                    else
+                    {
+                        loggerInformationsController.Warn(
+                            $"Текст для блока 'часто задаваемые вопросы' не получен для страницы информации");
                     }
 
                     var existsRespDataInfo =
@@ -123,6 +161,7 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
             }
             else
             {
+                loggerInformationsController.Error($"Данной информации не существует");
                 return NotFound(new
                 {
                     StatusCode = 404,
@@ -135,6 +174,7 @@ public sealed class InformationsController(ServerDbContext dbContext) : Controll
         }
         catch (Exception ex)
         {
+            loggerInformationsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
             return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }

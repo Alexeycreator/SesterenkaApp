@@ -35,11 +35,12 @@ public sealed class UsersController(
         var user = await dbContext.Users.FindAsync(id);
         if (user == null)
         {
+            loggerUsersController.Error($"Данного пользователя ({id}) не существует");
             return NotFound(new
             {
                 StatusCode = 404,
                 Message = $"Данного пользователя не существует",
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.Now
             });
         }
 
@@ -52,13 +53,22 @@ public sealed class UsersController(
         try
         {
             if (await dbContext.Users.AnyAsync(c => c.Login == createDto.Login))
+            {
+                loggerUsersController.Error($"Логин ({createDto.Login}) уже существует");
                 return Conflict(new { message = "Логин уже существует" });
+            }
 
             if (await dbContext.Users.AnyAsync(c => c.Email == createDto.Email))
+            {
+                loggerUsersController.Error($"Email ({createDto.Email}) уже существует");
                 return Conflict(new { message = "Email уже существует" });
+            }
 
             if (await dbContext.Users.AnyAsync(c => c.PhoneNumber == createDto.PhoneNumber))
+            {
+                loggerUsersController.Error($"Телефон ({createDto.PhoneNumber}) уже существует");
                 return Conflict(new { message = "Телефон уже существует" });
+            }
 
             string hashedPassword = passwordService.HashPassword(createDto.Password);
             loggerUsersController.Info($"Пароль захэширован для пользователя {createDto.Login}");
@@ -82,7 +92,9 @@ public sealed class UsersController(
             };
 
             dbContext.Users.Add(user);
+            loggerUsersController.Info($"Пользователь добавлен");
             await dbContext.SaveChangesAsync();
+            loggerUsersController.Info($"Все изменения внесены в БД");
 
             // Возвращаем данные без пароля
             var response = new UserResponseDto
@@ -280,54 +292,64 @@ public sealed class UsersController(
         var existsUser = await dbContext.Users.FindAsync(id);
         if (existsUser == null)
         {
+            loggerUsersController.Error($"Пользователя не существует!");
             return NotFound(new
             {
                 StatusCode = 404,
                 Error = "NotFound",
                 Message = $"Пользователя не существует!",
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTime.Now,
             });
         }
 
         if (userDto.SecondName != null)
         {
             existsUser.SecondName = userDto.SecondName;
+            loggerUsersController.Info($"Фамилия обновлена");
         }
 
         if (userDto.FirstName != null)
         {
             existsUser.FirstName = userDto.FirstName;
+            loggerUsersController.Info($"Имя обновлено");
         }
 
         if (userDto.SurName != null)
         {
             existsUser.SurName = userDto.SurName;
+            loggerUsersController.Info($"Отчество обновлено");
         }
 
         if (userDto.Gender != null)
         {
             existsUser.Gender = userDto.Gender;
+            loggerUsersController.Info($"Пол обновлен");
         }
 
         if (userDto.Birthday.HasValue)
         {
             existsUser.Birthday = userDto.Birthday.Value;
+            loggerUsersController.Info($"Дата рождения обновлена");
             existsUser.Age = CalculateAge(userDto.Birthday.Value);
+            loggerUsersController.Info($"Возраст обновлен");
         }
 
         if (userDto.Age.HasValue)
         {
             existsUser.Age = userDto.Age.Value;
+            loggerUsersController.Info($"Возраст обновлен");
         }
 
         if (userDto.PhoneNumber != null)
         {
             existsUser.PhoneNumber = userDto.PhoneNumber;
+            loggerUsersController.Info($"Номер телефона обновлен");
         }
 
         if (userDto.Email != null)
         {
             existsUser.Email = userDto.Email;
+            loggerUsersController.Info($"Email обновлен");
         }
 
         // Смена пароля
@@ -337,15 +359,18 @@ public sealed class UsersController(
             if (string.IsNullOrEmpty(userDto.CurrentPassword) ||
                 !passwordHasher.VerifyPassword(userDto.CurrentPassword, existsUser.PasswordHash))
             {
+                loggerUsersController.Error($"Неверный текущий пароль");
                 return BadRequest(new { Message = "Неверный текущий пароль" });
             }
 
             // Устанавливаем новый пароль
             existsUser.Password = userDto.NewPassword;
             existsUser.PasswordHash = passwordHasher.HashPassword(userDto.NewPassword);
+            loggerUsersController.Info($"Установлен новый пароль");
         }
 
         await dbContext.SaveChangesAsync();
+        loggerUsersController.Info($"Все изменения внесены в БД");
 
         return NoContent();
     }
@@ -360,6 +385,7 @@ public sealed class UsersController(
             {
                 if (user.Password == newPassword)
                 {
+                    loggerUsersController.Error($"Старый и новый пароли совпадают");
                     return Unauthorized(new { Message = "Старый и новый пароли совпадают" });
                 }
 
@@ -367,36 +393,38 @@ public sealed class UsersController(
                 {
                     user.Password = newPassword;
                     user.PasswordHash = passwordHasher.HashPassword(newPassword);
+                    loggerUsersController.Info($"Пароль изменен");
                     await dbContext.SaveChangesAsync();
+                    loggerUsersController.Info($"Все изменения внесены в БД");
                     return Ok();
                 }
                 else
                 {
+                    loggerUsersController.Error($"Старый и новый пароли совпадают");
                     return Unauthorized(new { Message = "Старый и новый пароли совпадают" });
                 }
             }
             else
             {
+                loggerUsersController.Error($"Пользователя не существует!");
                 return NotFound(new
                 {
                     StatusCode = 404,
                     Error = "NotFound",
                     Message = $"Пользователя не существует!",
-                    Timestamp = DateTime.UtcNow,
+                    Timestamp = DateTime.Now,
                 });
             }
         }
-        catch (NullReferenceException ex)
-        {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
-        }
         catch (DbUpdateException ex)
         {
+            loggerUsersController.Error($"Ошибка базы данных: {ex.Message}");
             return StatusCode(500, new { message = $"Ошибка базы данных: {ex.Message}" });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerUsersController.Error($"Внутрення ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = "Внутрення ошибка сервера", error = ex.Message });
         }
     }
 
@@ -406,17 +434,20 @@ public sealed class UsersController(
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
         if (user == null)
         {
+            loggerUsersController.Error($"Такого пользователя ({id}) не существует!");
             return NotFound(new
             {
                 StatusCode = 404,
                 Error = "NotFound",
                 Message = $"Такого пользователя не существует!",
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTime.Now,
             });
         }
 
         dbContext.Users.Remove(user);
+        loggerUsersController.Info($"Пользователь удален");
         await dbContext.SaveChangesAsync();
+        loggerUsersController.Info($"Все изменения внесены в БД");
 
         return Ok(new
         {
@@ -435,16 +466,19 @@ public sealed class UsersController(
             var user = await dbContext.Users.FindAsync(userId);
             if (user == null)
             {
-                return NotFound();
+                loggerUsersController.Error($"Пользователь ({userId}) не найден");
+                return NotFound(new { message = $"Пользователь не найден" });
             }
 
             if (user.Role == newRole)
             {
-                return BadRequest();
+                loggerUsersController.Error($"Старая и новая роль пользователя совпадают");
+                return BadRequest(new { message = $"Старая и новая роль пользователя совпадают" });
             }
             else
             {
                 user.Role = newRole;
+                loggerUsersController.Info($"Роль пользователя изменена");
                 user = CheckPosition(user);
                 var information = await dbContext.Informations.FirstOrDefaultAsync(i => i.Users_Id == user.Id);
                 if (user.Position == "администратор" || user.Position == "сотрудник")
@@ -473,6 +507,7 @@ public sealed class UsersController(
                 }
 
                 await dbContext.SaveChangesAsync();
+                loggerUsersController.Info($"Все изменения внесены в БД");
             }
 
             return Ok(new
@@ -503,8 +538,12 @@ public sealed class UsersController(
             case "admin":
                 user.Position = "администратор";
                 break;
-            default: throw new ArgumentException($"Роль {user.Role} не существует в БД. Для нее нет позиции.");
+            default:
+                loggerUsersController.Error($"Роль {user.Role} не существует в БД. Для нее нет позиции.");
+                throw new ArgumentException($"Роль {user.Role} не существует в БД. Для нее нет позиции.");
         }
+
+        loggerUsersController.Info($"Изменена позиция пользователя на {user.Position}");
 
         return user;
     }

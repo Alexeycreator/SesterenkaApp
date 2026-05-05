@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
 using WebApi.Models.DTOs.Catalog;
@@ -15,6 +16,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
     private readonly string statusBasket = OrdersEnum.Basket.GetDescription();
     private readonly string statusProcessing = OrdersEnum.Processing.GetDescription();
     private readonly string statusCompleted = OrdersEnum.Completed.GetDescription();
+    private Logger loggerOrderItemsController = LogManager.GetCurrentClassLogger();
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrderItemsModel>>> GetOrderItemsAsync()
@@ -28,11 +30,12 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         var orderItem = await dbContext.OrderItems.FindAsync(id);
         if (orderItem == null)
         {
+            loggerOrderItemsController.Error($"Данной позиции заказа с id = {id} не существует");
             return NotFound(new
             {
                 StatusCode = 404,
                 Message = $"Данной позиции заказа не существует",
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.Now
             });
         }
 
@@ -46,7 +49,8 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         {
             if (request == null)
             {
-                return NotFound();
+                loggerOrderItemsController.Error($"Данные не предоставлены");
+                return BadRequest(new { message = $"Данные не предоставлены" });
             }
 
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Login == request.LoginUser);
@@ -57,6 +61,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                     .FirstOrDefaultAsync();
                 if (order != null)
                 {
+                    loggerOrderItemsController.Info($"Найден заказ пользователя {request.LoginUser}");
                     var orderItems = await dbContext.OrderItems
                         .Where(oi =>
                             oi.Orders != null && oi.Orders.Users != null &&
@@ -87,18 +92,17 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                         totalAmount = orderItems.Sum(i => i.TotalPrice)
                     });
                 }
-                else
-                {
-                    return NotFound();
-                }
+
+                loggerOrderItemsController.Error($"Заказ пользователя {request.LoginUser} не найден");
+                return NotFound(new { message = $"Заказ пользователя {request.LoginUser} не найден" });
             }
-            else
-            {
-                return NotFound();
-            }
+
+            loggerOrderItemsController.Error($"Пользователь {request.LoginUser} не найден в системе");
+            return NotFound(new { message = $"Пользователь {request.LoginUser} не найден в системе" });
         }
         catch (Exception ex)
         {
+            loggerOrderItemsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
             return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }
@@ -106,31 +110,39 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
     [HttpGet("orderItem-data/{orderId}")]
     public async Task<IActionResult> GetOrderItemDataAsync(int orderId)
     {
-        var basketItems = await dbContext.OrderItems
-            .Where(oi => oi.Orders_Id == orderId)
-            .Select(oi => new OrderItemDataDto
-            {
-                Id = oi.Id,
-                Quantity = oi.Quantity,
-                PriceAtMoment = oi.PriceAtMoment,
-                NameProducts = oi.Products != null ? oi.Products.Name : "Товар не найден",
-                PartNumber = oi.Products != null ? oi.Products.PartNumber : "N/A",
-                ImageProduct = oi.Products != null ? oi.Products.Image : "",
-                NameCategories = oi.Products != null && oi.Products.Categories != null
-                    ? oi.Products.Categories.Name
-                    : "Категория не указана",
-                NameManufacturers = oi.Products != null && oi.Products.Manufacturers != null
-                    ? oi.Products.Manufacturers.Name
-                    : "Бренд не указан"
-            })
-            .ToListAsync();
-
-        return Ok(new
+        try
         {
-            items = basketItems,
-            totalQuantity = basketItems.Sum(i => i.Quantity),
-            totalAmount = basketItems.Sum(i => i.TotalPrice)
-        });
+            var basketItems = await dbContext.OrderItems
+                .Where(oi => oi.Orders_Id == orderId)
+                .Select(oi => new OrderItemDataDto
+                {
+                    Id = oi.Id,
+                    Quantity = oi.Quantity,
+                    PriceAtMoment = oi.PriceAtMoment,
+                    NameProducts = oi.Products != null ? oi.Products.Name : "Товар не найден",
+                    PartNumber = oi.Products != null ? oi.Products.PartNumber : "N/A",
+                    ImageProduct = oi.Products != null ? oi.Products.Image : "",
+                    NameCategories = oi.Products != null && oi.Products.Categories != null
+                        ? oi.Products.Categories.Name
+                        : "Категория не указана",
+                    NameManufacturers = oi.Products != null && oi.Products.Manufacturers != null
+                        ? oi.Products.Manufacturers.Name
+                        : "Бренд не указан"
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                items = basketItems,
+                totalQuantity = basketItems.Sum(i => i.Quantity),
+                totalAmount = basketItems.Sum(i => i.TotalPrice)
+            });
+        }
+        catch (Exception ex)
+        {
+            loggerOrderItemsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
+        }
     }
 
     [HttpPost]
@@ -140,13 +152,15 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         {
             if (request == null || request.Product_Id <= 0)
             {
-                return BadRequest();
+                loggerOrderItemsController.Error($"Данные не предоставлены");
+                return BadRequest(new { message = $"Данные не предоставлены" });
             }
 
             var product = await dbContext.Products.FindAsync(request.Product_Id);
             if (product == null)
             {
-                return NotFound();
+                loggerOrderItemsController.Error($"Товара с id = {request.Product_Id} не найден в системе");
+                return NotFound(new { message = "Товар не найден в системе" });
             }
 
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Login == request.UserLogin);
@@ -158,6 +172,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
 
                 if (ordersUser.Count == 0)
                 {
+                    loggerOrderItemsController.Info($"Создание заказа пользователя {request.UserLogin}");
                     var order = new OrdersModel()
                     {
                         OrderDate = DateTime.Now,
@@ -166,7 +181,9 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                         NameOrder = GenerateOrderNumber()
                     };
                     dbContext.Orders.Add(order);
+                    loggerOrderItemsController.Info($"Заказ успешно добавлен в БД");
                     await dbContext.SaveChangesAsync();
+                    loggerOrderItemsController.Info($"Все изменения внесены в БД");
                 }
 
                 var orderId = ordersUser.Where(os => os.Status == statusBasket && os.Users_Id == user.Id)
@@ -179,9 +196,12 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                 {
                     existOrderItem.Quantity += request.Quantity;
                     dbContext.OrderItems.Update(existOrderItem);
+                    loggerOrderItemsController.Info(
+                        $"Обновление количества товара с id = {request.Product_Id} в корзине");
                 }
                 else
                 {
+                    loggerOrderItemsController.Info($"Добавление товара в корзину");
                     var orderItem = new OrderItemsModel()
                     {
                         Quantity = request.Quantity,
@@ -190,18 +210,22 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                         Products_Id = request.Product_Id
                     };
                     dbContext.OrderItems.Add(orderItem);
+                    loggerOrderItemsController.Info($"Товары добавлены в корзину");
                 }
             }
 
             await dbContext.SaveChangesAsync();
+            loggerOrderItemsController.Info($"Все изменения внесены в БД");
             return Ok();
         }
         catch (DbUpdateException ex)
         {
+            loggerOrderItemsController.Error($"Ошибка базы данных: {ex.Message}");
             return StatusCode(500, new { message = $"Ошибка базы данных: {ex.Message}" });
         }
         catch (Exception ex)
         {
+            loggerOrderItemsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
             return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }
@@ -223,6 +247,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
             var orderItem = await dbContext.OrderItems.FindAsync(productId);
             if (orderItem == null)
             {
+                loggerOrderItemsController.Error($"Товар с id = {productId} не найден в корзине");
                 return NotFound(new { message = "Товар не найден в корзине" });
             }
 
@@ -230,32 +255,43 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
                 o.Id == orderId && o.Users_Id == userId && o.Status == statusBasket);
             if (order == null)
             {
+                loggerOrderItemsController.Error($"Корзина не найдена");
                 return NotFound(new { message = "Корзина не найдена" });
             }
 
             dbContext.OrderItems.Remove(orderItem);
+            loggerOrderItemsController.Info($"Товар с id = {productId} удален из корзины");
             await dbContext.SaveChangesAsync();
+            loggerOrderItemsController.Info($"Все изменения внесены в БД");
 
             var remainingItems = await dbContext.OrderItems
                 .AnyAsync(oi => oi.Orders_Id == orderId);
             if (!remainingItems)
             {
+                loggerOrderItemsController.Info($"В корзине нет товаров..." + Environment.NewLine +
+                                                $"Удаление заказа...");
                 dbContext.Orders.Remove(order);
+                loggerOrderItemsController.Info($"Заказ успешно удален");
                 await dbContext.SaveChangesAsync();
+                loggerOrderItemsController.Info($"Все изменения внесены в БД");
 
                 var anyItems = await dbContext.OrderItems.AnyAsync();
                 if (!anyItems)
                 {
+                    loggerOrderItemsController.Info($"Таблица корзины товаров пустая..." + Environment.NewLine +
+                                                    $"Обнуление счетчика Id...");
                     await dbContext.Database.ExecuteSqlRawAsync(
                         "DBCC CHECKIDENT ('dbo.OrderItems', RESEED, 0)");
+                    loggerOrderItemsController.Info($"Счетчик успешно обнулен");
                 }
             }
-            
+
             return Ok(new { message = "Товар успешно удален из корзины" });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerOrderItemsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }
 
@@ -267,12 +303,14 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         {
             if (request == null)
             {
-                return BadRequest(new { message = "Некорректные данные" });
+                loggerOrderItemsController.Error($"Пустые данные");
+                return BadRequest(new { message = "Пустые данные" });
             }
 
             var orderItem = await dbContext.OrderItems.FindAsync(id);
             if (orderItem == null)
             {
+                loggerOrderItemsController.Error($"Товар с id = {id} в корзине не найден");
                 return NotFound(new { message = "Товар в корзине не найден" });
             }
 
@@ -282,6 +320,7 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
 
             if (stock < request.Quantity)
             {
+                loggerOrderItemsController.Warn($"Недостаточно товара на складе. Доступно: {stock} шт.");
                 return BadRequest(new
                 {
                     message = $"Недостаточно товара на складе. Доступно: {stock} шт."
@@ -289,7 +328,9 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
             }
 
             orderItem.Quantity = request.Quantity;
+            loggerOrderItemsController.Info($"Обновление количества товара в заказе");
             await dbContext.SaveChangesAsync();
+            loggerOrderItemsController.Info($"Все изменения внесены в БД");
 
             if (orderItem.Orders_Id != null)
             {
@@ -300,7 +341,8 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerOrderItemsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }
 
@@ -315,7 +357,8 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerOrderItemsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
 
@@ -9,6 +10,8 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public sealed class ManufacturersController(ServerDbContext dbContext) : ControllerBase
 {
+    private Logger loggerManufacturersController = LogManager.GetCurrentClassLogger();
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ManufacturersModel>>> GetManufacturersAsync()
     {
@@ -21,6 +24,7 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
         var manufacturer = await dbContext.Manufacturers.FindAsync(id);
         if (manufacturer == null)
         {
+            loggerManufacturersController.Error($"Данного производителя с id = {id} не существует");
             return NotFound(new
             {
                 StatusCode = 404,
@@ -39,11 +43,13 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
         {
             if (request == null)
             {
+                loggerManufacturersController.Error($"Данные не предоставлены");
                 return BadRequest(new { message = "Данные не предоставлены" });
             }
 
             if (string.IsNullOrEmpty(request.Name))
             {
+                loggerManufacturersController.Error($"Название бренда не может быть пустым");
                 return BadRequest(new { message = "Название бренда не может быть пустым" });
             }
 
@@ -51,7 +57,8 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
                 .FirstOrDefaultAsync(m => m.Name == request.Name);
             if (existingManufacturer != null)
             {
-                return Conflict(new { message = "Бренд с таким названием уже существует" });
+                loggerManufacturersController.Error($"Бренд с таким названием ({request.Name}) уже существует");
+                return Conflict(new { message = $"Бренд с таким названием ({request.Name}) уже существует" });
             }
 
             var newManufacturer = new ManufacturersModel
@@ -60,13 +67,16 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
             };
 
             await dbContext.Manufacturers.AddAsync(newManufacturer);
+            loggerManufacturersController.Info($"Бренд {request.Name} успешно создан");
             await dbContext.SaveChangesAsync();
-            
-            return Ok(new { message = "Бренд успешно создан" });
+            loggerManufacturersController.Info($"Все изменения внесены в БД");
+
+            return Ok(new { message = $"Бренд {request.Name} успешно создан" });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerManufacturersController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = "Внутренняя ошибка сервера: ", error = ex.Message });
         }
     }
 
@@ -78,21 +88,27 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
             var manufacturers = await dbContext.Manufacturers.FindAsync(manufacturerId);
             if (manufacturers == null)
             {
-                return NotFound(new { message = "Бренд не найден" });
+                loggerManufacturersController.Error($"Бренд: {request.Name} не найден");
+                return NotFound(new { message = $"Бренд: {request.Name} не найден" });
             }
 
             if (string.IsNullOrEmpty(request.Name))
             {
+                loggerManufacturersController.Error($"Название бренда не может быть пустым");
                 return BadRequest(new { message = "Название бренда не может быть пустым" });
             }
 
             manufacturers.Name = request.Name;
+            loggerManufacturersController.Info($"Бренд: {request.Name} успешно обновлен");
             await dbContext.SaveChangesAsync();
-            return Ok(new { message = "Бренд успешно обновлен" });
+            loggerManufacturersController.Info($"Все изменения внесены в БД");
+
+            return Ok(new { message = $"Бренд: {request.Name} успешно обновлен" });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerManufacturersController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = "Внутренняя ошибка сервера: ", error = ex.Message });
         }
     }
 
@@ -104,16 +120,21 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
             var manufacturer = await dbContext.Manufacturers.FindAsync(manufacturerId);
             if (manufacturer == null)
             {
+                loggerManufacturersController.Error($"Бренд с id = {manufacturerId} не найден");
                 return NotFound(new { message = "Бренд не найден" });
             }
 
             dbContext.Manufacturers.Remove(manufacturer);
+            loggerManufacturersController.Info($"Бренд с id = {manufacturerId} успешно удален");
             await dbContext.SaveChangesAsync();
+            loggerManufacturersController.Info($"Все изменения внесены в БД");
+
             return Ok(new { message = "Бренд успешно удален" });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ошибка при обновлении", error = ex.Message });
+            loggerManufacturersController.Error($"Внутренняя ошибка сервера: {ex.Message}");
+            return StatusCode(500, new { message = "Внутренняя ошибка сервера: ", error = ex.Message });
         }
     }
 }

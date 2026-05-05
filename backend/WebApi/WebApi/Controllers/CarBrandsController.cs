@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using WebApi.Methods;
 using WebApi.Models.DataBase;
 
@@ -9,6 +10,8 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public sealed class CarBrandsController(ServerDbContext dbContext) : ControllerBase
 {
+    private Logger loggerCarBrandsController = LogManager.GetCurrentClassLogger();
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CarBrandsModel>>> GetCarBrandsAsync()
     {
@@ -21,6 +24,7 @@ public sealed class CarBrandsController(ServerDbContext dbContext) : ControllerB
         var carBrand = await dbContext.CarBrands.FindAsync(id);
         if (carBrand == null)
         {
+            loggerCarBrandsController.Error($"Данного брэнда машины с id = {id} не существует");
             return NotFound(new
             {
                 StatusCode = 404,
