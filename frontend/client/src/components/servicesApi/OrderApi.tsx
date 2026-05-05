@@ -74,6 +74,7 @@ export interface CurrentOrder {
     id: number;
     dateOrder: Date;
     status: string;
+    nameOrder: string;
     countProducts: number;
     address: AddressOrder;
     products: ProductsCurrentOrder[];

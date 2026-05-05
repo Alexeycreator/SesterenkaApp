@@ -18,7 +18,7 @@ const OrderDetailsPage = () => {
     const fetchCurrentOrder = async () => {
         try {
             setLoading(true);
-            const catalogData = await getCurrentOrderData(36);
+            const catalogData = await getCurrentOrderData(Number(id));
             setOrder(catalogData);
         }
         catch (err: any) {
@@ -109,7 +109,7 @@ const OrderDetailsPage = () => {
                 <span>/</span>
                 <Link to="/personalAccount?tab=orders">Мои заказы</Link>
                 <span>/</span>
-                <span className={styles.current}>Заказ #{order.id}</span>
+                <span className={styles.current}>Заказ #{order.nameOrder}</span>
             </div>
 
             {/* Заголовок */}
@@ -123,7 +123,7 @@ const OrderDetailsPage = () => {
                         >
                             ← Назад к заказам
                         </Button>
-                        <h1 className={styles.title}>Заказ #{order.id}</h1>
+                        <h1 className={styles.title}>Заказ #{order.nameOrder}</h1>
                         <div className={styles.statusWrapper}>
                             {getStatusBadge(order.status)}
                         </div>

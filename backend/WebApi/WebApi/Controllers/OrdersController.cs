@@ -154,6 +154,7 @@ public sealed class OrdersController(ServerDbContext dbContext) : ControllerBase
                 currentOrderDto.Id = currentOrder.Id;
                 currentOrderDto.DateOrder = currentOrder.OrderDate;
                 currentOrderDto.Status = currentOrder.Status;
+                currentOrderDto.NameOrder = currentOrder.NameOrder;
                 currentOrderDto.Address = address;
                 currentOrderDto.Products = products;
                 currentOrderDto.CountProducts = products.Count;
