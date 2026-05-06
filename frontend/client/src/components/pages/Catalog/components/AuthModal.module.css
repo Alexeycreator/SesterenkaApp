@@ -1,41 +1,62 @@
+/* ============================================
+   МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ/РЕГИСТРАЦИИ
+   ============================================ */
+
+/* Контейнер модального окна */
 .authModal :global(.modal-content) {
     background: linear-gradient(135deg, #F8F0E0 0%, #F0E0D0 100%);
     border: 2px solid #C0A080;
     border-radius: 15px;
 }
 
+/* Заголовок модального окна */
 .authModal :global(.modal-header) {
     border-bottom: 2px solid #C0A080;
     padding: 15px 20px;
 }
 
+/* Заголовок внутри модального окна */
 .authModal :global(.modal-title) {
     color: #8B5A2B;
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
 }
 
+/* Тело модального окна */
 .authModal :global(.modal-body) {
     padding: 20px;
 }
 
+/* ============================================
+   ФОРМА
+   ============================================ */
+
+/* Метка поля формы */
 .authModal :global(.form-label) {
     color: #8B5A2B;
     font-weight: 500;
 }
 
+/* Поле ввода формы */
 .authModal :global(.form-control) {
     border: 2px solid #D2B48C;
     border-radius: 8px;
     background-color: #FFF8F0;
     color: #8B5A2B;
+    transition: all 0.3s ease;
 }
 
+/* Эффект при фокусе на поле ввода */
 .authModal :global(.form-control:focus) {
     border-color: #c49b6b;
     box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
 }
 
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+/* Основная кнопка отправки */
 .authModal :global(.btn-primary) {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -46,16 +67,32 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на основную кнопку */
 .authModal :global(.btn-primary:hover) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
 }
 
+/* Кнопка-ссылка для переключения между входом и регистрацией */
 .authModal :global(.btn-link) {
     color: #c49b6b;
     text-decoration: none;
+    transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку-ссылку */
 .authModal :global(.btn-link:hover) {
     color: #8B5A2B;
+}
+
+/* ============================================
+   УВЕДОМЛЕНИЯ (ALERT)
+   ============================================ */
+
+/* Стили для уведомления об ошибке */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }

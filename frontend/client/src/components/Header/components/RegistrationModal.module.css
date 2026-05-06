@@ -1,5 +1,8 @@
-/* RegistrationModal.module.css */
+/* ============================================
+   ОСНОВНЫЕ КОМПОНЕНТЫ МОДАЛЬНОГО ОКНА
+   ============================================ */
 
+/* Обертка модального окна */
 .modal :global(.modal-content) {
     border-radius: 20px;
     overflow: hidden;
@@ -7,12 +10,14 @@
     border: none;
 }
 
+/* Заголовок модального окна */
 .modalHeader {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     padding: 20px 30px;
     border-bottom: none;
 }
 
+/* Заголовок внутри модального окна */
 .modalTitle {
     color: white;
     font-size: 1.5rem;
@@ -22,31 +27,41 @@
     gap: 10px;
 }
 
+/* Иконка заголовка */
 .titleIcon {
     font-size: 1.8rem;
 }
 
+/* Тело модального окна */
 .modalBody {
     padding: 30px;
     background: #f8f9fa;
 }
 
+/* Нижняя часть модального окна */
 .modalFooter {
     padding: 20px 30px;
     border-top: 1px solid #e0e0e0;
     background: white;
 }
 
+/* ============================================
+   ФОРМА РЕГИСТРАЦИИ
+   ============================================ */
+
+/* Контейнер формы */
 .formContainer {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
+/* Группа полей формы */
 .formGroup {
     margin-bottom: 0;
 }
 
+/* Метка поля формы */
 .formLabel {
     font-weight: 600;
     color: #2c3e50;
@@ -57,14 +72,17 @@
     gap: 8px;
 }
 
+/* Иконка метки */
 .labelIcon {
     font-size: 1.1rem;
 }
 
+/* Звездочка обязательного поля */
 .requiredStar {
     color: #e74c3c;
 }
 
+/* Поле ввода */
 .formInput {
     border: 2px solid #e0e0e0;
     border-radius: 10px;
@@ -74,32 +92,42 @@
     background-color: white;
 }
 
+/* Эффект при фокусе на поле ввода */
 .formInput:focus {
     border-color: #c49b6b;
     box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.1);
     outline: none;
 }
 
+/* Эффект при наведении на поле ввода */
 .formInput:hover:not(:disabled) {
     border-color: #c49b6b;
 }
 
+/* Сообщение об ошибке валидации */
 .errorFeedback {
     color: #e74c3c;
     font-size: 0.85rem;
     margin-top: 5px;
 }
 
-.errorMessage {
-    background: linear-gradient(135deg, #fee, #fdd);
-    border-left: 4px solid #e74c3c;
-    border-radius: 10px;
-    padding: 12px 15px;
+/* ============================================
+   УВЕДОМЛЕНИЯ (Alert)
+   ============================================ */
+
+/* Стили для уведомления об ошибке */
+.errorAlert {
     margin-bottom: 20px;
-    color: #c0392b;
-    font-size: 0.9rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }
 
+/* ============================================
+   ГРУППА ПОЛЯ "ПОЛ"
+   ============================================ */
+
+/* Группа для выбора пола */
 .genderGroup {
     display: flex;
     gap: 30px;
@@ -110,6 +138,7 @@
     border: 2px solid #e0e0e0;
 }
 
+/* Лейбл для radio-кнопки */
 .genderLabel {
     display: flex;
     align-items: center;
@@ -119,6 +148,7 @@
     color: #2c3e50;
 }
 
+/* Radio-кнопка выбора пола */
 .genderRadio {
     width: 18px;
     height: 18px;
@@ -126,14 +156,21 @@
     accent-color: #c49b6b;
 }
 
+/* Текст выбора пола */
 .genderText {
     user-select: none;
 }
 
+/* ============================================
+   ПОЛЕ ПАРОЛЯ С ТОГГЛЕМ
+   ============================================ */
+
+/* Обертка для поля пароля */
 .passwordWrapper {
     position: relative;
 }
 
+/* Кнопка показа/скрытия пароля */
 .passwordToggle {
     position: absolute;
     right: 12px;
@@ -145,14 +182,21 @@
     text-decoration: none;
 }
 
+/* Эффект при наведении на кнопку показа пароля */
 .passwordToggle:hover {
     color: #c49b6b;
 }
 
+/* ============================================
+   ЧЕКБОКС СОГЛАСИЯ
+   ============================================ */
+
+/* Группа чекбокса */
 .checkboxGroup {
     margin: 10px 0;
 }
 
+/* Лейбл чекбокса */
 .checkboxLabel {
     display: flex;
     align-items: center;
@@ -160,6 +204,7 @@
     cursor: pointer;
 }
 
+/* Чекбокс */
 .checkbox {
     width: 18px;
     height: 18px;
@@ -167,12 +212,18 @@
     accent-color: #c49b6b;
 }
 
+/* Текст чекбокса */
 .checkboxText {
     color: #2c3e50;
     font-size: 0.9rem;
     user-select: none;
 }
 
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+/* Кнопка отправки формы */
 .submitButton {
     width: 100%;
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
@@ -186,17 +237,20 @@
     margin-top: 10px;
 }
 
+/* Эффект при наведении на кнопку отправки */
 .submitButton:hover:not(:disabled) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
+/* Кнопка отправки в заблокированном состоянии */
 .submitButton:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
+/* Кнопка "Далее" */
 .nextButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: none;
@@ -208,12 +262,14 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку "Далее" */
 .nextButton:hover:not(:disabled) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
+/* Кнопка "Назад" */
 .backButton {
     border: 2px solid #c49b6b;
     color: #8B5A2B;
@@ -224,12 +280,14 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку "Назад" */
 .backButton:hover {
     background-color: #c49b6b;
     color: white;
     border-color: #8B5A2B;
 }
 
+/* Спиннер загрузки */
 .spinner {
     display: inline-block;
     width: 16px;
@@ -241,13 +299,17 @@
     margin-right: 8px;
 }
 
+/* Анимация спиннера */
 @keyframes spin {
     to {
         transform: rotate(360deg);
     }
 }
 
-/* Адаптивность */
+/* ============================================
+   АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+   ============================================ */
+
 @media (max-width: 768px) {
     .modalBody {
         padding: 20px;

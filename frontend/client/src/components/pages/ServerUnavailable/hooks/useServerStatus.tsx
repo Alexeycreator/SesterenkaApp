@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+// hooks/useServerStatus.ts
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 export const useServerStatus = () => {
     const [isServerAvailable, setIsServerAvailable] = useState<boolean | null>(null);
     const [checking, setChecking] = useState(true);
+    const isCheckingRef = useRef(false);
 
     const checkServer = async () => {
-        setChecking(true);
+        if (isCheckingRef.current) return;
+        
+        isCheckingRef.current = true;
         try {
             const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5027/api';
             await axios.get(`${apiUrl}/Health/ping`, { timeout: 5000 });
@@ -15,15 +19,12 @@ export const useServerStatus = () => {
             setIsServerAvailable(false);
         } finally {
             setChecking(false);
+            isCheckingRef.current = false;
         }
     };
 
     useEffect(() => {
         checkServer();
-        
-        const interval = setInterval(checkServer, 30000);
-        
-        return () => clearInterval(interval);
     }, []);
 
     return { isServerAvailable, checking, checkServer };

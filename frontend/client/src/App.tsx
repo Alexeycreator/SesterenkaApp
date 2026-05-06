@@ -43,7 +43,7 @@ const ScrollToTop = ({ location }: ScrollToTopProps) => {
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isServerAvailable, checking } = useServerStatus();
+  const { isServerAvailable, checking, checkServer } = useServerStatus();
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -52,6 +52,23 @@ function App() {
       navigate('/', { replace: true });
     }
   }, [checking, isServerAvailable, navigate, isInitialized]);
+
+  // Слушаем событие для повторной проверки сервера (например, после обновления данных)
+  useEffect(() => {
+    const handleRecheckServer = () => {
+      checkServer();
+    };
+
+    window.addEventListener('recheckServer', handleRecheckServer);
+    window.addEventListener('authChange', handleRecheckServer);
+    window.addEventListener('cartUpdated', handleRecheckServer);
+
+    return () => {
+      window.removeEventListener('recheckServer', handleRecheckServer);
+      window.removeEventListener('authChange', handleRecheckServer);
+      window.removeEventListener('cartUpdated', handleRecheckServer);
+    };
+  }, [checkServer]);
 
   if (checking) {
     return (

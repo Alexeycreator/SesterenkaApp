@@ -1,3 +1,8 @@
+/* ============================================
+   ОСНОВНЫЕ КОМПОНЕНТЫ
+   ============================================ */
+
+/* Основная карточка контента */
 .contentCard {
     border: 2px solid #D2B48C;
     border-radius: 15px;
@@ -6,17 +11,24 @@
     margin-bottom: 20px;
 }
 
+/* Заголовок секции "История заказов" */
 .sectionTitle {
     color: #8B5A2B;
     font-size: 1.5rem;
-    margin: 0;
+    margin: 0 0 20px 0;
     font-family: 'Cormorant Garamond', serif;
 }
 
+/* ============================================
+   СПИСОК ЗАКАЗОВ
+   ============================================ */
+
+/* Контейнер списка заказов */
 .ordersList {
     margin-top: 20px;
 }
 
+/* Карточка отдельного заказа */
 .orderItem {
     border: 2px solid #D2B48C;
     border-radius: 12px;
@@ -25,11 +37,17 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на карточку заказа */
 .orderItem:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* ============================================
+   ШАПКА ЗАКАЗА (ID, дата, статус)
+   ============================================ */
+
+/* Шапка карточки заказа */
 .orderHeader {
     display: flex;
     align-items: center;
@@ -39,17 +57,24 @@
     border-bottom: 1px solid #D2B48C;
 }
 
+/* ID заказа */
 .orderId {
     color: #2c3e50;
     font-weight: 600;
     font-size: 1.1rem;
 }
 
+/* Дата заказа */
 .orderDate {
     color: #7f8c8d;
     font-size: 0.9rem;
 }
 
+/* ============================================
+   ДЕТАЛИ ЗАКАЗА
+   ============================================ */
+
+/* Блок с деталями заказа */
 .orderDetails {
     display: flex;
     justify-content: space-between;
@@ -59,17 +84,24 @@
     margin-bottom: 10px;
 }
 
+/* Информация о заказе (количество товаров, сумма) */
 .orderInfo {
     display: flex;
     gap: 20px;
     color: #2c3e50;
 }
 
+/* Адрес доставки */
 .orderAddress {
     color: #7f8c8d;
     font-size: 0.9rem;
 }
 
+/* ============================================
+   КНОПКА "ПОДРОБНЕЕ"
+   ============================================ */
+
+/* Кнопка "Подробнее" */
 .orderDetailsBtn {
     color: #c49b6b;
     text-decoration: none;
@@ -78,12 +110,17 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку "Подробнее" */
 .orderDetailsBtn:hover {
     color: #8B5A2B;
     transform: translateX(5px);
 }
 
-/* Статусы заказов */
+/* ============================================
+   СТАТУСЫ ЗАКАЗОВ
+   ============================================ */
+
+/* Статус "В корзине" */
 .statusBasket {
     background: linear-gradient(135deg, #95a5a6, #7f8c8d);
     color: white;
@@ -93,6 +130,7 @@
     font-weight: 500;
 }
 
+/* Статус "В обработке" */
 .statusProcessing {
     background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
@@ -102,6 +140,7 @@
     font-weight: 500;
 }
 
+/* Статус "Собран" */
 .statusReady {
     background: linear-gradient(135deg, #3498db, #2980b9);
     color: white;
@@ -111,6 +150,7 @@
     font-weight: 500;
 }
 
+/* Статус "Выдан" */
 .statusCompleted {
     background: linear-gradient(135deg, #27ae60, #229954);
     color: white;
@@ -120,6 +160,7 @@
     font-weight: 500;
 }
 
+/* Статус "Отменен" */
 .statusCancelled {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
@@ -129,12 +170,18 @@
     font-weight: 500;
 }
 
+/* ============================================
+   СОСТОЯНИЯ ЗАГРУЗКИ И ПУСТОГО СПИСКА
+   ============================================ */
+
+/* Состояние загрузки */
 .loadingOrders {
     text-align: center;
     padding: 40px;
     color: #7f8c8d;
 }
 
+/* Пустой список заказов */
 .emptyOrders {
     text-align: center;
     padding: 40px;
@@ -145,23 +192,60 @@
     margin-bottom: 20px;
 }
 
+/* Кнопка перехода в каталог */
 .shopButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
     color: white;
     padding: 10px 25px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
 }
 
 .shopButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
 }
 
-/* Адаптивность */
+/* Кнопка повторной попытки */
+.retryButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   УВЕДОМЛЕНИЯ (Alert)
+   ============================================ */
+
+/* Стили для уведомления об ошибке */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+   ============================================ */
+
 @media (max-width: 768px) {
+
+    /* Шапка заказа - перенос элементов при необходимости */
     .orderHeader {
         flex-wrap: wrap;
     }
 
+    /* Детали заказа в колонку */
     .orderDetails {
         flex-direction: column;
         align-items: flex-start;

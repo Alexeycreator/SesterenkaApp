@@ -85,6 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     localStorage.setItem('user', JSON.stringify(updatedStoredUser));
                 }
                 window.dispatchEvent(new CustomEvent('authChange', { detail: { user: updatedUser } }));
+                window.dispatchEvent(new CustomEvent('footerDataUpdate'));
                 console.log('Данные пользователя обновлены:', updatedUser);
             } catch (error) {
                 console.error('Ошибка обновления данных пользователя:', error);
@@ -92,7 +93,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         }
     };
-
     useEffect(() => {
     }, [user]);
 

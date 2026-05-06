@@ -42,6 +42,12 @@ export const Filters: React.FC<FiltersProps> = ({
     priceRange,
     onResetFilters
 }) => {
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            onSearch();
+        }
+    };
+
     return (
         <Card className={styles.filtersCard}>
             <Card.Body>
@@ -54,7 +60,7 @@ export const Filters: React.FC<FiltersProps> = ({
                             placeholder="Поиск по названию или артикулу..."
                             value={searchQuery}
                             onChange={(e) => onSearchChange(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+                            onKeyPress={handleKeyPress}
                             className={styles.searchInput}
                         />
                         {searchQuery && (
@@ -113,7 +119,7 @@ export const Filters: React.FC<FiltersProps> = ({
                                     type="number"
                                     value={tempMinPrice === 0 ? '' : tempMinPrice}
                                     onChange={onTempMinPriceChange}
-                                    placeholder="0"
+                                    placeholder={`${priceRange.min}`}
                                     min={priceRange.min}
                                     max={priceRange.max}
                                     className={styles.priceInput}
@@ -125,7 +131,7 @@ export const Filters: React.FC<FiltersProps> = ({
                                     type="number"
                                     value={tempMaxPrice === 10000 ? '' : tempMaxPrice}
                                     onChange={onTempMaxPriceChange}
-                                    placeholder="10000"
+                                    placeholder={`${priceRange.max}`}
                                     min={priceRange.min}
                                     max={priceRange.max}
                                     className={styles.priceInput}

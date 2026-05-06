@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 
 import { createCategory, deleteCategory, getCategories, Categories, updateCategory } from '../../../../servicesApi/CategoriesApi';
 
@@ -17,6 +17,8 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
     const [saving, setSaving] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Categories | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         icon: '🛢️',
@@ -36,16 +38,30 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
         setEditingCategory(null);
         setSearchTerm('');
         setCategories([]);
+        setSuccessMessage(null);
+        setErrorMessage(null);
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
     };
 
     const loadCategories = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getCategories();
             setCategories(data);
         } catch (error: any) {
             console.error('Ошибка загрузки категорий:', error);
-            alert(error.serverMessage || 'Не удалось загрузить список категорий');
+            const msg = error.serverMessage || 'Не удалось загрузить список категорий';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -62,18 +78,20 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
 
     const handleSave = async () => {
         if (!formData.name.trim()) {
-            alert('Введите название категории');
+            showError('Введите название категории');
             return;
         }
 
         if (!formData.description.trim()) {
-            alert('Введите описание категории');
+            showError('Введите описание категории');
             return;
         }
 
         const iconToSend = formData.icon.trim() || '🛢️';
 
         setSaving(true);
+        setErrorMessage(null);
+
         try {
             if (editingCategory) {
                 await updateCategory(editingCategory.id, {
@@ -81,27 +99,22 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
                     icon: iconToSend,
                     description: formData.description
                 });
-                alert('Категория успешно обновлена');
+                showSuccess('Категория успешно обновлена');
             } else {
                 await createCategory({
                     name: formData.name,
                     icon: iconToSend,
                     description: formData.description
                 });
-                alert('Категория успешно добавлена');
+                showSuccess('Категория успешно добавлена');
             }
             resetForm();
             await loadCategories();
             if (onRefresh) onRefresh();
         } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            if (error.serverMessage) {
-                alert(error.serverMessage);
-            } else if (error.message) {
-                alert(error.message);
-            } else {
-                alert('Не удалось сохранить категорию');
-            }
+            const msg = error.serverMessage || error.message || 'Не удалось сохранить категорию';
+            showError(msg);
         } finally {
             setSaving(false);
         }
@@ -117,6 +130,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
         if (editingCategory) {
             setEditingCategory(null);
         }
+        showSuccess('Форма очищена');
     };
 
     const handleEdit = (category: Categories) => {
@@ -131,20 +145,16 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить категорию?')) {
             setSaving(true);
+            setErrorMessage(null);
             try {
                 await deleteCategory(id);
-                alert('Категория успешно удалена');
+                showSuccess('Категория успешно удалена');
                 await loadCategories();
                 if (onRefresh) onRefresh();
             } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                if (error.serverMessage) {
-                    alert(error.serverMessage);
-                } else if (error.message) {
-                    alert(error.message);
-                } else {
-                    alert('Не удалось удалить категорию');
-                }
+                const msg = error.serverMessage || error.message || 'Не удалось удалить категорию';
+                showError(msg);
             } finally {
                 setSaving(false);
             }
@@ -164,6 +174,20 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
                 <Modal.Title>Управление категориями</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
+
                 <Row>
                     <Col md={5}>
                         <div className="d-flex justify-content-between align-items-center mb-3">

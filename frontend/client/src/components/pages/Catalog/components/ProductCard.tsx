@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Badge, Button } from 'react-bootstrap';
 
 import { Product } from '../../../servicesApi/ProductsApi';
@@ -22,8 +22,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onProductSelect,
     apiUrl
 }) => {
+    const [imgError, setImgError] = useState(false);
     const productStock = getProductStock(product.id);
     const isInStock = (productStock?.totalQuantity ?? 0) > 0;
+
+    const imageSrc = imgError ? '/placeholder.jpg' : `${apiUrl}/${product.image}`;
 
     return (
         <Card
@@ -33,11 +36,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className={styles.productImageWrapper}>
                 <Card.Img
                     variant="top"
-                    src={`${apiUrl}/${product.image}`}
+                    src={imageSrc}
                     className={styles.productImage}
-                    onError={(e) => {
-                        e.currentTarget.src = '/placeholder.jpg';
-                    }}
+                    onError={() => setImgError(true)}
                 />
                 {!isInStock && (
                     <Badge className={styles.outOfStockBadge}>

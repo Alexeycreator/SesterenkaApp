@@ -1,5 +1,6 @@
-/* OrderDetailsPage.module.css */
-
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+   ============================================ */
 .pageContainer {
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
     min-height: 100vh;
@@ -7,7 +8,9 @@
     padding-top: 90px;
 }
 
-/* Хлебные крошки */
+/* ============================================
+   ХЛЕБНЫЕ КРОШКИ
+   ============================================ */
 .breadcrumbs {
     display: flex;
     align-items: center;
@@ -36,7 +39,9 @@
     font-weight: 500;
 }
 
-/* Заголовок */
+/* ============================================
+   ЗАГОЛОВОК
+   ============================================ */
 .header {
     display: flex;
     align-items: center;
@@ -76,7 +81,9 @@
     align-items: center;
 }
 
-/* Карточки */
+/* ============================================
+   КАРТОЧКИ
+   ============================================ */
 .infoCard,
 .summaryCard,
 .itemsCard {
@@ -96,7 +103,9 @@
     padding-bottom: 10px;
 }
 
-/* Информационная сетка */
+/* ============================================
+   ИНФОРМАЦИОННАЯ СЕТКА
+   ============================================ */
 .infoGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -120,7 +129,9 @@
     font-weight: 500;
 }
 
-/* Итоговая карточка */
+/* ============================================
+   ИТОГОВАЯ КАРТОЧКА
+   ============================================ */
 .summaryRow {
     display: flex;
     justify-content: space-between;
@@ -146,7 +157,9 @@
     font-size: 1.4rem;
 }
 
-/* Список товаров */
+/* ============================================
+   СПИСОК ТОВАРОВ
+   ============================================ */
 .itemsList {
     display: flex;
     flex-direction: column;
@@ -235,28 +248,27 @@
     text-align: right;
 }
 
-/* Загрузка и ошибка */
-.loadingContainer,
+/* ============================================
+   КОНТЕЙНЕР ОШИБКИ
+   ============================================ */
 .errorContainer {
     text-align: center;
-    padding: 60px 20px;
+    padding: 40px;
     background: white;
     border-radius: 20px;
     margin-top: 50px;
 }
 
-.spinner {
-    font-size: 3rem;
-    animation: spin 1s linear infinite;
+.errorAlert {
     margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Статусы заказов */
+/* ============================================
+   СТАТУСЫ ЗАКАЗОВ
+   ============================================ */
 .statusBasket {
     background: linear-gradient(135deg, #95a5a6, #7f8c8d);
     color: white;
@@ -302,29 +314,31 @@
     font-weight: 500;
 }
 
-/* Адаптивность */
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .orderItem {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .itemImage {
         width: 100px;
         height: 100px;
         margin: 0 auto;
     }
-    
+
     .itemDetails {
         justify-content: center;
         flex-wrap: wrap;
     }
-    
+
     .infoGrid {
         grid-template-columns: 1fr;
     }

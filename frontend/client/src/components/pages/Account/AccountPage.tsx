@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Alert } from 'react-bootstrap';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '../../../contexts/AuthContext';
@@ -21,7 +21,7 @@ const AccountPage = () => {
     const userId = searchParams.get('userId');
     const activeTab = searchParams.get('tab') || 'profile';
 
-    const { ordersData, orderItemsData, loading, fetchOrders } = useAccountData(currentUser?.login);
+    const { ordersData, orderItemsData, loading, error, fetchOrders } = useAccountData(currentUser?.login);
 
     // Обновление вкладки с сохранением userId
     const handleTabChange = (tab: string) => {
@@ -61,6 +61,18 @@ const AccountPage = () => {
                     </p>
                 </Col>
             </Row>
+
+            {/* Отображение ошибки */}
+            {error && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => { }} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки данных!</Alert.Heading>
+                            <p>{error}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
 
             {/* Навигация по вкладкам */}
             <Row className="mb-4">
@@ -119,7 +131,7 @@ const AccountPage = () => {
                 </Col>
             </Row>
 
-            {/* Контент вкладок - явный рендеринг */}
+            {/* Контент вкладок */}
             <Row>
                 <Col lg={12}>
                     {activeTab === 'profile' && (
@@ -130,6 +142,7 @@ const AccountPage = () => {
                             ordersData={ordersData}
                             orderItemsData={orderItemsData}
                             loading={loading}
+                            error={error}
                             onRefresh={fetchOrders}
                         />
                     )}

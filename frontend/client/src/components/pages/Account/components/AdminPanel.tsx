@@ -22,6 +22,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     // Состояния для модальных окон
     const [showOrdersModal, setShowOrdersModal] = useState(false);
@@ -38,10 +40,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
     const loadUsers = async () => {
         try {
             setLoading(true);
+            setError(null);
             const data = await getUsers();
             setUsers(data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки пользователей:', error);
+            const errorMessage = error.serverMessage || error.message || 'Не удалось загрузить список пользователей';
+            setError(errorMessage);
+            // Автоматически скрываем ошибку через 5 секунд
+            setTimeout(() => setError(null), 5000);
         } finally {
             setLoading(false);
         }
@@ -60,28 +67,46 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
     }, [users, searchTerm]);
 
     const handleRoleChange = async (userId: number, newRole: string) => {
+        setError(null);
+        setSuccessMessage(null);
         try {
             await updateRoleUser(userId, newRole);
             await loadUsers();
-            alert('Роль пользователя обновлена');
-        } catch (error) {
+            setSuccessMessage(`Роль пользователя успешно обновлена на "${getRoleName(newRole)}"`);
+            setTimeout(() => setSuccessMessage(null), 3000);
+        } catch (error: any) {
             console.error('Ошибка обновления роли:', error);
-            alert('Не удалось обновить роль');
+            const errorMessage = error.serverMessage || error.message || 'Не удалось обновить роль пользователя';
+            setError(errorMessage);
+            setTimeout(() => setError(null), 5000);
         }
     };
 
     const handleDeleteUser = async () => {
         if (!selectedUser) return;
+        setError(null);
+        setSuccessMessage(null);
         try {
             await deleteUser(selectedUser.id);
             await loadUsers();
-            alert('Пользователь успешно удален');
-        } catch (error) {
+            setSuccessMessage(`Пользователь "${selectedUser.secondName} ${selectedUser.firstName}" успешно удален`);
+            setTimeout(() => setSuccessMessage(null), 3000);
+        } catch (error: any) {
             console.error('Ошибка удаления:', error);
-            alert('Не удалось удалить пользователя');
+            const errorMessage = error.serverMessage || error.message || 'Не удалось удалить пользователя';
+            setError(errorMessage);
+            setTimeout(() => setError(null), 5000);
         } finally {
             setShowDeleteConfirm(false);
             setSelectedUser(null);
+        }
+    };
+
+    const getRoleName = (role: string): string => {
+        switch (role) {
+            case 'admin': return 'Администратор';
+            case 'employee': return 'Сотрудник';
+            default: return 'Пользователь';
         }
     };
 
@@ -98,10 +123,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
 
     const clearSearch = () => setSearchTerm('');
 
+    const handleCloseError = () => setError(null);
+    const handleCloseSuccess = () => setSuccessMessage(null);
+
     return (
         <Card className={styles.contentCard}>
             <Card.Body>
                 <h2 className={styles.sectionTitle}>👑 Администрирование</h2>
+
+                {/* Отображение ошибок и успешных сообщений */}
+                {error && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={handleCloseError} dismissible>
+                        <Alert.Heading>Ошибка!</Alert.Heading>
+                        <p>{error}</p>
+                    </Alert>
+                )}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={handleCloseSuccess} dismissible>
+                        <Alert.Heading>Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
 
                 {/* Панель управления каталогом */}
                 <h3 className={styles.sectionSubtitle}>Управление каталогом</h3>

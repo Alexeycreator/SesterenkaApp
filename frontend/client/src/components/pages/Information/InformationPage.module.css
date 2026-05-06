@@ -1,9 +1,15 @@
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+   ============================================ */
 .pageContainer {
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
     min-height: 100vh;
     padding: 20px;
 }
 
+/* ============================================
+   ЗАГОЛОВКИ
+   ============================================ */
 .title {
     font-size: 2.5rem;
     font-weight: bold;
@@ -28,7 +34,9 @@
     padding-bottom: 10px;
 }
 
-/* Информационный блок */
+/* ============================================
+   ИНФОРМАЦИОННЫЙ БЛОК
+   ============================================ */
 .infoBlock {
     background: white;
     border-radius: 20px;
@@ -92,7 +100,9 @@
     font-size: 1rem;
 }
 
-/* Стили для FAQ/вопросов */
+/* ============================================
+   FAQ БЛОК
+   ============================================ */
 .faqBlock {
     display: flex;
     flex-direction: column;
@@ -161,7 +171,9 @@
     flex: 1;
 }
 
-/* Карточки команды */
+/* ============================================
+   КАРТОЧКИ КОМАНДЫ
+   ============================================ */
 .teamCard {
     background: white;
     border-radius: 15px;
@@ -226,7 +238,9 @@
     line-height: 1.3;
 }
 
-/* Карточки магазинов */
+/* ============================================
+   КАРТОЧКИ МАГАЗИНОВ
+   ============================================ */
 .storeCard {
     background: white;
     border-radius: 15px;
@@ -253,10 +267,7 @@
     text-align: center;
 }
 
-.storeAddress,
-.storePhone,
-.storeSchedule,
-.storeWeekend {
+.storeAddress {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -272,65 +283,27 @@
     flex-shrink: 0;
 }
 
-.storeFeatures {
-    margin-top: 15px;
+.storeSchedule {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
+    color: #34495e;
+    word-break: break-word;
 }
 
-.storeFeature {
-    background: rgba(196, 155, 107, 0.1);
-    color: #8B5A2B;
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    border: 1px solid #D2B48C;
-}
-
-/* Дополнительная информация */
-.extraInfo {
-    background: linear-gradient(135deg, #c49b6b20, #b38b5b20);
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-    border: 2px dashed #c49b6b;
-}
-
-.extraTitle {
-    color: #2c3e50;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-    font-family: 'Cormorant Garamond', serif;
-}
-
-.extraText {
-    color: #2c3e50;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin: 0;
-}
-
-/* Лоадер и ошибка */
-.loader {
-    text-align: center;
-    padding: 50px;
-    font-size: 1.2rem;
-    color: #8B5A2B;
-}
-
-.error {
-    text-align: center;
-    padding: 50px;
-    font-size: 1.2rem;
-    color: #e74c3c;
-    background: white;
-    border-radius: 15px;
+/* ============================================
+   УВЕДОМЛЕНИЕ ОБ ОШИБКЕ
+   ============================================ */
+.errorAlert {
     margin: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }
 
-/* Адаптивность */
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
 @media (max-width: 768px) {
     .pageContainer {
         padding: 15px;
@@ -376,34 +349,8 @@
     .questionText {
         font-size: 0.95rem;
     }
-
-    .extraTitle {
-        font-size: 1.2rem;
-    }
-
-    .extraText {
-        font-size: 1rem;
-    }
 }
 
-@media (max-width: 576px) {
-    .teamEmail {
-        font-size: 0.75rem;
-    }
-
-    .storeAddress,
-    .storePhone,
-    .storeSchedule {
-        font-size: 0.85rem;
-    }
-}
-
-/* Центрирование карточек */
-.row {
-    justify-content: center;
-}
-
-/* Для карточек команды - фиксированная ширина на больших экранах */
 @media (min-width: 992px) {
     .teamCard {
         min-width: 250px;

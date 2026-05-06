@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, Modal } from 'react-bootstrap';
+import { Card, Button, Modal, Alert } from 'react-bootstrap';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
@@ -15,16 +15,34 @@ export interface SettingsTabProps {
 export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh }) => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const { logout } = useAuth();
 
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
     const handleDeleteAccount = async () => {
+        setErrorMessage(null);
         try {
             await clientApi.delete(currentUser?.id);
-            logout();
-            window.location.href = '/';
-        } catch (error) {
+            showSuccess('Аккаунт успешно удален');
+            setTimeout(() => {
+                logout();
+                window.location.href = '/';
+            }, 1500);
+        } catch (error: any) {
             console.error('Ошибка удаления аккаунта:', error);
-            alert('Не удалось удалить аккаунт');
+            const msg = error.serverMessage || error.message || 'Не удалось удалить аккаунт';
+            showError(msg);
+            setShowDeleteConfirm(false);
         }
     };
 
@@ -32,6 +50,20 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh
         <Card className={styles.contentCard}>
             <Card.Body>
                 <h2 className={styles.sectionTitle}>Настройки аккаунта</h2>
+
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
 
                 <div className={styles.settingsSection}>
                     <h3 className={styles.settingsSubtitle}>Безопасность</h3>

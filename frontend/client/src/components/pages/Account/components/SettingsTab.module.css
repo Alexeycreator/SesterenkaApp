@@ -1,3 +1,8 @@
+/* ============================================
+   ОСНОВНЫЕ КОМПОНЕНТЫ
+   ============================================ */
+
+/* Основная карточка контента */
 .contentCard {
     border: 2px solid #D2B48C;
     border-radius: 15px;
@@ -6,29 +11,42 @@
     margin-bottom: 20px;
 }
 
+/* Заголовок секции "Настройки аккаунта" */
 .sectionTitle {
     color: #8B5A2B;
     font-size: 1.5rem;
-    margin: 0;
+    margin: 0 0 20px 0;
     font-family: 'Cormorant Garamond', serif;
 }
 
+/* ============================================
+   НАСТРОЙКИ (Безопасность, Удаление аккаунта)
+   ============================================ */
+
+/* Секция настроек */
 .settingsSection {
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid #D2B48C;
 }
 
+/* Убираем нижнюю границу у последней секции */
 .settingsSection:last-child {
     border-bottom: none;
 }
 
+/* Подзаголовок секции */
 .settingsSubtitle {
     color: #2c3e50;
     font-size: 1.2rem;
     margin-bottom: 15px;
 }
 
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+/* Кнопка "Изменить пароль" */
 .changePasswordButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -39,17 +57,13 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку изменения пароля */
 .changePasswordButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
 }
 
-.deleteWarning {
-    color: #e74c3c;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-}
-
+/* Кнопка "Удалить аккаунт" */
 .deleteAccountButton {
     background: transparent;
     border: 2px solid #e74c3c;
@@ -60,8 +74,46 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку удаления */
 .deleteAccountButton:hover {
     background: #e74c3c;
     color: white;
     transform: translateY(-2px);
+}
+
+/* ============================================
+   ПРЕДУПРЕЖДЕНИЯ
+   ============================================ */
+
+/* Текст предупреждения об удалении аккаунта */
+.deleteWarning {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+/* Текст предупреждения в модальном окне */
+.warningText {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+/* ============================================
+   УВЕДОМЛЕНИЯ (Alert)
+   ============================================ */
+
+/* Стили для успешного уведомления */
+.successAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border: 2px solid #27ae60;
+}
+
+/* Стили для уведомления об ошибке */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Table, Badge, Button, Form } from 'react-bootstrap';
+import { Modal, Table, Badge, Button, Form, Alert } from 'react-bootstrap';
 
 import { getOrderUser, OrderData, Orders, updateStatusOrder } from '../../../../servicesApi/OrderApi';
 
@@ -29,6 +29,8 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
     const [allOrders, setAllOrders] = useState<Orders[]>([]);
     const [loading, setLoading] = useState(false);
     const [updatingStatus, setUpdatingStatus] = useState<number | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         if (show && userLogin) {
@@ -36,9 +38,20 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
         }
     }, [show, userLogin]);
 
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
+    };
+
     const loadOrders = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getOrderUser(userLogin);
             setOrderDataList(data);
             const extractedOrders: Orders[] = [];
@@ -48,9 +61,10 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
                 }
             });
             setAllOrders(extractedOrders);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки заказов:', error);
-            alert('Не удалось загрузить заказы');
+            const msg = error.serverMessage || error.message || 'Не удалось загрузить заказы';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -59,13 +73,14 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
     const handleStatusChange = async (orderId: number, newStatus: string) => {
         try {
             setUpdatingStatus(orderId);
-            // Исправлено: передаем объект с id и status
+            setErrorMessage(null);
             await updateStatusOrder({ id: orderId, status: newStatus });
-            alert('Статус заказа обновлен');
+            showSuccess('Статус заказа обновлен');
             await loadOrders();
         } catch (error: any) {
             console.error('Ошибка обновления статуса:', error);
-            alert(error.serverMessage || 'Не удалось обновить статус заказа');
+            const msg = error.serverMessage || error.message || 'Не удалось обновить статус заказа';
+            showError(msg);
         } finally {
             setUpdatingStatus(null);
         }
@@ -77,6 +92,20 @@ export const UserOrdersModal: React.FC<UserOrdersModalProps> = ({ show, onHide, 
                 <Modal.Title>Заказы пользователя {userName}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
+
                 {loading ? (
                     <div className="text-center p-4">Загрузка заказов...</div>
                 ) : allOrders.length === 0 ? (

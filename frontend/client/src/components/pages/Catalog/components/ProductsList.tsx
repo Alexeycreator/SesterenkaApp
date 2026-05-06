@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Alert } from 'react-bootstrap';
 
 import { Product } from '../../../servicesApi/ProductsApi';
 import { Manufacturer } from '../../../servicesApi/ManufacturersApi';
@@ -63,32 +63,32 @@ export const ProductsList: React.FC<ProductsListProps> = ({
             </Row>
 
             {filteredProducts.length > 0 ? (
-                <Row xs={1} md={2} lg={3} className="g-4">
-                    {filteredProducts.map((product) => (
-                        <Col key={product.id}>
-                            <ProductCard
-                                product={product}
-                                manufacturerData={manufacturerData}
-                                getProductStock={getProductStock}
-                                onProductSelect={onProductSelect}
-                                apiUrl={apiUrl}
-                            />
-                        </Col>
-                    ))}
-                    <div>
-                        <Row className="mb-4">
-                            <Col>
-                                <Button
-                                    variant="link"
-                                    className={styles.backButton}
-                                    onClick={onBackToCategories}
-                                >
-                                    ← Назад к категориям
-                                </Button>
+                <>
+                    <Row xs={1} md={2} lg={3} className="g-4">
+                        {filteredProducts.map((product) => (
+                            <Col key={product.id}>
+                                <ProductCard
+                                    product={product}
+                                    manufacturerData={manufacturerData}
+                                    getProductStock={getProductStock}
+                                    onProductSelect={onProductSelect}
+                                    apiUrl={apiUrl}
+                                />
                             </Col>
-                        </Row>
-                    </div>
-                </Row>
+                        ))}
+                    </Row>
+                    <Row className="mt-4 mb-4">
+                        <Col>
+                            <Button
+                                variant="link"
+                                className={styles.backButton}
+                                onClick={onBackToCategories}
+                            >
+                                ← Назад к категориям
+                            </Button>
+                        </Col>
+                    </Row>
+                </>
             ) : (
                 <div className={styles.emptyState}>
                     <h3>😕 Товары не найдены</h3>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 
 import { createStock, deleteStock, getManagementStocks, updateStock } from '../../../../servicesApi/StocksApi';
 
@@ -17,6 +17,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
     const [saving, setSaving] = useState(false);
     const [editingStock, setEditingStock] = useState<any | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         productId: 0,
         warehouseId: 0,
@@ -36,11 +38,24 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
         setEditingStock(null);
         setSearchTerm('');
         setStockData(null);
+        setSuccessMessage(null);
+        setErrorMessage(null);
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
     };
 
     const loadData = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getManagementStocks();
 
             let extractedData;
@@ -53,7 +68,8 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
             setStockData(extractedData);
         } catch (error: any) {
             console.error('Ошибка загрузки данных:', error);
-            alert(error.serverMessage || 'Не удалось загрузить данные об остатках');
+            const msg = error.serverMessage || 'Не удалось загрузить данные об остатках';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -93,35 +109,32 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
 
     const handleSave = async () => {
         if (!formData.productId || !formData.warehouseId || formData.quantity < 0) {
-            alert('Заполните все поля');
+            showError('Заполните все поля');
             return;
         }
 
         setSaving(true);
+        setErrorMessage(null);
+
         try {
             if (editingStock) {
                 await updateStock(editingStock.id, formData.quantity);
-                alert('Остатки успешно обновлены');
+                showSuccess('Остатки успешно обновлены');
             } else {
                 await createStock({
                     products_Id: formData.productId,
                     warehouses_Id: formData.warehouseId,
                     quantity: formData.quantity
                 });
-                alert('Остатки успешно добавлены');
+                showSuccess('Остатки успешно добавлены');
             }
             resetForm();
             await loadData();
             if (onRefresh) onRefresh();
         } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            if (error.serverMessage) {
-                alert(error.serverMessage);
-            } else if (error.message) {
-                alert(error.message);
-            } else {
-                alert('Не удалось сохранить остатки');
-            }
+            const msg = error.serverMessage || error.message || 'Не удалось сохранить остатки';
+            showError(msg);
         } finally {
             setSaving(false);
         }
@@ -137,6 +150,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
         if (editingStock) {
             setEditingStock(null);
         }
+        showSuccess('Форма очищена');
     };
 
     const handleEdit = (stock: any) => {
@@ -151,20 +165,16 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить запись об остатках?')) {
             setSaving(true);
+            setErrorMessage(null);
             try {
                 await deleteStock(id);
-                alert('Запись успешно удалена');
+                showSuccess('Запись успешно удалена');
                 await loadData();
                 if (onRefresh) onRefresh();
             } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                if (error.serverMessage) {
-                    alert(error.serverMessage);
-                } else if (error.message) {
-                    alert(error.message);
-                } else {
-                    alert('Не удалось удалить запись');
-                }
+                const msg = error.serverMessage || error.message || 'Не удалось удалить запись';
+                showError(msg);
             } finally {
                 setSaving(false);
             }
@@ -184,6 +194,20 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
                 <Modal.Title>Управление остатками на складах</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
+
                 <Row>
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-3">

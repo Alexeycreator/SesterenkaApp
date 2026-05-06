@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Card, Button, Row, Col, Table, Form, InputGroup } from 'react-bootstrap';
+import { Card, Button, Row, Col, Table, Form, InputGroup, Alert } from 'react-bootstrap';
 
 import { getUsers, User } from '../../../servicesApi/UsersApi';
 import { UserOrdersModal } from './common/UserOrdersModal';
@@ -22,12 +22,18 @@ export const EmployeePanel: React.FC<EmployeePanelProps> = ({ currentUser, onRef
     const [loading, setLoading] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [showOrdersModal, setShowOrdersModal] = useState(false);
     const [showProductModal, setShowProductModal] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [showManufacturerModal, setShowManufacturerModal] = useState(false);
     const [showStockModal, setShowStockModal] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
+    };
 
     useEffect(() => {
         loadUsers();
@@ -36,10 +42,13 @@ export const EmployeePanel: React.FC<EmployeePanelProps> = ({ currentUser, onRef
     const loadUsers = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getUsers();
             setUsers(data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка загрузки пользователей:', error);
+            const msg = error.serverMessage || error.message || 'Не удалось загрузить список пользователей';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -63,6 +72,14 @@ export const EmployeePanel: React.FC<EmployeePanelProps> = ({ currentUser, onRef
         <Card className={styles.contentCard}>
             <Card.Body>
                 <h2 className={styles.sectionTitle}>🛠️ Панель управления сотрудника</h2>
+
+                {/* Уведомление об ошибке */}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
 
                 {/* Панель управления каталогом */}
                 <h3 className={styles.sectionSubtitle}>Управление каталогом</h3>

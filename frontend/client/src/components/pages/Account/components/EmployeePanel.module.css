@@ -1,3 +1,7 @@
+/* ============================================
+   ОСНОВНЫЕ КОМПОНЕНТЫ
+   ============================================ */
+
 /* Основная карточка контента */
 .contentCard {
     border: 2px solid #D2B48C;
@@ -7,16 +11,15 @@
     margin-bottom: 20px;
 }
 
-/* Заголовок секции */
+/* Заголовок секции (например "Панель управления сотрудника") */
 .sectionTitle {
     color: #8B5A2B;
     font-size: 1.5rem;
-    margin: 0;
+    margin: 0 0 20px 0;
     font-family: 'Cormorant Garamond', serif;
-    margin-bottom: 20px;
 }
 
-/* Подзаголовок секции */
+/* Подзаголовок секции (например "Управление каталогом", "Пользователи") */
 .sectionSubtitle {
     color: #2c3e50;
     font-size: 1.3rem;
@@ -26,7 +29,11 @@
     padding-bottom: 8px;
 }
 
-/* Карточки управления */
+/* ============================================
+   КАРТОЧКИ УПРАВЛЕНИЯ КАТАЛОГОМ
+   ============================================ */
+
+/* Карточка-кнопка для перехода к управлению */
 .adminCard {
     border: 2px solid #D2B48C;
     border-radius: 12px;
@@ -37,17 +44,20 @@
     overflow: hidden;
 }
 
+/* Эффект при наведении на карточку */
 .adminCard:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(139, 90, 43, 0.15);
     border-color: #c49b6b;
 }
 
+/* Тело карточки */
 .adminCard .cardBody {
     padding: 25px 20px;
     text-align: center;
 }
 
+/* Заголовок внутри карточки */
 .adminCard h3 {
     color: #8B5A2B;
     font-size: 1.3rem;
@@ -55,6 +65,7 @@
     font-family: 'Cormorant Garamond', serif;
 }
 
+/* Описание внутри карточки */
 .adminCard p {
     color: #7f8c8d;
     font-size: 0.9rem;
@@ -80,6 +91,7 @@
     text-align: center;
 }
 
+/* Эффект при наведении на кнопку */
 .cardLink:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
@@ -87,21 +99,28 @@
     color: white !important;
 }
 
+/* Эффект при нажатии на кнопку */
 .cardLink:active {
     transform: translateY(0);
 }
 
-/* Таблица пользователей */
+/* ============================================
+   ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ
+   ============================================ */
+
+/* Контейнер таблицы с горизонтальной прокруткой */
 .usersTable {
     overflow-x: auto;
     margin-top: 20px;
 }
 
+/* Стилизация самой таблицы */
 .usersTable table {
     width: 100%;
     font-size: 0.9rem;
 }
 
+/* Заголовки таблицы */
 .usersTable th {
     background: #f0e5d5;
     color: #8B5A2B;
@@ -109,12 +128,17 @@
     padding: 12px;
 }
 
+/* Ячейки таблицы */
 .usersTable td {
     padding: 10px;
     vertical-align: middle;
 }
 
-/* Кнопка просмотра заказов */
+/* ============================================
+   КНОПКИ ДЕЙСТВИЙ
+   ============================================ */
+
+/* Кнопка просмотра заказов пользователя */
 .viewOrdersBtn {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -135,77 +159,23 @@
     color: white !important;
 }
 
-/* Селект роли */
-.roleSelect {
-    padding: 5px 8px;
-    border: 2px solid #D2B48C;
-    border-radius: 8px;
-    background: white;
-    color: #2c3e50;
-    font-size: 0.85rem;
-    margin-right: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* ============================================
+   УВЕДОМЛЕНИЯ (Alert)
+   ============================================ */
+
+/* Стили для уведомления об ошибке */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }
 
-.roleSelect:hover {
-    border-color: #c49b6b;
-}
+/* ============================================
+   ИНФОРМАЦИЯ О ПОИСКЕ
+   ============================================ */
 
-/* Списки элементов (для модальных окон) */
-.itemsList {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #D2B48C;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.listItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s ease;
-}
-
-.listItem:hover {
-    background-color: #f9f5f0;
-}
-
-.listItem:last-child {
-    border-bottom: none;
-}
-
-.itemInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
-
-.itemInfo strong {
-    color: #2c3e50;
-    font-size: 0.95rem;
-}
-
-.itemInfo span {
-    color: #7f8c8d;
-    font-size: 0.85rem;
-}
-
-.itemIcon {
-    font-size: 1.2rem;
-    margin-right: 8px;
-}
-
-.itemActions {
-    display: flex;
-    gap: 8px;
-}
-
-/* Информация о поиске */
+/* Блок с информацией о количестве найденных результатов */
 .searchInfo {
     font-size: 0.8rem;
     color: #7f8c8d;
@@ -214,85 +184,38 @@
     border-bottom: 1px solid #D2B48C;
 }
 
-/* Кнопки действий */
-.editBtn {
-    background: transparent;
-    border: 2px solid #c49b6b;
-    color: #8B5A2B;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
+/* ============================================
+   АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+   ============================================ */
 
-.editBtn:hover {
-    background: #c49b6b;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.deleteBtn {
-    background: transparent;
-    border: 2px solid #e74c3c;
-    color: #e74c3c;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-
-.deleteBtn:hover {
-    background: #e74c3c;
-    color: white;
-    transform: translateY(-2px);
-}
-
-/* Кнопка сохранения */
-.saveBtn {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    color: white;
-    font-weight: 600;
-    padding: 10px 24px;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-}
-
-.saveBtn:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
-}
-
-/* Адаптивность */
 @media (max-width: 768px) {
 
+    /* Уменьшаем шрифты в таблице */
     .usersTable td,
     .usersTable th {
         font-size: 0.75rem;
         padding: 6px;
     }
 
-    .roleSelect {
-        font-size: 0.7rem;
-        padding: 3px 5px;
-    }
-
+    /* Уменьшаем кнопки */
     .viewOrdersBtn {
         font-size: 0.7rem;
         padding: 3px 8px;
     }
 
+    /* Уменьшаем кнопки в карточках */
     .cardLink {
         min-width: 140px;
         font-size: 0.8rem;
         padding: 6px 15px;
     }
 
+    /* Уменьшаем заголовки в карточках */
     .adminCard h3 {
         font-size: 1.1rem;
     }
 
+    /* Уменьшаем описания в карточках */
     .adminCard p {
         font-size: 0.8rem;
     }

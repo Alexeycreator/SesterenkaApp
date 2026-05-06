@@ -1,3 +1,8 @@
+/* ============================================
+   ОСНОВНЫЕ КОМПОНЕНТЫ - Общие стили для всех карточек
+   ============================================ */
+
+/* Основная карточка контента (обертка для всего компонента) */
 .contentCard {
     border: 2px solid #D2B48C;
     border-radius: 15px;
@@ -6,14 +11,15 @@
     margin-bottom: 20px;
 }
 
+/* Заголовок секции (например "Администрирование") */
 .sectionTitle {
     color: #8B5A2B;
     font-size: 1.5rem;
-    margin: 0;
+    margin: 0 0 20px 0;
     font-family: 'Cormorant Garamond', serif;
-    margin-bottom: 20px;
 }
 
+/* Подзаголовок секции (например "Управление каталогом", "Управление пользователями") */
 .sectionSubtitle {
     color: #2c3e50;
     font-size: 1.3rem;
@@ -23,257 +29,11 @@
     padding-bottom: 8px;
 }
 
-.adminCard {
-    border: 2px solid #D2B48C;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    height: 100%;
-}
+/* ============================================
+   КАРТОЧКИ УПРАВЛЕНИЯ КАТАЛОГОМ (Товары, Категории, Бренды, Склады, Адреса)
+   ============================================ */
 
-.adminCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.adminCard h3 {
-    color: #8B5A2B;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-.adminCard p {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-}
-
-/* Таблица пользователей */
-.usersTable {
-    overflow-x: auto;
-    margin-top: 20px;
-}
-
-.usersTable table {
-    width: 100%;
-    font-size: 0.9rem;
-}
-
-.usersTable th {
-    background: #f0e5d5;
-    color: #8B5A2B;
-    font-weight: 600;
-    padding: 12px;
-}
-
-.usersTable td {
-    padding: 10px;
-    vertical-align: middle;
-}
-
-.roleSelect {
-    padding: 5px;
-    border: 1px solid #D2B48C;
-    border-radius: 5px;
-    background: white;
-    margin-right: 10px;
-}
-
-.viewOrdersBtn {
-    color: #c49b6b;
-    font-size: 0.85rem;
-    padding: 0;
-}
-
-.viewOrdersBtn:hover {
-    color: #8B5A2B;
-}
-
-/* Ролевые бейджи */
-.roleAdmin {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    padding: 3px 10px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    color: white;
-}
-
-.roleEmployee {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    padding: 3px 10px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    color: white;
-}
-
-.roleUser {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    padding: 3px 10px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    color: white;
-}
-
-.itemsList {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #D2B48C;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.listItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.listItem:last-child {
-    border-bottom: none;
-}
-
-.itemInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.itemInfo strong {
-    color: #2c3e50;
-}
-
-.itemInfo span {
-    color: #7f8c8d;
-    font-size: 0.85rem;
-}
-
-.itemIcon {
-    font-size: 1.2rem;
-    margin-right: 8px;
-}
-
-.itemActions {
-    display: flex;
-    gap: 8px;
-}
-
-/* Добавьте в AdminPanel.module.css */
-
-.searchInfo {
-    font-size: 0.8rem;
-    color: #7f8c8d;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #D2B48C;
-}
-
-.itemsList {
-    max-height: 500px;
-    overflow-y: auto;
-    border: 1px solid #D2B48C;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.listItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s ease;
-}
-
-.listItem:hover {
-    background-color: #f9f5f0;
-}
-
-.listItem:last-child {
-    border-bottom: none;
-}
-
-.itemInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
-
-.itemInfo strong {
-    color: #2c3e50;
-    font-size: 0.95rem;
-}
-
-.itemInfo span {
-    color: #7f8c8d;
-    font-size: 0.85rem;
-}
-
-.itemInfo .small {
-    font-size: 0.75rem;
-}
-
-.itemActions {
-    display: flex;
-    gap: 8px;
-}
-
-.editBtn {
-    background: transparent;
-    border: 2px solid #c49b6b;
-    color: #8B5A2B;
-    transition: all 0.3s ease;
-}
-
-.editBtn:hover {
-    background: #c49b6b;
-    color: white;
-}
-
-.deleteBtn {
-    background: transparent;
-    border: 2px solid #e74c3c;
-    color: #e74c3c;
-    transition: all 0.3s ease;
-}
-
-.deleteBtn:hover {
-    background: #e74c3c;
-    color: white;
-}
-
-.statusSelect {
-    width: 130px;
-    padding: 4px 8px;
-    border: 1px solid #D2B48C;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    background: white;
-}
-
-.statusSelect:hover {
-    border-color: #c49b6b;
-}
-
-.saveBtn {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    color: white;
-    font-weight: 500;
-    padding: 8px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.saveBtn:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-}
-
-/* AdminPanel.module.css */
-
-/* Стили для карточек управления */
+/* Карточка-кнопка для перехода к управлению */
 .adminCard {
     border: 2px solid #D2B48C;
     border-radius: 15px;
@@ -284,17 +44,20 @@
     overflow: hidden;
 }
 
+/* Эффект при наведении на карточку */
 .adminCard:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(139, 90, 43, 0.15);
     border-color: #c49b6b;
 }
 
-.adminCard .cardBody {
+/* Тело карточки */
+.cardBody {
     padding: 25px 20px;
     text-align: center;
 }
 
+/* Заголовок внутри карточки (например "📦 Товары") */
 .adminCard h3 {
     color: #8B5A2B;
     font-size: 1.3rem;
@@ -302,6 +65,7 @@
     font-family: 'Cormorant Garamond', serif;
 }
 
+/* Описание внутри карточки */
 .adminCard p {
     color: #7f8c8d;
     font-size: 0.9rem;
@@ -309,7 +73,7 @@
     line-height: 1.4;
 }
 
-/* Кнопка внутри карточки - стиль как в приложении */
+/* Кнопка "Управление..." внутри карточки */
 .cardLink {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -327,6 +91,7 @@
     text-align: center;
 }
 
+/* Эффект при наведении на кнопку */
 .cardLink:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
@@ -334,30 +99,51 @@
     color: white !important;
 }
 
+/* Эффект при нажатии на кнопку */
 .cardLink:active {
     transform: translateY(0);
 }
 
-/* Кнопка "Управление товарами" в таблице */
-.manageBtn {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    color: white;
-    font-weight: 500;
-    font-size: 0.85rem;
-    padding: 5px 12px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    cursor: pointer;
+/* ============================================
+   ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ
+   ============================================ */
+
+/* Контейнер таблицы с горизонтальной прокруткой */
+.usersTable {
+    overflow-x: auto;
+    margin-top: 20px;
 }
 
-.manageBtn:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-    box-shadow: 0 3px 10px rgba(139, 90, 43, 0.2);
+/* Стилизация самой таблицы */
+.usersTable table {
+    width: 100%;
+    font-size: 0.9rem;
 }
 
-/* Кнопка просмотра заказов */
+/* Заголовки таблицы */
+.usersTable th {
+    background: #f0e5d5;
+    color: #8B5A2B;
+    font-weight: 600;
+    padding: 12px;
+}
+
+/* Ячейки таблицы */
+.usersTable td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* Выпадающий список для выбора роли пользователя */
+.roleSelect {
+    padding: 5px;
+    border: 1px solid #D2B48C;
+    border-radius: 5px;
+    background: white;
+    margin-right: 10px;
+}
+
+/* Кнопка просмотра заказов пользователя */
 .viewOrdersBtn {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -378,7 +164,7 @@
     color: white !important;
 }
 
-/* Кнопка удаления */
+/* Кнопка удаления пользователя */
 .deleteUserBtn {
     background: transparent;
     border: 2px solid #e74c3c;
@@ -399,62 +185,54 @@
     transform: translateY(-2px);
 }
 
-/* Кнопки в модальных окнах */
-.saveBtn {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
+/* ============================================
+   БЕЙДЖИ РОЛЕЙ ПОЛЬЗОВАТЕЛЕЙ
+   ============================================ */
+
+/* Бейдж для роли администратора */
+.roleAdmin {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
     color: white;
-    font-weight: 600;
-    padding: 10px 24px;
-    border-radius: 30px;
-    transition: all 0.3s ease;
+    display: inline-block;
 }
 
-.saveBtn:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
-}
-
-.editBtn {
-    background: transparent;
-    border: 2px solid #c49b6b;
-    color: #8B5A2B;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-
-.editBtn:hover {
-    background: #c49b6b;
+/* Бейдж для роли сотрудника */
+.roleEmployee {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
     color: white;
-    transform: translateY(-2px);
+    display: inline-block;
 }
 
-.deleteBtn {
-    background: transparent;
-    border: 2px solid #e74c3c;
-    color: #e74c3c;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-
-.deleteBtn:hover {
-    background: #e74c3c;
+/* Бейдж для роли обычного пользователя */
+.roleUser {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
     color: white;
-    transform: translateY(-2px);
+    display: inline-block;
 }
 
-.searchInfo {
-    font-size: 0.85rem;
-    color: #6c757d;
-    margin-bottom: 10px;
-    padding: 5px 0;
+/* ============================================
+   ОБЩИЕ КОМПОНЕНТЫ ДЛЯ СПИСКОВ (категории, бренды, адреса, остатки, товары)
+   ============================================ */
+
+/* Контейнер списка с прокруткой */
+.itemsList {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #D2B48C;
+    border-radius: 8px;
+    padding: 10px;
 }
 
+/* Отдельный элемент списка */
 .listItem {
     display: flex;
     justify-content: space-between;
@@ -464,10 +242,17 @@
     transition: background-color 0.2s ease;
 }
 
+/* Эффект при наведении на элемент списка */
 .listItem:hover {
     background-color: #f8f9fa;
 }
 
+/* Последний элемент списка - без нижней границы */
+.listItem:last-child {
+    border-bottom: none;
+}
+
+/* Блок с информацией об элементе */
 .itemInfo {
     flex: 1;
     display: flex;
@@ -475,6 +260,36 @@
     gap: 5px;
 }
 
+/* Название/имя элемента */
+.itemInfo strong {
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+/* Дополнительная информация (артикул, цена и т.д.) */
+.itemInfo span {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+/* Маленький текст */
+.itemInfo .small {
+    font-size: 0.75rem;
+}
+
+/* Иконка товара/категории */
+.itemIcon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+/* Блок с кнопками действий (редактировать, удалить) */
+.itemActions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Бейдж для адреса, который является магазином */
 .shopBadge {
     display: inline-block;
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
@@ -485,38 +300,47 @@
     width: fit-content;
 }
 
-.itemActions {
-    display: flex;
-    gap: 8px;
-}
+/* ============================================
+   КНОПКИ ДЕЙСТВИЙ (Редактировать, Удалить, Сохранить)
+   ============================================ */
 
+/* Кнопка редактирования */
 .editBtn {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: none;
-    color: white;
-    border-radius: 6px;
-    padding: 5px 10px;
+    background: transparent;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .editBtn:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-1px);
+    background: #c49b6b;
+    color: white;
+    transform: translateY(-2px);
 }
 
+/* Кнопка удаления */
 .deleteBtn {
-    background: #e74c3c;
-    border: none;
-    border-radius: 6px;
-    padding: 5px 10px;
+    background: transparent;
+    border: 2px solid #e74c3c;
+    color: #e74c3c;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .deleteBtn:hover {
-    background: #c0392b;
-    transform: translateY(-1px);
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
 }
 
+/* Кнопка сохранения (общая для всех модальных окон) */
 .saveBtn {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: none;
@@ -524,6 +348,8 @@
     padding: 8px 20px;
     border-radius: 8px;
     transition: all 0.3s ease;
+    cursor: pointer;
+    font-weight: 500;
 }
 
 .saveBtn:hover {
@@ -531,21 +357,60 @@
     transform: translateY(-2px);
 }
 
+/* ============================================
+   ИНФОРМАЦИЯ О ПОИСКЕ
+   ============================================ */
+
+/* Блок с информацией о количестве найденных результатов */
+.searchInfo {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid #D2B48C;
+}
+
+/* ============================================
+   СТАТУСЫ ЗАКАЗОВ
+   ============================================ */
+
+/* Выпадающий список для выбора статуса заказа */
+.statusSelect {
+    width: 130px;
+    padding: 4px 8px;
+    border: 1px solid #D2B48C;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    background: white;
+}
+
+.statusSelect:hover {
+    border-color: #c49b6b;
+}
+
+/* ============================================
+   ЧЕКБОКСЫ (для поля isShop в адресах)
+   ============================================ */
+
+/* Группа чекбоксов */
 .checkboxGroup {
     padding: 8px 0;
 }
 
+/* Стилизация чекбокса */
 .checkboxGroup :global(.form-check-input) {
     width: 18px;
     height: 18px;
     cursor: pointer;
 }
 
+/* Чекбокс в отмеченном состоянии */
 .checkboxGroup :global(.form-check-input):checked {
     background-color: #c49b6b;
     border-color: #c49b6b;
 }
 
+/* Лейбл чекбокса */
 .checkboxGroup :global(.form-check-label) {
     margin-left: 8px;
     cursor: pointer;

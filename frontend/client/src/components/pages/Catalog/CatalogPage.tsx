@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 
 import { Categories } from '../../servicesApi/CategoriesApi';
 import { Product } from '../../servicesApi/ProductsApi';
@@ -28,11 +28,13 @@ const normalizeString = (str: string) => str.toLowerCase().replace(/\s+/g, '');
 
 const CatalogPage = () => {
     const api = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
+    const navigate = useNavigate();
     const { user: currentUser, isAuthenticated } = useAuth();
 
     // Состояния
-    const [catalogData, setCatalogData] = useState<Catalog | null>();
+    const [catalogData, setCatalogData] = useState<Catalog | null>(null);
     const [loadingCatalogData, setLoadingCatalogData] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
     const [productData, setProductData] = useState<Product[]>([]);
     const [manufacturerData, setManufacturerData] = useState<Manufacturer[]>([]);
@@ -53,6 +55,7 @@ const CatalogPage = () => {
     // Модальное окно авторизации
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [pendingProductId, setPendingProductId] = useState<number | null>(null);
+    const [addingToCart, setAddingToCart] = useState(false);
 
     // Чтение параметров из URL
     const selectedCategory = searchParams.get('category')
@@ -80,11 +83,12 @@ const CatalogPage = () => {
         if (categorySearchFromUrl) {
             setCategorySearchQuery(categorySearchFromUrl);
         }
-    }, []);
+    }, [searchParams]);
 
     const fetchCatalogData = async () => {
         try {
             setLoadingCatalogData(true);
+            setError(null);
             const data = await getCatalogData();
             setCatalogData(data);
             if (data) {
@@ -93,14 +97,16 @@ const CatalogPage = () => {
                 setStockWarehousesQuantityData(data.stocks);
                 setManufacturerData(data.manufacturers);
             }
-        } catch (err) {
-            console.error('Ошибка загрузки:', err);
+        } catch (err: any) {
+            console.error('Ошибка загрузки каталога:', err);
+            const errorMsg = err.serverMessage || err.message || 'Не удалось загрузить каталог. Попробуйте позже.';
+            setError(errorMsg);
         } finally {
             setLoadingCatalogData(false);
         }
     };
 
-    // Обновление URL (только для важных параметров, не для каждого символа поиска)
+    // Обновление URL
     const updateUrl = (category: number | null, productId?: number | null, newFilters?: FilterState) => {
         const params: Record<string, string> = {};
         if (category !== null && category !== undefined) {
@@ -135,7 +141,7 @@ const CatalogPage = () => {
         setSearchParams(params, { replace: true });
     };
 
-    // Мгновенный поиск по категориям (префиксный поиск - только по началу названия)
+    // Мгновенный поиск по категориям
     const handleCategorySearchChange = (value: string) => {
         setCategorySearchQuery(value);
 
@@ -197,13 +203,12 @@ const CatalogPage = () => {
         }, 500);
     };
 
-    // Фильтрация категорий по поисковому запросу (ПРЕФИКСНЫЙ поиск - только по началу слова)
+    // Фильтрация категорий по поисковому запросу (префиксный поиск)
     const filteredCategories = useMemo(() => {
         if (!categorySearchQuery.trim()) {
             return categoriesData;
         }
         const normalizedQuery = normalizeString(categorySearchQuery);
-        // Ищем только те категории, которые начинаются с поискового запроса
         return categoriesData.filter(category => {
             const normalizedName = normalizeString(category.name);
             return normalizedName.startsWith(normalizedQuery);
@@ -359,6 +364,9 @@ const CatalogPage = () => {
             setShowAuthModal(true);
             return;
         }
+        if (addingToCart) return;
+
+        setAddingToCart(true);
         try {
             setLoadingCatalogData(true);
             await addToOrderItem(productId, currentUser?.login || '');
@@ -368,6 +376,7 @@ const CatalogPage = () => {
             throw error;
         } finally {
             setLoadingCatalogData(false);
+            setAddingToCart(false);
         }
     };
 
@@ -419,9 +428,20 @@ const CatalogPage = () => {
                 </Col>
             </Row>
 
+            {/* Отображение ошибки */}
+            {error && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                            <p>{error}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+
             {!selectedCategory ? (
                 <>
-                    {/* Поисковая строка по центру */}
                     <Row className="justify-content-center mb-4">
                         <Col md={6} lg={5}>
                             <div className={styles.categorySearchContainer}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 
 import { getAddresses, Address, updateAddress, deleteAddress, createAddress } from '../../../../servicesApi/AddressesApi';
 import { useAuth } from '../../../../../contexts/AuthContext';
@@ -19,6 +19,8 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
     const [saving, setSaving] = useState(false);
     const [editingAddress, setEditingAddress] = useState<Address | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         region: '',
         city: '',
@@ -53,16 +55,30 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         setEditingAddress(null);
         setSearchTerm('');
         setAddresses([]);
+        setSuccessMessage(null);
+        setErrorMessage(null);
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
     };
 
     const loadAddresses = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getAddresses();
             setAddresses(data);
         } catch (error: any) {
             console.error('Ошибка загрузки адресов:', error);
-            alert(error.serverMessage || 'Не удалось загрузить список адресов');
+            const msg = error.serverMessage || 'Не удалось загрузить список адресов';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -80,21 +96,23 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
 
     const handleSave = async () => {
         if (!formData.city || !formData.street) {
-            alert('Заполните обязательные поля (город и улица)');
+            showError('Заполните обязательные поля (город и улица)');
             return;
         }
 
         if (!canAdd) {
-            alert('У вас нет прав для добавления/редактирования адресов');
+            showError('У вас нет прав для добавления/редактирования адресов');
             return;
         }
 
         if (!currentUser?.id) {
-            alert('Ошибка: пользователь не авторизован');
+            showError('Ошибка: пользователь не авторизован');
             return;
         }
 
         setSaving(true);
+        setErrorMessage(null);
+
         try {
             const addressData: any = {
                 city: formData.city,
@@ -112,29 +130,20 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                 addressData.isShop = formData.isShop;
             }
 
-            console.log('Отправляемые данные:', addressData);
-            console.log('Режим:', editingAddress ? 'Редактирование' : 'Создание');
-            console.log('Пользователь:', currentUser.login, 'Роль:', userRole);
-
             if (editingAddress) {
                 await updateAddress(editingAddress.id, addressData, currentUser.id);
-                alert('Адрес успешно обновлен');
+                showSuccess('Адрес успешно обновлен');
             } else {
                 await createAddress(addressData, currentUser.id);
-                alert('Адрес успешно добавлен');
+                showSuccess('Адрес успешно добавлен');
             }
             resetForm();
             await loadAddresses();
             if (onRefresh) onRefresh();
         } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            if (error.serverMessage) {
-                alert(error.serverMessage);
-            } else if (error.message) {
-                alert(error.message);
-            } else {
-                alert('Не удалось сохранить адрес');
-            }
+            const msg = error.serverMessage || error.message || 'Не удалось сохранить адрес';
+            showError(msg);
         } finally {
             setSaving(false);
         }
@@ -162,11 +171,12 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
         if (editingAddress) {
             setEditingAddress(null);
         }
+        showSuccess('Форма очищена');
     };
 
     const handleEdit = (address: Address) => {
         if (!canEdit) {
-            alert('У вас нет прав для редактирования адресов');
+            showError('У вас нет прав для редактирования адресов');
             return;
         }
         setEditingAddress(address);
@@ -181,31 +191,27 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
 
     const handleDelete = async (id: number) => {
         if (!canDelete) {
-            alert('Только администратор может удалять адреса');
+            showError('Только администратор может удалять адреса');
             return;
         }
 
         if (!currentUser?.id) {
-            alert('Ошибка: пользователь не авторизован');
+            showError('Ошибка: пользователь не авторизован');
             return;
         }
 
         if (window.confirm('Удалить адрес?')) {
             setSaving(true);
+            setErrorMessage(null);
             try {
                 await deleteAddress(id);
-                alert('Адрес успешно удален');
+                showSuccess('Адрес успешно удален');
                 await loadAddresses();
                 if (onRefresh) onRefresh();
             } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                if (error.serverMessage) {
-                    alert(error.serverMessage);
-                } else if (error.message) {
-                    alert(error.message);
-                } else {
-                    alert('Не удалось удалить адрес');
-                }
+                const msg = error.serverMessage || error.message || 'Не удалось удалить адрес';
+                showError(msg);
             } finally {
                 setSaving(false);
             }
@@ -225,6 +231,20 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
                 <Modal.Title>Управление адресами магазинов</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
+
                 <Row>
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-3">

@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { getCategories, Categories } from '../../servicesApi/CategoriesApi';
 
 import styles from './MainPage.module.css';
 
+// Кэш для категорий (за пределами компонента)
+let cachedCategories: any[] | null = null;
+let isLoading = false;
+let isInitialized = false;
+
 const MainPage = () => {
     // Состояние для категорий
-    const [randomCategories, setRandomCategories] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [randomCategories, setRandomCategories] = useState<any[]>(cachedCategories || []);
+    const [loading, setLoading] = useState(!cachedCategories);
+    const [error, setError] = useState<string | null>(null);
+    const isMounted = useRef(true);
 
     const defaultCategories = [
         { id: 1, icon: '🛢️', name: 'Масляные фильтры', link: '/catalog?category=1' },
@@ -19,36 +26,6 @@ const MainPage = () => {
         { id: 5, icon: '⚙️', name: 'Поршни и кольца', link: '/catalog?category=5' },
         { id: 6, icon: '🛞', name: 'Колеса и шины', link: '/catalog?category=6' }
     ];
-
-    // Загрузка категорий при монтировании компонента
-    useEffect(() => {
-        fetchCategories();
-    }, []);
-
-    // Функция для получения категорий из API
-    const fetchCategories = async () => {
-        try {
-            setLoading(true);
-            const categories = await getCategories();
-
-            if (categories && categories.length > 0) {
-                const apiCategories = categories.map((cat: Categories, index: number) => ({
-                    id: cat.id,
-                    icon: cat.icon || '📦',
-                    name: cat.name,
-                    link: `/catalog?category=${cat.id}`
-                }));
-                selectRandomCategories(apiCategories);
-            } else {
-                selectRandomCategories(defaultCategories);
-            }
-        } catch (error) {
-            console.error('Ошибка загрузки категорий:', error);
-            selectRandomCategories(defaultCategories);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     // Функция для выбора 6 случайных категорий
     const selectRandomCategories = (categories: any[]) => {
@@ -61,17 +38,111 @@ const MainPage = () => {
         }
 
         const selected = shuffled.slice(0, 6);
-        setRandomCategories(selected);
+        if (isMounted.current) {
+            setRandomCategories(selected);
+        }
+        return selected;
     };
 
-    // Функция для обновления случайных категорий (при перезагрузке)
+    // Функция для получения категорий из API (только один раз)
+    const fetchCategories = async (forceRefresh: boolean = false) => {
+        // Если уже загружены и не принудительное обновление, используем кэш
+        if (cachedCategories !== null && !forceRefresh) {
+            if (isMounted.current) {
+                selectRandomCategories(cachedCategories);
+                setLoading(false);
+            }
+            return;
+        }
+
+        // Если уже идет загрузка, ждем
+        if (isLoading) return;
+
+        isLoading = true;
+        if (isMounted.current) {
+            setLoading(true);
+            setError(null);
+        }
+
+        try {
+            const categories = await getCategories();
+
+            let apiCategories;
+            if (categories && categories.length > 0) {
+                apiCategories = categories.map((cat: Categories) => ({
+                    id: cat.id,
+                    icon: cat.icon || '📦',
+                    name: cat.name,
+                    link: `/catalog?category=${cat.id}`
+                }));
+            } else {
+                apiCategories = defaultCategories;
+            }
+
+            // Сохраняем в кэш
+            cachedCategories = apiCategories;
+
+            if (isMounted.current) {
+                selectRandomCategories(apiCategories);
+                setError(null);
+            }
+        } catch (error: any) {
+            console.error('Ошибка загрузки категорий:', error);
+            if (isMounted.current) {
+                const errorMsg = error.serverMessage || error.message || 'Не удалось загрузить категории';
+                setError(errorMsg);
+                selectRandomCategories(defaultCategories);
+            }
+        } finally {
+            isLoading = false;
+            if (isMounted.current) {
+                setLoading(false);
+            }
+        }
+    };
+
+    // Функция для обновления случайных категорий (перетасовка без перезагрузки)
     const refreshCategories = () => {
-        if (randomCategories.length > 0) {
+        if (cachedCategories && cachedCategories.length > 0) {
+            selectRandomCategories(cachedCategories);
+        } else if (randomCategories.length > 0) {
             selectRandomCategories(randomCategories);
         } else {
             selectRandomCategories(defaultCategories);
         }
     };
+
+    // Принудительное обновление из кэша (после изменения категорий в админке)
+    const forceRefreshCategories = () => {
+        cachedCategories = null;
+        fetchCategories(true);
+    };
+
+    // Загрузка категорий при монтировании компонента
+    useEffect(() => {
+        isMounted.current = true;
+
+        // Загружаем данные только если они еще не загружены
+        if (!isInitialized) {
+            isInitialized = true;
+            fetchCategories();
+        } else if (cachedCategories) {
+            selectRandomCategories(cachedCategories);
+            setLoading(false);
+        }
+
+        // Слушаем событие обновления категорий (из админки)
+        const handleCategoriesUpdate = () => {
+            forceRefreshCategories();
+        };
+
+        window.addEventListener('categoriesUpdated', handleCategoriesUpdate);
+
+        return () => {
+            isMounted.current = false;
+            window.removeEventListener('categoriesUpdated', handleCategoriesUpdate);
+        };
+    }, []);
 
     const advantages = [
         {
@@ -112,16 +183,10 @@ const MainPage = () => {
                         Работаем с 2015 года.
                     </p>
                     <div className={styles.heroButtons}>
-                        <Link
-                            to="/catalog"
-                            className={styles.primaryButton}
-                        >
+                        <Link to="/catalog" className={styles.primaryButton}>
                             Перейти в каталог
                         </Link>
-                        <Link
-                            to="/information"
-                            className={styles.secondaryButton}
-                        >
+                        <Link to="/information" className={styles.secondaryButton}>
                             О компании
                         </Link>
                     </div>
@@ -138,6 +203,18 @@ const MainPage = () => {
                 </Col>
             </Row>
 
+            {/* Отображение ошибки */}
+            {error && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                            <p>{error}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+
             {loading ? (
                 <Row className="mb-5">
                     <Col className="text-center">
@@ -147,12 +224,9 @@ const MainPage = () => {
             ) : (
                 <>
                     <Row xs={2} md={3} lg={6} className="g-3 mb-4">
-                        {randomCategories.map((cat, index) => (
+                        {randomCategories.map((cat) => (
                             <Col key={cat.id}>
-                                <Link
-                                    to={cat.link}
-                                    className={styles.categoryLink}
-                                >
+                                <Link to={cat.link} className={styles.categoryLink}>
                                     <div className={styles.categoryItem}>
                                         <div className={styles.categoryIcon}>
                                             {cat.icon}
@@ -205,10 +279,7 @@ const MainPage = () => {
                             Наши специалисты всегда готовы помочь вам подобрать
                             необходимые запчасти и ответить на все вопросы.
                         </p>
-                        <Link
-                            to="/help"
-                            className={styles.ctaButton}
-                        >
+                        <Link to="/help" className={styles.ctaButton}>
                             Связаться с нами
                         </Link>
                     </div>

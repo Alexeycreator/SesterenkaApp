@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useEffect, useState, useRef } from 'react';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import { getInformations } from '../../servicesApi/InformationsApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './InformationPage.module.css';
-import LoadingSpinner from '../../LoadingSpinner';
+
+// Кэш для данных (за пределами компонента)
+let cachedData: any = null;
+let isLoading = false;
+let isInitialized = false;
 
 const InformationPage = () => {
     const navigate = useNavigate();
@@ -24,70 +29,119 @@ const InformationPage = () => {
     const [employees, setEmployees] = useState<any[]>([]);
     const [shops, setShops] = useState<any[]>([]);
 
-    const fetchInformation = async () => {
-        try {
+    const isMounted = useRef(true);
+
+    const fetchInformation = async (forceRefresh: boolean = false) => {
+        // Если данные уже загружены и не принудительное обновление, используем кэш
+        if (cachedData !== null && !forceRefresh && isInitialized) {
+            if (isMounted.current) {
+                const firstItem = cachedData;
+
+                setAboutUsList(firstItem.aboutUs || []);
+                setQuestionsList(firstItem.questions || []);
+                setOurMissionList(firstItem.ourMission || []);
+                setOurValuesList(firstItem.ourValues || []);
+                setEmployees(firstItem.usersInfo || []);
+
+                const shopAddresses = (firstItem.addressesInfo || []).filter((addr: any) => addr.isShop === true);
+                setShops(shopAddresses);
+                setLoadingInformation(false);
+            }
+            return;
+        }
+
+        // Если уже идет загрузка, ждем
+        if (isLoading) return;
+
+        isLoading = true;
+        if (isMounted.current) {
             setLoadingInformation(true);
+            setErrorInformation(null);
+        }
+
+        try {
             const data = await getInformations();
 
             if (data && data.length > 0) {
                 const firstItem = data[0];
 
-                if (firstItem.aboutUs && firstItem.aboutUs.length > 0) {
-                    setAboutUsList(firstItem.aboutUs);
-                }
+                // Сохраняем в кэш
+                cachedData = firstItem;
+                isInitialized = true;
 
-                if (firstItem.questions && firstItem.questions.length > 0) {
-                    setQuestionsList(firstItem.questions);
-                }
+                if (isMounted.current) {
+                    setAboutUsList(firstItem.aboutUs || []);
+                    setQuestionsList(firstItem.questions || []);
+                    setOurMissionList(firstItem.ourMission || []);
+                    setOurValuesList(firstItem.ourValues || []);
+                    setEmployees(firstItem.usersInfo || []);
 
-                if (firstItem.ourMission && firstItem.ourMission.length > 0) {
-                    setOurMissionList(firstItem.ourMission);
-                }
-
-                if (firstItem.ourValues && firstItem.ourValues.length > 0) {
-                    setOurValuesList(firstItem.ourValues);
-                }
-
-                if (firstItem.usersInfo && firstItem.usersInfo.length > 0) {
-                    setEmployees(firstItem.usersInfo);
-                }
-
-                if (firstItem.addressesInfo && firstItem.addressesInfo.length > 0) {
-                    const shopAddresses = firstItem.addressesInfo.filter(addr => addr.isShop === true);
+                    const shopAddresses = (firstItem.addressesInfo || []).filter((addr: any) => addr.isShop === true);
                     setShops(shopAddresses);
+                    setErrorInformation(null);
                 }
             }
         } catch (err: any) {
             console.error('Ошибка загрузки страницы информации:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    setErrorInformation('Информация не найдена');
-                    navigate('/404', { replace: true });
+            if (isMounted.current) {
+                if (err.code === 'ERR_BAD_REQUEST') {
+                    if (err.response?.status === 404) {
+                        setErrorInformation('Информация не найдена');
+                        navigate('/404', { replace: true });
+                    } else {
+                        const errorMsg = err.response?.data?.message || err.message || 'Ошибка загрузки данных';
+                        setErrorInformation(errorMsg);
+                    }
                 } else {
-                    setErrorInformation(err.response?.data?.message || 'Ошибка загрузки данных');
+                    setErrorInformation('Ошибка соединения с сервером');
                 }
-            } else {
-                setErrorInformation('Ошибка соединения с сервером');
             }
         } finally {
-            setLoadingInformation(false);
+            isLoading = false;
+            if (isMounted.current) {
+                setLoadingInformation(false);
+            }
         }
     };
 
     useEffect(() => {
-        fetchInformation();
+        isMounted.current = true;
+
+        // Загружаем данные только один раз
+        if (!isInitialized) {
+            fetchInformation();
+        }
+
+        // Слушаем событие обновления данных
+        const handleDataUpdate = () => {
+            if (isMounted.current) {
+                cachedData = null;
+                isInitialized = false;
+                fetchInformation(true);
+            }
+        };
+
+        window.addEventListener('authChange', handleDataUpdate);
+        window.addEventListener('categoriesUpdated', handleDataUpdate);
+
+        return () => {
+            isMounted.current = false;
+            window.removeEventListener('authChange', handleDataUpdate);
+            window.removeEventListener('categoriesUpdated', handleDataUpdate);
+        };
     }, []);
 
     if (loadingInformation) {
-        return (
-            <LoadingSpinner />
-        );
+        return <LoadingSpinner />;
     }
 
     if (errorInformation) {
         return (
             <Container fluid className={styles.pageContainer}>
-                <div className={styles.error}>{errorInformation}</div>
+                <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorInformation(null)} dismissible>
+                    <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                    <p>{errorInformation}</p>
+                </Alert>
             </Container>
         );
     }

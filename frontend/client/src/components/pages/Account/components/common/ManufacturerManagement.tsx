@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, InputGroup, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Form, InputGroup, Row, Col, Alert } from 'react-bootstrap';
 
 import { createManufacturer, deleteManufacturer, getManufacturers, Manufacturer, updateManufacturer } from '../../../../servicesApi/ManufacturersApi';
 
@@ -17,6 +17,8 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
     const [saving, setSaving] = useState(false);
     const [editingManufacturer, setEditingManufacturer] = useState<Manufacturer | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({ name: '' });
 
     useEffect(() => {
@@ -32,16 +34,30 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
         setEditingManufacturer(null);
         setSearchTerm('');
         setManufacturers([]);
+        setSuccessMessage(null);
+        setErrorMessage(null);
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
     };
 
     const loadManufacturers = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getManufacturers();
             setManufacturers(data);
         } catch (error: any) {
             console.error('Ошибка загрузки брендов:', error);
-            alert(error.serverMessage || 'Не удалось загрузить список брендов');
+            const msg = error.serverMessage || 'Не удалось загрузить список брендов';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -55,31 +71,28 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
 
     const handleSave = async () => {
         if (!formData.name.trim()) {
-            alert('Введите название бренда');
+            showError('Введите название бренда');
             return;
         }
 
         setSaving(true);
+        setErrorMessage(null);
+
         try {
             if (editingManufacturer) {
                 await updateManufacturer(editingManufacturer.id, { name: formData.name });
-                alert('Бренд успешно обновлен');
+                showSuccess('Бренд успешно обновлен');
             } else {
                 await createManufacturer({ name: formData.name });
-                alert('Бренд успешно добавлен');
+                showSuccess('Бренд успешно добавлен');
             }
             resetForm();
             await loadManufacturers();
             if (onRefresh) onRefresh();
         } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            if (error.serverMessage) {
-                alert(error.serverMessage);
-            } else if (error.message) {
-                alert(error.message);
-            } else {
-                alert('Не удалось сохранить бренд');
-            }
+            const msg = error.serverMessage || error.message || 'Не удалось сохранить бренд';
+            showError(msg);
         } finally {
             setSaving(false);
         }
@@ -95,6 +108,7 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
         if (editingManufacturer) {
             setEditingManufacturer(null);
         }
+        showSuccess('Форма очищена');
     };
 
     const handleEdit = (manufacturer: Manufacturer) => {
@@ -105,20 +119,16 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить бренд?')) {
             setSaving(true);
+            setErrorMessage(null);
             try {
                 await deleteManufacturer(id);
-                alert('Бренд успешно удален');
+                showSuccess('Бренд успешно удален');
                 await loadManufacturers();
                 if (onRefresh) onRefresh();
             } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                if (error.serverMessage) {
-                    alert(error.serverMessage);
-                } else if (error.message) {
-                    alert(error.message);
-                } else {
-                    alert('Не удалось удалить бренд');
-                }
+                const msg = error.serverMessage || error.message || 'Не удалось удалить бренд';
+                showError(msg);
             } finally {
                 setSaving(false);
             }
@@ -138,6 +148,20 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
                 <Modal.Title>Управление брендами</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
+
                 <Row>
                     <Col md={5}>
                         <div className="d-flex justify-content-between align-items-center mb-3">

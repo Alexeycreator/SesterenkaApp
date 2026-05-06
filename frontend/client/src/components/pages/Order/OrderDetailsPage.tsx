@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import { Container, Row, Col, Card, Badge, Button, Alert } from 'react-bootstrap';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
 import { CurrentOrder, getCurrentOrderData } from '../../servicesApi/OrderApi';
@@ -7,43 +7,86 @@ import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './OrderDetailsPage.module.css';
 
+// Кэш для данных (за пределами компонента)
+let cachedOrder: CurrentOrder | null = null;
+let isLoading = false;
+let currentOrderId: number | null = null;
+
 const OrderDetailsPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [order, setOrder] = useState<CurrentOrder>();
-    const [loading, setLoading] = useState(true);
+    const orderId = Number(id);
+
+    const [order, setOrder] = useState<CurrentOrder | null>(cachedOrder);
+    const [loading, setLoading] = useState(!cachedOrder);
     const [error, setError] = useState<string | null>(null);
+    const isMounted = useRef(true);
 
     // получение данных конкретного заказа
-    const fetchCurrentOrder = async () => {
-        try {
-            setLoading(true);
-            const catalogData = await getCurrentOrderData(Number(id));
-            setOrder(catalogData);
-        }
-        catch (err: any) {
-            console.error('Ошибка загрузки страницы конкретного товара:', err);
-            if (err.code === 'ERR_BAD_REQUEST') {
-                if (err.response?.status === 404) {
-                    const serverMessage = err.response.data?.message || 'Информация не найдена';
-                    setError(serverMessage);
-                    navigate('/404', { replace: true });
-                } else {
-                    setError(err.response?.data?.message || 'Ошибка загрузки данных');
-                }
-            } else {
-                setError('Ошибка соединения с сервером');
+    const fetchCurrentOrder = async (forceRefresh: boolean = false) => {
+        // Если данные уже загружены для этого заказа и не принудительное обновление, используем кэш
+        if (cachedOrder !== null && currentOrderId === orderId && !forceRefresh) {
+            if (isMounted.current) {
+                setOrder(cachedOrder);
+                setLoading(false);
             }
+            return;
         }
-        finally {
-            setLoading(false);
+
+        // Если уже идет загрузка, ждем
+        if (isLoading) return;
+
+        isLoading = true;
+        if (isMounted.current) {
+            setLoading(true);
+            setError(null);
+        }
+
+        try {
+            const catalogData = await getCurrentOrderData(orderId);
+
+            // Сохраняем в кэш
+            cachedOrder = catalogData;
+            currentOrderId = orderId;
+
+            if (isMounted.current) {
+                setOrder(catalogData);
+                setError(null);
+            }
+        } catch (err: any) {
+            console.error('Ошибка загрузки страницы конкретного заказа:', err);
+            if (isMounted.current) {
+                if (err.code === 'ERR_BAD_REQUEST') {
+                    if (err.response?.status === 404) {
+                        const serverMessage = err.response.data?.message || 'Информация не найдена';
+                        setError(serverMessage);
+                        navigate('/404', { replace: true });
+                    } else {
+                        const errorMsg = err.response?.data?.message || err.message || 'Ошибка загрузки данных';
+                        setError(errorMsg);
+                    }
+                } else {
+                    setError('Ошибка соединения с сервером');
+                }
+                setOrder(null);
+            }
+        } finally {
+            isLoading = false;
+            if (isMounted.current) {
+                setLoading(false);
+            }
         }
     };
 
     // хуки
     useEffect(() => {
+        isMounted.current = true;
         fetchCurrentOrder();
-    }, []);
+
+        return () => {
+            isMounted.current = false;
+        };
+    }, [orderId]);
 
     // Получение статуса заказа
     const getStatusBadge = (status: string) => {
@@ -90,13 +133,19 @@ const OrderDetailsPage = () => {
     if (error || !order) {
         return (
             <Container fluid className={styles.pageContainer}>
-                <div className={styles.errorContainer}>
-                    <h2>Ошибка</h2>
-                    <p>{error || 'Заказ не найден'}</p>
-                    <Link to="/personalAccount?tab=orders">
-                        <Button className={styles.backButton}>← Вернуться к заказам</Button>
-                    </Link>
-                </div>
+                <Row className="justify-content-center">
+                    <Col md={8} lg={6}>
+                        <div className={styles.errorContainer}>
+                            <Alert variant="danger" className={styles.errorAlert}>
+                                <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                                <p>{error || 'Заказ не найден'}</p>
+                            </Alert>
+                            <Link to="/personalAccount?tab=orders">
+                                <Button className={styles.backButton}>← Вернуться к заказам</Button>
+                            </Link>
+                        </div>
+                    </Col>
+                </Row>
             </Container>
         );
     }

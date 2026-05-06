@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 import styles from './RegistrationModal.module.css';
 
@@ -53,10 +53,12 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className={styles.modalBody}>
+                {/* Отображение ошибки от сервера */}
                 {registrationError && (
-                    <div className={styles.errorMessage}>
-                        {registrationError}
-                    </div>
+                    <Alert variant="danger" className={styles.errorAlert} onClose={onClose} dismissible>
+                        <Alert.Heading>❌ Ошибка регистрации!</Alert.Heading>
+                        <p>{registrationError}</p>
+                    </Alert>
                 )}
 
                 {registrationStep === 1 ? (

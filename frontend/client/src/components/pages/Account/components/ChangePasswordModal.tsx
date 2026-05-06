@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { changePassword } from '../../../../service/IndexAuth';
@@ -27,10 +27,22 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     const [oldPasswordError, setOldPasswordError] = useState('');
     const [newPasswordError, setNewPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [serverError, setServerError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setServerError(message);
+        setTimeout(() => setServerError(null), 5000);
+    };
 
     const handleChangePassword = async () => {
         if (!userId) {
-            alert('Ошибка: пользователь не авторизован');
+            showError('Ошибка: пользователь не авторизован');
             return;
         }
 
@@ -52,8 +64,10 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             return;
         }
 
+        setServerError(null);
+        setIsChanging(true);
+
         try {
-            setIsChanging(true);
             await changePassword(userId, oldPassword, newPassword);
 
             // Обновляем токен с новым паролем
@@ -63,22 +77,30 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 localStorage.setItem('user', JSON.stringify(loginResponse.user));
                 setUser(loginResponse.user);
 
-                alert('Пароль успешно изменен');
-                onHide();
-                setOldPassword('');
-                setNewPassword('');
-                setConfirmPassword('');
+                showSuccess('Пароль успешно изменен');
+                setTimeout(() => {
+                    onHide();
+                    setOldPassword('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                }, 1500);
             } catch (loginError) {
-                alert('Пароль изменен, но требуется повторный вход');
-                logout();
-                window.location.href = '/login';
+                showError('Пароль изменен, но требуется повторный вход');
+                setTimeout(() => {
+                    logout();
+                    window.location.href = '/login';
+                }, 2000);
             }
         } catch (error: any) {
             console.error('Ошибка:', error);
             if (error.statusCode === 401) {
                 setOldPasswordError('Неверный текущий пароль');
+            } else if (error.serverMessage) {
+                showError(error.serverMessage);
+            } else if (error.message) {
+                showError(error.message);
             } else {
-                alert(error.message || 'Не удалось изменить пароль');
+                showError('Не удалось изменить пароль');
             }
         } finally {
             setIsChanging(false);
@@ -91,6 +113,20 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 <Modal.Title>Изменение пароля</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {serverError && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setServerError(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{serverError}</p>
+                    </Alert>
+                )}
+
                 <Form>
                     {/* Старый пароль */}
                     <Form.Group className="mb-3">
@@ -102,6 +138,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                                 onChange={(e) => {
                                     setOldPassword(e.target.value);
                                     setOldPasswordError('');
+                                    setServerError(null);
                                 }}
                                 placeholder="Введите текущий пароль"
                                 isInvalid={!!oldPasswordError}
@@ -130,6 +167,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                                 onChange={(e) => {
                                     setNewPassword(e.target.value);
                                     setNewPasswordError('');
+                                    setServerError(null);
                                 }}
                                 placeholder="Введите новый пароль"
                                 isInvalid={!!newPasswordError}
@@ -161,6 +199,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                                 onChange={(e) => {
                                     setConfirmPassword(e.target.value);
                                     setConfirmPasswordError('');
+                                    setServerError(null);
                                 }}
                                 placeholder="Повторите новый пароль"
                                 isInvalid={!!confirmPasswordError}

@@ -1,10 +1,15 @@
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+   ============================================ */
 .pageContainer {
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
     min-height: 100vh;
     padding: 20px;
 }
 
-/* Hero секция */
+/* ============================================
+   HERO СЕКЦИЯ
+   ============================================ */
 .heroSection {
     margin-bottom: 60px;
     text-align: center;
@@ -38,6 +43,7 @@
     justify-content: center;
 }
 
+/* Кнопки */
 .primaryButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -47,6 +53,7 @@
     padding: 12px 30px;
     border-radius: 8px;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
 .primaryButton:hover {
@@ -65,6 +72,7 @@
     padding: 12px 30px;
     border-radius: 8px;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
 .secondaryButton:hover {
@@ -74,7 +82,9 @@
     color: #5a3e2b;
 }
 
-/* Заголовки секций */
+/* ============================================
+   ЗАГОЛОВКИ СЕКЦИЙ
+   ============================================ */
 .sectionTitle {
     font-size: 2.2rem;
     color: #2c3e50;
@@ -85,7 +95,16 @@
     padding-bottom: 15px;
 }
 
-/* Категории */
+.sectionSubtitle {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* ============================================
+   КАТЕГОРИИ
+   ============================================ */
 .categoryLink {
     text-decoration: none;
     display: block;
@@ -118,7 +137,9 @@
     font-weight: 500;
 }
 
-/* Преимущества */
+/* ============================================
+   ПРЕИМУЩЕСТВА
+   ============================================ */
 .advantageCard {
     background: white;
     border-radius: 15px;
@@ -155,99 +176,9 @@
     margin: 0;
 }
 
-/* Новости */
-.newsCard {
-    border: 2px solid transparent;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    background: white;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    height: 100%;
-}
-
-.newsCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    border-color: #c49b6b;
-}
-
-.newsDate {
-    color: #95a5a6;
-    font-size: 0.85rem;
-    margin-bottom: 10px;
-}
-
-.newsTitle {
-    color: #2c3e50;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    line-height: 1.4;
-}
-
-.newsText {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
-
-.newsLink {
-    color: #c49b6b;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-.newsLink:hover {
-    color: #8B5A2B;
-    transform: translateX(5px);
-}
-
-/* Отзывы */
-.testimonialCard {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    height: 100%;
-}
-
-.testimonialCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    border-color: #c49b6b;
-}
-
-.testimonialRating {
-    margin-bottom: 15px;
-}
-
-.star {
-    color: #f1c40f;
-    font-size: 1.2rem;
-    margin-right: 3px;
-}
-
-.testimonialText {
-    color: #2c3e50;
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 15px;
-    font-style: italic;
-}
-
-.testimonialAuthor {
-    color: #8B5A2B;
-    font-weight: 500;
-    text-align: right;
-}
-
-/* CTA секция */
+/* ============================================
+   CTA СЕКЦИЯ
+   ============================================ */
 .ctaSection {
     background: linear-gradient(135deg, #c49b6b20, #b38b5b20);
     border-radius: 20px;
@@ -280,6 +211,8 @@
     padding: 12px 30px;
     border-radius: 8px;
     transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .ctaButton:hover {
@@ -289,15 +222,9 @@
     color: white;
 }
 
-/* Стили для секции категорий */
-.sectionSubtitle {
-    text-align: center;
-    color: #7f8c8d;
-    font-size: 1rem;
-    margin-bottom: 2rem;
-}
-
-/* Стили для кнопки обновления */
+/* ============================================
+   КНОПКА ОБНОВЛЕНИЯ
+   ============================================ */
 .refreshButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -316,7 +243,9 @@
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
-/* Стили для загрузчика */
+/* ============================================
+   ЗАГРУЗЧИК
+   ============================================ */
 .loader {
     text-align: center;
     padding: 40px;
@@ -324,12 +253,19 @@
     color: #8B5A2B;
 }
 
-/* Анимация для карточек категорий при обновлении */
-.categoryItem {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: fadeIn 0.5s ease;
+/* ============================================
+   УВЕДОМЛЕНИЕ ОБ ОШИБКЕ
+   ============================================ */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
 }
 
+/* ============================================
+   АНИМАЦИЯ
+   ============================================ */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -342,7 +278,9 @@
     }
 }
 
-/* Адаптивность */
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
 @media (max-width: 768px) {
     .heroTitle {
         font-size: 2.5rem;

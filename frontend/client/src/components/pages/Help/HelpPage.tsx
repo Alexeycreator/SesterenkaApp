@@ -1,42 +1,101 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from "react";
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 
 import { getShopAddress, AddressOrder } from '../../servicesApi/AddressesApi';
 import { getUsers, User } from '../../servicesApi/UsersApi';
 
 import styles from './HelpPage.module.css';
 
+// Кэш для данных (за пределами компонента)
+let cachedAdminUser: User | null = null;
+let cachedShopAddress: AddressOrder | null = null;
+let isLoading = false;
+let isInitialized = false;
+
 const HelpPage = () => {
     // Состояния для динамических данных
-    const [adminUser, setAdminUser] = useState<User | null>(null);
-    const [shopAddress, setShopAddress] = useState<AddressOrder | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [adminUser, setAdminUser] = useState<User | null>(cachedAdminUser);
+    const [shopAddress, setShopAddress] = useState<AddressOrder | null>(cachedShopAddress);
+    const [loading, setLoading] = useState(!cachedAdminUser || !cachedShopAddress);
+    const [error, setError] = useState<string | null>(null);
+    const isMounted = useRef(true);
 
     useEffect(() => {
+        isMounted.current = true;
+
         const fetchData = async () => {
+            // Если уже загружено и инициализировано, используем кэш
+            if (cachedAdminUser !== null && cachedShopAddress !== null && isInitialized) {
+                if (isMounted.current) {
+                    setAdminUser(cachedAdminUser);
+                    setShopAddress(cachedShopAddress);
+                    setLoading(false);
+                }
+                return;
+            }
+
+            // Если уже идет загрузка, не повторяем
+            if (isLoading) return;
+
+            isLoading = true;
+            if (isMounted.current) {
+                setLoading(true);
+                setError(null);
+            }
+
             try {
-                // Параллельно загружаем пользователей и адреса
                 const [users, addresses] = await Promise.all([
                     getUsers(),
                     getShopAddress()
                 ]);
 
-                // Находим первого пользователя с ролью admin
                 const admin = users.find(user => user.role === 'admin');
-                setAdminUser(admin || null);
+                const address = addresses && addresses.length > 0 ? addresses[0] : null;
 
-                // Берем первый адрес магазина
-                if (addresses && addresses.length > 0) {
-                    setShopAddress(addresses[0]);
+                // Сохраняем в кэш
+                cachedAdminUser = admin || null;
+                cachedShopAddress = address || null;
+                isInitialized = true;
+
+                if (isMounted.current) {
+                    setAdminUser(cachedAdminUser);
+                    setShopAddress(cachedShopAddress);
+                    setError(null);
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Ошибка загрузки данных для страницы помощи:', error);
+                if (isMounted.current) {
+                    const errorMsg = error.serverMessage || error.message || 'Не удалось загрузить контактные данные';
+                    setError(errorMsg);
+                }
             } finally {
-                setLoading(false);
+                isLoading = false;
+                if (isMounted.current) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchData();
+
+        // Слушаем события обновления данных
+        const handleDataUpdate = () => {
+            if (isMounted.current) {
+                cachedAdminUser = null;
+                cachedShopAddress = null;
+                isInitialized = false;
+                fetchData();
+            }
+        };
+
+        window.addEventListener('authChange', handleDataUpdate);
+        window.addEventListener('footerDataUpdate', handleDataUpdate);
+
+        return () => {
+            isMounted.current = false;
+            window.removeEventListener('authChange', handleDataUpdate);
+            window.removeEventListener('footerDataUpdate', handleDataUpdate);
+        };
     }, []);
 
     const faqItems = [
@@ -100,6 +159,18 @@ const HelpPage = () => {
                     </p>
                 </Col>
             </Row>
+
+            {/* Отображение ошибки */}
+            {error && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                            <p>{error}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
 
             {/* Каналы поддержки */}
             <Row className="mb-5">

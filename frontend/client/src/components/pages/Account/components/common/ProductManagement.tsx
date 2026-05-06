@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 
 import {
     getControlProducts,
@@ -27,6 +27,8 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
     const [saving, setSaving] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         partNumber: '',
@@ -60,18 +62,32 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         setProducts([]);
         setCategories([]);
         setManufacturers([]);
+        setSuccessMessage(null);
+        setErrorMessage(null);
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 5000);
     };
 
     const loadData = async () => {
         try {
             setLoading(true);
+            setErrorMessage(null);
             const data = await getControlProducts();
             setProducts(data.products);
             setCategories(data.categories);
             setManufacturers(data.manufacturers);
         } catch (error: any) {
             console.error('Ошибка загрузки данных:', error);
-            alert(error.serverMessage || 'Не удалось загрузить список товаров');
+            const msg = error.serverMessage || 'Не удалось загрузить список товаров';
+            showError(msg);
         } finally {
             setLoading(false);
         }
@@ -93,16 +109,18 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
 
     const handleSave = async () => {
         if (!formData.name.trim() || !formData.partNumber.trim() || formData.price <= 0) {
-            alert('Заполните обязательные поля (название, артикул, цена)');
+            showError('Заполните обязательные поля (название, артикул, цена)');
             return;
         }
 
         if (!formData.categories_Id || !formData.manufacturers_Id) {
-            alert('Выберите категорию и бренд');
+            showError('Выберите категорию и бренд');
             return;
         }
 
         setSaving(true);
+        setErrorMessage(null);
+
         try {
             const productData = {
                 name: formData.name,
@@ -116,23 +134,18 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
 
             if (editingProduct) {
                 await updateProductControlPanel(editingProduct.id, productData);
-                alert('Товар успешно обновлен');
+                showSuccess('Товар успешно обновлен');
             } else {
                 await createProductControlPanel(productData);
-                alert('Товар успешно добавлен');
+                showSuccess('Товар успешно добавлен');
             }
             resetForm();
             await loadData();
             if (onRefresh) onRefresh();
         } catch (error: any) {
             console.error('Ошибка сохранения:', error);
-            if (error.serverMessage) {
-                alert(error.serverMessage);
-            } else if (error.message) {
-                alert(error.message);
-            } else {
-                alert('Не удалось сохранить товар');
-            }
+            const msg = error.serverMessage || error.message || 'Не удалось сохранить товар';
+            showError(msg);
         } finally {
             setSaving(false);
         }
@@ -164,6 +177,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
         if (editingProduct) {
             setEditingProduct(null);
         }
+        showSuccess('Форма очищена');
     };
 
     const handleEdit = (product: Product) => {
@@ -182,20 +196,16 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
     const handleDelete = async (id: number) => {
         if (window.confirm('Удалить товар?')) {
             setSaving(true);
+            setErrorMessage(null);
             try {
                 await deleteProductControlPanel(id);
-                alert('Товар успешно удален');
+                showSuccess('Товар успешно удален');
                 await loadData();
                 if (onRefresh) onRefresh();
             } catch (error: any) {
                 console.error('Ошибка удаления:', error);
-                if (error.serverMessage) {
-                    alert(error.serverMessage);
-                } else if (error.message) {
-                    alert(error.message);
-                } else {
-                    alert('Не удалось удалить товар');
-                }
+                const msg = error.serverMessage || error.message || 'Не удалось удалить товар';
+                showError(msg);
             } finally {
                 setSaving(false);
             }
@@ -225,6 +235,20 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
                 <Modal.Title>Управление товарами</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {/* Уведомления */}
+                {successMessage && (
+                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
+
                 <Row>
                     <Col md={5}>
                         <div className="d-flex justify-content-between align-items-center mb-3">

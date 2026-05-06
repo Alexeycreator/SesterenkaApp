@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button, Badge } from 'react-bootstrap';
+import { Card, Button, Badge, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import { Orders, OrderItems } from '../../../servicesApi/OrderApi';
@@ -10,6 +10,7 @@ interface OrdersTabProps {
     ordersData: Orders[];
     orderItemsData: OrderItems[][];
     loading?: boolean;
+    error?: string | null;
     onRefresh?: () => void;
 }
 
@@ -42,11 +43,29 @@ const getStatusBadge = (status: string) => {
     }
 };
 
-export const OrdersTab: React.FC<OrdersTabProps> = ({ ordersData, loading }) => {
+export const OrdersTab: React.FC<OrdersTabProps> = ({ ordersData, loading, error, onRefresh }) => {
     const navigate = useNavigate();
 
     if (loading) {
         return <div className={styles.loadingOrders}>Загрузка заказов...</div>;
+    }
+
+    if (error) {
+        return (
+            <Card className={styles.contentCard}>
+                <Card.Body>
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => { }} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{error}</p>
+                    </Alert>
+                    <div className={styles.emptyOrders}>
+                        <Button onClick={onRefresh} className={styles.retryButton}>
+                            🔄 Попробовать снова
+                        </Button>
+                    </div>
+                </Card.Body>
+            </Card>
+        );
     }
 
     if (!ordersData || ordersData.length === 0) {

@@ -31,22 +31,29 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
 }) => {
     const [addingToCart, setAddingToCart] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [imgError, setImgError] = useState(false);
+    const [cartError, setCartError] = useState<string | null>(null);
 
     const productStock = getProductStock(selectedProduct.id);
     const quantity = productStock?.totalQuantity ?? 0;
     const isInStock = quantity > 0;
 
+    const imageSrc = imgError ? '/placeholder.jpg' : `${apiUrl}/${selectedProduct.image}`;
+
     const handleAddToCart = async () => {
         if (addingToCart) return;
 
         setAddingToCart(true);
+        setCartError(null);
         try {
             await onAddToCart(selectedProduct.id);
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 2000);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Ошибка добавления в корзину:', error);
-            alert('Не удалось добавить товар в корзину');
+            const errorMsg = error.serverMessage || error.message || 'Не удалось добавить товар в корзину';
+            setCartError(errorMsg);
+            setTimeout(() => setCartError(null), 3000);
         } finally {
             setAddingToCart(false);
         }
@@ -76,17 +83,25 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Row>
             )}
 
+            {cartError && (
+                <Row className="mb-3">
+                    <Col>
+                        <div className={styles.errorAlert}>
+                            ❌ {cartError}
+                        </div>
+                    </Col>
+                </Row>
+            )}
+
             <Row className="justify-content-center">
                 <Col md={10} lg={8}>
                     <Card className={styles.fullProductCard}>
                         <Row className="g-0">
                             <Col md={6}>
                                 <Card.Img
-                                    src={`${apiUrl}/${selectedProduct.image}`}
+                                    src={imageSrc}
                                     className={styles.fullProductImage}
-                                    onError={(e) => {
-                                        e.currentTarget.src = '/placeholder.jpg';
-                                    }}
+                                    onError={() => setImgError(true)}
                                 />
                             </Col>
                             <Col md={6}>

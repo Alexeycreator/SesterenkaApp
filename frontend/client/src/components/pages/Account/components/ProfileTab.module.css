@@ -1,3 +1,8 @@
+/* ============================================
+   ОСНОВНЫЕ КОМПОНЕНТЫ
+   ============================================ */
+
+/* Основная карточка контента */
 .contentCard {
     border: 2px solid #D2B48C;
     border-radius: 15px;
@@ -6,6 +11,7 @@
     margin-bottom: 20px;
 }
 
+/* Заголовок секции "Личные данные" */
 .sectionTitle {
     color: #8B5A2B;
     font-size: 1.5rem;
@@ -13,6 +19,11 @@
     font-family: 'Cormorant Garamond', serif;
 }
 
+/* ============================================
+   ШАПКА ПРОФИЛЯ (Заголовок + кнопка редактирования)
+   ============================================ */
+
+/* Контейнер шапки профиля */
 .profileHeader {
     display: flex;
     justify-content: space-between;
@@ -22,6 +33,7 @@
     border-bottom: 2px solid #D2B48C;
 }
 
+/* Кнопка "Редактировать" / "Отмена" */
 .editButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -32,15 +44,22 @@
     transition: all 0.3s ease;
 }
 
+/* Эффект при наведении на кнопку редактирования */
 .editButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
 }
 
+/* ============================================
+   РЕЖИМ ПРОСМОТРА (нередактируемый)
+   ============================================ */
+
+/* Контейнер информации о пользователе */
 .profileInfo {
     margin-bottom: 25px;
 }
 
+/* Строка информации (ФИО, Email, Телефон, Дата рождения) */
 .infoRow {
     display: flex;
     margin-bottom: 12px;
@@ -48,31 +67,40 @@
     border-bottom: 1px solid #D2B48C;
 }
 
+/* Метка (название поля) */
 .infoLabel {
     width: 150px;
     color: #7f8c8d;
     font-weight: 500;
 }
 
+/* Значение поля */
 .infoValue {
     flex: 1;
     color: #2c3e50;
 }
 
-/* Форма редактирования */
+/* ============================================
+   РЕЖИМ РЕДАКТИРОВАНИЯ (форма)
+   ============================================ */
+
+/* Метка для полей формы */
 .formLabel {
     color: #8B5A2B;
     font-weight: 500;
 }
 
+/* Поле ввода формы */
 .formInput {
     border: 2px solid #D2B48C;
     border-radius: 8px;
     padding: 10px;
     background-color: #FFF8F0;
     color: #8B5A2B;
+    transition: all 0.3s ease;
 }
 
+/* Эффект при фокусе на поле ввода */
 .formInput:focus {
     border-color: #c49b6b;
     box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.25);
@@ -80,6 +108,18 @@
     background-color: white;
 }
 
+/* ============================================
+   КНОПКА СОХРАНЕНИЯ
+   ============================================ */
+
+/* Группа кнопок (контейнер для кнопки сохранить) */
+.buttonGroup {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+/* Кнопка сохранения изменений */
 .saveButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
@@ -88,14 +128,19 @@
     padding: 10px 30px;
     border-radius: 8px;
     transition: all 0.3s ease;
-    margin-top: 15px;
 }
 
+/* Эффект при наведении на кнопку сохранения */
 .saveButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
     transform: translateY(-2px);
 }
 
+/* ============================================
+   СТАТИСТИКА (если будет добавлена)
+   ============================================ */
+
+/* Сетка для статистических карточек */
 .statsGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -103,6 +148,7 @@
     margin-top: 25px;
 }
 
+/* Карточка статистики */
 .statCard {
     background: linear-gradient(135deg, #c49b6b10, #b38b5b10);
     border: 2px solid #D2B48C;
@@ -111,6 +157,7 @@
     text-align: center;
 }
 
+/* Числовое значение статистики */
 .statValue {
     color: #2c3e50;
     font-size: 1.8rem;
@@ -118,29 +165,59 @@
     margin-bottom: 5px;
 }
 
+/* Метка статистики */
 .statLabel {
     color: #7f8c8d;
     font-size: 0.9rem;
 }
 
-/* Адаптивность */
+/* ============================================
+   УВЕДОМЛЕНИЯ (Alert)
+   ============================================ */
+
+/* Стили для уведомления об ошибке */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+   ============================================ */
+
 @media (max-width: 768px) {
+
+    /* Шапка профиля в колонку */
     .profileHeader {
         flex-direction: column;
         gap: 15px;
         text-align: center;
     }
 
+    /* Строка информации в колонку */
     .infoRow {
         flex-direction: column;
     }
 
+    /* Метка на всю ширину */
     .infoLabel {
         width: 100%;
         margin-bottom: 5px;
     }
 
+    /* Статистика в один столбец */
     .statsGrid {
         grid-template-columns: 1fr;
+    }
+
+    /* Кнопка сохранения на всю ширину */
+    .buttonGroup {
+        justify-content: stretch;
+    }
+
+    .saveButton {
+        width: 100%;
     }
 }
