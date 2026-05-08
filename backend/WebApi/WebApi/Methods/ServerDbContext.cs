@@ -27,32 +27,32 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
 
         #region IX_Users
 
-        builder.Entity<UsersModel>().HasIndex(c => new { c.SecondName, c.FirstName, c.SurName })
+        builder.Entity<UsersModel>().HasIndex(u => new { u.SecondName, u.FirstName, u.SurName })
             .HasDatabaseName("IX_Users_FullName");
-        builder.Entity<UsersModel>().HasIndex(c => c.SecondName)
+        builder.Entity<UsersModel>().HasIndex(u => u.SecondName)
             .HasDatabaseName("IX_Users_SecondName");
-        builder.Entity<UsersModel>().HasIndex(c => c.FirstName)
+        builder.Entity<UsersModel>().HasIndex(u => u.FirstName)
             .HasDatabaseName("IX_Users_FirstName");
-        builder.Entity<UsersModel>().HasIndex(c => c.SurName)
+        builder.Entity<UsersModel>().HasIndex(u => u.SurName)
             .HasDatabaseName("IX_Users_SurName");
-        builder.Entity<UsersModel>().HasIndex(c => c.PhoneNumber)
+        builder.Entity<UsersModel>().HasIndex(u => u.PhoneNumber)
             .HasDatabaseName("IX_Users_PhoneNumber")
             .IsUnique();
-        builder.Entity<UsersModel>().HasIndex(c => c.Email)
+        builder.Entity<UsersModel>().HasIndex(u => u.Email)
             .HasDatabaseName("IX_Users_Email")
             .IsUnique();
-        builder.Entity<UsersModel>().HasIndex(c => c.Login)
+        builder.Entity<UsersModel>().HasIndex(u => u.Login)
             .HasDatabaseName("IX_Users_Login")
             .IsUnique();
-        builder.Entity<UsersModel>().HasIndex(c => c.Gender)
+        builder.Entity<UsersModel>().HasIndex(u => u.Gender)
             .HasDatabaseName("IX_Users_Gender");
-        builder.Entity<UsersModel>().HasIndex(c => c.Birthday)
+        builder.Entity<UsersModel>().HasIndex(u => u.Birthday)
             .HasDatabaseName("IX_Users_Birthday");
-        builder.Entity<UsersModel>().HasIndex(c => c.Age)
+        builder.Entity<UsersModel>().HasIndex(u => u.Age)
             .HasDatabaseName("IX_Users_Age");
-        builder.Entity<UsersModel>().HasIndex(c => c.Position)
+        builder.Entity<UsersModel>().HasIndex(u => u.Position)
             .HasDatabaseName("IX_Users_Position");
-        builder.Entity<UsersModel>().HasIndex(c => c.Role)
+        builder.Entity<UsersModel>().HasIndex(u => u.Role)
             .HasDatabaseName("IX_Users_Role");
 
         #endregion
