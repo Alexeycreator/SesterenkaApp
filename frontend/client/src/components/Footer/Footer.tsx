@@ -234,6 +234,16 @@ const Footer: React.FC = () => {
                                 О нас
                             </Link>
                         </li>
+                        <li className={styles.listItem}>
+                            <Link to="/privacy-policy" className={styles.link}>
+                                Политика конфиденциальности
+                            </Link>
+                        </li>
+                        <li className={styles.listItem}>
+                            <Link to="/terms-of-use" className={styles.link}>
+                                Условия эксплуатации
+                            </Link>
+                        </li>
                     </ul>
                 </div>
 
