@@ -169,7 +169,7 @@ const InformationPage = () => {
                             {/* Миссия - OurMission */}
                             {ourMissionList.length > 0 && (
                                 <p className={styles.companyMission}>
-                                    Наша миссия — {ourMissionList[0]}
+                                    {ourMissionList[0]}
                                 </p>
                             )}
 
