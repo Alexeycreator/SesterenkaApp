@@ -109,8 +109,8 @@ function App() {
             <Route path='/orderItems' element={<OrderItemsPage />} />
             <Route path='/order' element={<OrderPage />} />
             <Route path='/order/:id' element={<OrderDetailsPage />} />
-            <Route path='/privacy_policy' element={<PrivacyPolicyPage />} />
-            <Route path='/terms_of_use' element={<TermsOfUsePage />} />
+            <Route path='/privacy-policy' element={<PrivacyPolicyPage />} />
+            <Route path='/terms-of-use' element={<TermsOfUsePage />} />
             <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </main>
