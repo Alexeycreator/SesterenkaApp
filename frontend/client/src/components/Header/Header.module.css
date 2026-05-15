@@ -1,46 +1,39 @@
-/* ============================================
-   НАВИГАЦИОННАЯ ПАНЕЛЬ (NAVBAR)
-   ============================================ */
-
-/* Основная панель навигации */
+/* Основная панель навигации - принудительно убираем фиксацию */
 .navbar {
-    background: linear-gradient(90deg, #F8F0E0 0%, #F0E0D0 50%, #E8D0C0 100%);
-    border-bottom: 2px solid #C0A080;
-    box-shadow: 0 2px 10px rgba(160, 120, 80, 0.1);
-    padding: 8px 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    width: 100%;
-    height: 70px;
+    position: fixed !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    background: linear-gradient(90deg, #F8F0E0 0%, #F0E0D5 50%, #E8D0C0 100%) !important;
+    border-bottom: 2px solid #C0A080 !important;
+    box-shadow: 0 2px 10px rgba(160, 120, 80, 0.1) !important;
+    padding: 8px 0 !important;
+    width: 100% !important;
+    min-height: 70px !important;
+    margin: 0 !important;
+    z-index: 1000 !important;
 }
 
 /* Контейнер для содержимого шапки */
 .container {
     padding: 0 20px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-/* ============================================
-   ЛОГОТИП
-   ============================================ */
-
-/* Логотип компании */
+/* Логотип */
 .logo {
     font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 28px;
     font-weight: 600;
     color: #8B5A2B;
-    text-shadow: 1px 1px 2px rgba(200, 160, 120, 0.3);
-    letter-spacing: 1px;
     padding: 5px 15px;
     border-radius: 20px;
     transition: all 0.3s ease;
     margin-left: 10px;
     text-decoration: none;
     background: rgba(255, 245, 235, 0.5);
-    backdrop-filter: blur(5px);
     border: 1px solid #C0A080;
     white-space: nowrap;
 }
@@ -49,29 +42,23 @@
     background: rgba(200, 160, 120, 0.15);
 }
 
-/* ============================================
-   КНОПКА БУРГЕР-МЕНЮ (МОБИЛЬНАЯ ВЕРСИЯ)
-   ============================================ */
-
+/* Кнопка бургер-меню */
 .navbarToggler {
-    background-color: #C0A080;
-    border: 1px solid #8B5A2B;
+    background-color: #C0A080 !important;
+    border: 1px solid #8B5A2B !important;
 }
 
 .navbarTogglerIcon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%238B5A2B' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%238B5A2B' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }
 
-/* ============================================
-   МЕНЮ НАВИГАЦИИ
-   ============================================ */
-
+/* Меню навигации */
 .navMenu {
     margin-left: 20px;
 }
 
 .navLink {
-    color: #8B5A2B;
+    color: #8B5A2B !important;
     font-size: 16px;
     font-weight: 400;
     padding: 8px 15px;
@@ -83,14 +70,12 @@
 }
 
 .navLink:hover {
-    background-color: rgba(200, 160, 120, 0.15);
-    border-color: #C0A080;
+    background-color: rgba(200, 160, 120, 0.15) !important;
+    border-color: #C0A080 !important;
+    color: #8B5A2B !important;
 }
 
-/* ============================================
-   ПРАВАЯ СЕКЦИЯ (КОРЗИНА, АВТОРИЗАЦИЯ)
-   ============================================ */
-
+/* Правая секция */
 .rightSection {
     display: flex;
     align-items: center;
@@ -98,10 +83,7 @@
     margin-left: auto;
 }
 
-/* ============================================
-   КОРЗИНА
-   ============================================ */
-
+/* Корзина */
 .cartLink {
     position: relative;
     display: flex;
@@ -135,10 +117,7 @@
     text-align: center;
 }
 
-/* ============================================
-   КНОПКА АВТОРИЗАЦИИ
-   ============================================ */
-
+/* Кнопка авторизации */
 .authButton {
     display: flex;
     align-items: center;
@@ -163,127 +142,7 @@
     font-size: 1.1rem;
 }
 
-/* ============================================
-   МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ
-   ============================================ */
-
-.authModal {
-    position: absolute;
-    top: 55px;
-    right: 0;
-    width: 320px;
-    background-color: #F8F0E0;
-    border: 2px solid #C0A080;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
-}
-
-.authModalTitle {
-    color: #8B5A2B;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    font-family: 'Cormorant Garamond', serif;
-    border-bottom: 2px solid #C0A080;
-    padding-bottom: 10px;
-}
-
-.authFormField {
-    margin-bottom: 15px;
-}
-
-.authInput {
-    width: 100%;
-    padding: 10px 12px;
-    background-color: #FFF8F0;
-    border: 2px solid #D2B48C;
-    border-radius: 8px;
-    color: #8B5A2B;
-    font-size: 0.9rem;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.authInput:focus {
-    border-color: #c49b6b;
-    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.2);
-}
-
-.authInputError {
-    border-color: #e74c3c;
-}
-
-.authFieldError {
-    color: #e74c3c;
-    font-size: 0.75rem;
-    margin-top: 5px;
-    padding-left: 5px;
-}
-
-.authError {
-    background-color: #fee;
-    color: #e74c3c;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    font-size: 0.85rem;
-    text-align: center;
-    border: 1px solid #e74c3c;
-}
-
-.authButtons {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.authSubmitButton {
-    flex: 1;
-    padding: 10px;
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.authSubmitButton:hover:not(:disabled) {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-}
-
-.authSubmitButton:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.authRegisterButton {
-    flex: 1;
-    padding: 10px;
-    background: transparent;
-    border: 2px solid #c49b6b;
-    border-radius: 8px;
-    color: #8B5A2B;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.authRegisterButton:hover {
-    background: rgba(196, 155, 107, 0.1);
-    transform: translateY(-2px);
-}
-
-/* ============================================
-   МЕНЮ ПОЛЬЗОВАТЕЛЯ (АВАТАР + ВЫПАДАЮЩЕЕ МЕНЮ)
-   ============================================ */
-
+/* Меню пользователя */
 .userMenuWrapper {
     position: relative;
 }
@@ -361,10 +220,7 @@
     color: #8B5A2B;
 }
 
-/* ============================================
-   АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
-   ============================================ */
-
+/* Адаптивность */
 @media (max-width: 768px) {
     .logo {
         font-size: 20px;
@@ -373,11 +229,6 @@
 
     .navMenu {
         margin-left: 0;
-    }
-
-    .authModal {
-        width: 280px;
-        right: -50px;
     }
 
     .rightSection {
@@ -421,5 +272,168 @@
 
     .authIcon {
         font-size: 0.9rem;
+    }
+}
+
+/* ============================================
+   МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ
+   ============================================ */
+
+/* Контейнер модального окна */
+.authModal {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 320px;
+    background-color: #F8F0E0;
+    border: 2px solid #C0A080;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    margin-top: 10px;
+}
+
+/* Заголовок модального окна */
+.authModalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #C0A080;
+}
+
+.authModalTitle {
+    color: #8B5A2B;
+    text-align: center;
+    margin: 0;
+    font-size: 1.3rem;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* Кнопка закрытия */
+.authModalClose {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #8B5A2B;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.authModalClose:hover {
+    background: rgba(196, 155, 107, 0.1);
+    color: #c0392b;
+}
+
+/* Поле формы */
+.authFormField {
+    margin-bottom: 15px;
+}
+
+.authInput {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #FFF8F0;
+    border: 2px solid #D2B48C;
+    border-radius: 8px;
+    color: #8B5A2B;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.authInput:focus {
+    border-color: #c49b6b;
+    box-shadow: 0 0 0 3px rgba(196, 155, 107, 0.2);
+}
+
+.authInputError {
+    border-color: #e74c3c;
+}
+
+.authFieldError {
+    color: #e74c3c;
+    font-size: 0.75rem;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+.authError {
+    background-color: #fee;
+    color: #e74c3c;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    text-align: center;
+    border: 1px solid #e74c3c;
+}
+
+/* Кнопки */
+.authButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.authSubmitButton {
+    flex: 1;
+    padding: 10px;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.authSubmitButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+}
+
+.authSubmitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.authRegisterButton {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: 2px solid #c49b6b;
+    border-radius: 8px;
+    color: #8B5A2B;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.authRegisterButton:hover {
+    background: rgba(196, 155, 107, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .authModal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 320px;
+        margin-top: 0;
     }
 }

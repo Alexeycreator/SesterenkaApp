@@ -1,9 +1,9 @@
 import React, { Component, createRef } from "react";
 import { Link } from 'react-router-dom';
 
-import { authApi, UserData } from "../../service/IndexAuth";
+import { UserData } from "../../service/IndexAuth";
 import { AuthContext } from '../../contexts/AuthContext';
-import { getOrderItemData, OrderItem } from "../servicesApi/OrderItemsApi";
+import { getOrderItemData } from "../servicesApi/OrderItemsApi";
 import { NavMenu } from './components/NavMenu';
 import { AuthModal } from './components/AuthModal';
 import RegistrationModal from './components/RegistrationModal';
@@ -50,6 +50,8 @@ export default class Header extends Component<{}, HeaderState> {
     context!: React.ContextType<typeof AuthContext>;
 
     private userMenuRef = createRef<HTMLDivElement>();
+    private authRef = createRef<HTMLDivElement>();
+    private registrationRef = createRef<HTMLDivElement>();
     private fetchTimeout: NodeJS.Timeout | null = null;
     private isFetching = false;
     private debounceTimeout: NodeJS.Timeout | null = null;
@@ -170,7 +172,6 @@ export default class Header extends Component<{}, HeaderState> {
         }
     };
 
-    // Остальные методы без изменений...
     toggleAuthModal = () => {
         this.setState(prev => ({
             showAuth: !prev.showAuth,
@@ -267,6 +268,23 @@ export default class Header extends Component<{}, HeaderState> {
     };
 
     handleClickOutside = (event: MouseEvent) => {
+        // Закрываем модальное окно авторизации
+        if (this.authRef.current && !this.authRef.current.contains(event.target as Node)) {
+            this.setState({ showAuth: false, authError: null, authFieldErrors: {}, authForm: { login: '', password: '' } });
+        }
+
+        // Закрываем модальное окно регистрации
+        if (this.registrationRef.current && !this.registrationRef.current.contains(event.target as Node)) {
+            this.setState({
+                showRegistrationModal: false,
+                registrationError: null,
+                registrationFieldErrors: {},
+                registrationForm: { ...this.initialRegistrationForm },
+                registrationStep: 1
+            });
+        }
+
+        // Закрываем меню пользователя
         if (this.userMenuRef.current && !this.userMenuRef.current.contains(event.target as Node)) {
             this.setState({ showUserMenu: false });
         }
@@ -470,27 +488,29 @@ export default class Header extends Component<{}, HeaderState> {
                                         )}
                                     </div>
                                 ) : (
-                                    <button className={styles.authButton} onClick={this.toggleAuthModal}>
-                                        <span className={styles.authIcon}>🔑</span>
-                                        <span>Вход</span>
-                                    </button>
+                                    <div className={styles.positionRelative}>
+                                        <button className={styles.authButton} onClick={this.toggleAuthModal}>
+                                            <span className={styles.authIcon}>🔑</span>
+                                            <span>Вход</span>
+                                        </button>
+                                        <AuthModal
+                                            show={showAuth}
+                                            onClose={() => this.setState({ showAuth: false })}
+                                            authForm={this.state.authForm}
+                                            authLoading={this.state.authLoading}
+                                            authError={this.state.authError}
+                                            authFieldErrors={this.state.authFieldErrors}
+                                            onInputChange={this.handleAuthInputChange}
+                                            onSubmit={this.handleAuthSubmit}
+                                            onRegister={this.switchToRegistration}
+                                            ref={this.authRef}
+                                        />
+                                    </div>
                                 )}
                             </div>
                         </div>
                     </div>
                 </nav>
-
-                <AuthModal
-                    show={showAuth}
-                    onClose={() => this.setState({ showAuth: false })}
-                    authForm={this.state.authForm}
-                    authLoading={this.state.authLoading}
-                    authError={this.state.authError}
-                    authFieldErrors={this.state.authFieldErrors}
-                    onInputChange={this.handleAuthInputChange}
-                    onSubmit={this.handleAuthSubmit}
-                    onRegister={this.switchToRegistration}
-                />
 
                 <RegistrationModal
                     show={showRegistrationModal}
@@ -507,6 +527,7 @@ export default class Header extends Component<{}, HeaderState> {
                     onBack={this.handleRegistrationBack}
                     onSubmit={this.handleRegistrationSubmit}
                     onTogglePassword={() => this.setState({ showPassword: !showPassword })}
+                    ref={this.registrationRef}
                 />
             </>
         );

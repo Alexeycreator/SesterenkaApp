@@ -35,9 +35,10 @@ export const AuthModal = React.forwardRef<HTMLDivElement, AuthModalProps>(({
 
     return (
         <div ref={ref} className={styles.authModal}>
-            <h3 className={styles.authModalTitle}>
-                Авторизация
-            </h3>
+            <div className={styles.authModalHeader}>
+                <h3 className={styles.authModalTitle}>Авторизация</h3>
+                <button className={styles.authModalClose} onClick={onClose}>✕</button>
+            </div>
 
             <form onSubmit={onSubmit}>
                 <div className={styles.authFormField}>
