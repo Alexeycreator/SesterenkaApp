@@ -14,7 +14,7 @@ const LoadingSpinner = () => {
                     Пожалуйста, подождите 5-15 секунд...
                 </p>
                 <p className={styles.loadingSubtext}>
-                    Загружаем информацию о товарах
+                    Загружаем информацию о странице
                 </p>
             </div>
         </div>
