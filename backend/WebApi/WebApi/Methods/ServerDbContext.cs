@@ -20,6 +20,7 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
     public DbSet<WarehousesModel> Warehouses { get; set; }
     public DbSet<WarehousesAddressesModel> WarehousesAddresses { get; set; }
     public DbSet<InformationsModel> Informations { get; set; }
+    public DbSet<NewsModel> News { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -193,6 +194,13 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
             .IsUnique();
         builder.Entity<WarehousesModel>().HasIndex(w => w.Name)
             .HasDatabaseName("IX_Warehouses_Name");
+
+        #endregion
+
+        #region IX_News
+
+        builder.Entity<NewsModel>().HasIndex(n => n.Theme)
+            .HasDatabaseName("IX_News_Theme");
 
         #endregion
     }

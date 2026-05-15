@@ -282,6 +282,43 @@ namespace WebApi.Migrations
                     b.ToTable("Manufacturers");
                 });
 
+            modelBuilder.Entity("WebApi.Models.DataBase.NewsModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Image")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Theme")
+                        .HasDatabaseName("IX_News_Theme");
+
+                    b.ToTable("News");
+                });
+
             modelBuilder.Entity("WebApi.Models.DataBase.OrderItemsModel", b =>
                 {
                     b.Property<int>("Id")
