@@ -1,12 +1,15 @@
-/* NewsPage.module.css */
-
-/* Основной контейнер страницы */
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР СТРАНИЦЫ
+   ============================================ */
 .pageContainer {
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
     min-height: 100vh;
+    padding: 20px;
 }
 
-/* Заголовок страницы */
+/* ============================================
+   ЗАГОЛОВКИ
+   ============================================ */
 .title {
     font-size: 2.5rem;
     font-weight: bold;
@@ -16,7 +19,6 @@
     text-align: center;
 }
 
-/* Подзаголовок страницы */
 .subtitle {
     font-size: 1.1rem;
     color: #5a6b7a;
@@ -24,10 +26,12 @@
     text-align: center;
 }
 
-/* Поле поиска */
+/* ============================================
+   ПОИСК И ФИЛЬТРЫ
+   ============================================ */
 .searchInput {
     border: 2px solid #D2B48C;
-    border-radius: 10px 0 0 10px;
+    border-radius: 8px 0 0 8px;
     padding: 12px 15px;
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -42,32 +46,97 @@
     background-color: white;
 }
 
-/* Кнопка очистки поиска */
 .clearButton {
-    background-color: #f8f9fa;
+    background: #f8f9fa;
     border: 2px solid #D2B48C;
     border-left: none;
+    border-right: none;
     color: #8B5A2B;
     font-weight: bold;
     transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 0 15px;
 }
 
 .clearButton:hover {
-    background-color: #e9ecef;
+    background: #e9ecef;
     color: #5a3e2b;
 }
 
-/* Кнопка поиска */
-.searchButton {
+/* ============================================
+   КНОПКИ - ЕДИНЫЙ СТИЛЬ ПРИЛОЖЕНИЯ
+   ============================================ */
+
+/* Основная кнопка (градиент) */
+.searchButton,
+.resetButton,
+.retryButton {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
-    color: #F8F0E0;
+    color: white;
     font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 8px;
     transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.searchButton:hover {
+.searchButton:hover,
+.resetButton:hover,
+.retryButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    color: white;
+}
+
+/* Кнопка "Назад" */
+.backButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.backButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    color: white;
+}
+
+/* Кнопка "Читать далее" */
+.readMoreBtn {
+    background: transparent;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.readMoreBtn:hover {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border-color: #8B5A2B;
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
@@ -75,263 +144,182 @@
 /* Кнопка фильтра (неактивная) */
 .filterButton {
     background: transparent;
-    border: 1px solid #c49b6b;
+    border: 2px solid #c49b6b;
     color: #8B5A2B;
     transition: all 0.3s ease;
     font-weight: 500;
     padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .filterButton:hover {
     background: rgba(196, 155, 107, 0.1);
     border-color: #8B5A2B;
-    color: #8B5A2B;
+    color: #5a3e2b;
     transform: translateY(-2px);
 }
 
 /* Активный фильтр */
 .activeFilter {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 1px solid #8B5A2B;
-    color: #F8F0E0;
+    border: 2px solid #8B5A2B;
+    color: white;
     font-weight: 500;
     padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .activeFilter:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    color: #F8F0E0;
+    color: white;
+    transform: translateY(-2px);
 }
 
-/* Счетчик категории */
 .categoryCount {
     font-size: 0.8rem;
     opacity: 0.9;
 }
 
-/* Карточка новости - основной стиль */
+/* ============================================
+   РЕЗУЛЬТАТЫ ПОИСКА
+   ============================================ */
+.resultsInfo {
+    color: #5a6b7a;
+    font-size: 1rem;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(196, 155, 107, 0.3);
+}
+
+.resultsInfo strong {
+    color: #8B5A2B;
+    font-weight: 600;
+}
+
+/* ============================================
+   КАРТОЧКИ НОВОСТЕЙ
+   ============================================ */
 .newsCard {
     border: 2px solid transparent;
     border-radius: 15px;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s ease;
     background: white;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    animation: fadeInUp 0.5s ease forwards;
     cursor: pointer;
 }
 
-/* Эффект при наведении на карточку - поднятие вверх */
 .newsCard:hover {
-    transform: translateY(-8px);
-    /* Поднимаем карточку вверх */
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
-    /* Усиливаем тень */
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     border-color: #c49b6b;
-    /* Добавляем золотистую рамку */
 }
 
-/* Обертка для изображения */
 .imageWrapper {
     position: relative;
     overflow: hidden;
     height: 200px;
 }
 
-/* Изображение карточки */
 .cardImage {
     height: 100%;
     width: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
-    /* Плавное увеличение */
 }
 
-/* Эффект увеличения изображения при наведении на карточку */
 .newsCard:hover .cardImage {
     transform: scale(1.1);
-    /* Увеличиваем изображение */
 }
 
-/* Бейдж "Популярное" */
-.featuredBadge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-    font-size: 0.8rem;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-weight: 500;
-    z-index: 1;
-    transition: transform 0.3s ease;
-}
-
-/* Эффект для бейджа при наведении */
-.newsCard:hover .featuredBadge {
-    transform: scale(1.05);
-    /* Немного увеличиваем бейдж */
-}
-
-/* Тело карточки */
 .cardBody {
     padding: 20px;
-    transition: background-color 0.3s ease;
 }
 
-/* Легкое изменение фона при наведении */
-.newsCard:hover .cardBody {
-    background-color: #fffaf5;
-    /* Очень светлый бежевый оттенок */
-}
-
-/* Бейдж категории */
 .categoryBadge {
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    color: #F8F0E0;
+    border: 1px solid #8B5A2B;
+    color: white;
     font-weight: 500;
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
-    border: 1px solid #8B5A2B;
-    transition: all 0.3s ease;
 }
 
-/* Эффект для бейджа категории при наведении */
-.newsCard:hover .categoryBadge {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: scale(1.02);
-}
-
-/* Дата публикации */
 .dateText {
     color: #95a5a6;
     font-size: 0.85rem;
-    transition: color 0.3s ease;
 }
 
-/* Затемнение даты при наведении */
-.newsCard:hover .dateText {
-    color: #7f8c8d;
-}
-
-/* Заголовок новости */
 .cardTitle {
     color: #2c3e50;
     font-size: 1.2rem;
     font-weight: 600;
     margin: 15px 0 10px;
     line-height: 1.4;
-    transition: color 0.3s ease;
 }
 
-/* Изменение цвета заголовка при наведении */
 .newsCard:hover .cardTitle {
     color: #8B5A2B;
-    /* Коричневый цвет */
 }
 
-/* Текст новости */
 .cardText {
     color: #7f8c8d;
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 15px;
-    transition: color 0.3s ease;
 }
 
-/* Информация об авторе */
-.authorInfo {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+/* ============================================
+   ПОЛНАЯ СТАТЬЯ
+   ============================================ */
+.fullArticleCard {
+    border: 2px solid #C0A080;
+    border-radius: 20px;
+    overflow: hidden;
+    background: white;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.1);
 }
 
-.authorName {
-    color: #8B5A2B;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-/* Кнопка "Читать далее" */
-.readMoreBtn {
-    color: #c49b6b;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 0;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-/* Эффект для кнопки при наведении на карточку */
-.newsCard:hover .readMoreBtn {
-    color: #8B5A2B;
-    transform: translateX(8px);
-    /* Увеличиваем сдвиг */
-}
-
-/* Добавляем подчеркивание для кнопки */
-.readMoreBtn::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background-color: #8B5A2B;
-    transition: width 0.3s ease;
-}
-
-/* Появление подчеркивания при наведении на карточку */
-.newsCard:hover .readMoreBtn::after {
+.fullArticleImage {
+    height: 400px;
     width: 100%;
+    object-fit: cover;
 }
 
-/* Футер карточки */
-.cardFooter {
-    background-color: white;
-    border-top: 1px solid rgba(196, 155, 107, 0.2);
-    padding: 15px 20px;
-    transition: all 0.3s ease;
+.fullArticleBody {
+    padding: 30px;
 }
 
-/* Изменение футера при наведении */
-.newsCard:hover .cardFooter {
-    border-top-color: #c49b6b;
-    background-color: #fffaf5;
+.fullArticleTitle {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 15px 0 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
 }
 
-/* Статистика (время, просмотры, комментарии) */
-.stats {
-    display: flex;
-    justify-content: space-between;
-    color: #95a5a6;
-    font-size: 0.85rem;
+.articleContent {
+    margin-top: 20px;
 }
 
-.statItem {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: color 0.3s ease;
+.articleExcerpt {
+    color: #34495e;
+    font-size: 1.1rem;
+    line-height: 1.6;
 }
 
-/* Изменение цвета статистики при наведении */
-.newsCard:hover .statItem {
-    color: #8B5A2B;
-}
-
-/* Состояние "нет результатов" */
+/* ============================================
+   ПУСТОЕ СОСТОЯНИЕ
+   ============================================ */
 .noResults {
     text-align: center;
     padding: 60px 20px;
     background: white;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    animation: fadeInUp 0.5s ease;
+    border: 2px dashed #D2B48C;
 }
 
 .noResults h3 {
@@ -345,23 +333,20 @@
     margin-bottom: 20px;
 }
 
-/* Кнопка сброса фильтров */
-.resetButton {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    color: #F8F0E0;
-    padding: 10px 30px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+/* ============================================
+   ОШИБКА
+   ============================================ */
+.errorContainer {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 20px;
+    margin-top: 50px;
 }
 
-.resetButton:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
-}
-
-/* Анимация появления карточек */
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -374,7 +359,10 @@
     }
 }
 
-/* Задержки анимации для карточек */
+.newsCard {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
 .newsCard:nth-child(1) {
     animation-delay: 0.1s;
 }
@@ -399,31 +387,23 @@
     animation-delay: 0.6s;
 }
 
-/* Информация о результатах поиска */
-.resultsInfo {
-    color: #5a6b7a;
-    font-size: 1rem;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(196, 155, 107, 0.3);
-}
-
-.resultsInfo strong {
-    color: #8B5A2B;
-    font-weight: 600;
-}
-
-/* Адаптивность для планшетов */
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
 @media (max-width: 992px) {
     .title {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
 
-    .subtitle {
-        font-size: 1rem;
+    .fullArticleTitle {
+        font-size: 1.8rem;
+    }
+
+    .fullArticleImage {
+        height: 300px;
     }
 }
 
-/* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     .pageContainer {
         padding-top: 80px;
@@ -431,37 +411,45 @@
 
     .title {
         font-size: 1.8rem;
-        text-align: center;
     }
 
     .subtitle {
         font-size: 0.95rem;
-        text-align: center;
     }
 
-    .stats {
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
+    .fullArticleBody {
+        padding: 20px;
     }
 
-    /* Уменьшаем эффект поднятия на мобильных */
-    .newsCard:hover {
-        transform: translateY(-4px);
+    .fullArticleTitle {
+        font-size: 1.5rem;
+    }
+
+    .fullArticleImage {
+        height: 250px;
+    }
+
+    .filterButton,
+    .activeFilter {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
 }
 
-/* Адаптивность для маленьких мобильных */
 @media (max-width: 576px) {
     .title {
         font-size: 1.5rem;
     }
 
-    .subtitle {
-        font-size: 0.9rem;
+    .fullArticleTitle {
+        font-size: 1.3rem;
     }
 
     .cardTitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+
+    .fullArticleImage {
+        height: 200px;
     }
 }

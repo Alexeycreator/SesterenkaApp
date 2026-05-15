@@ -1,117 +1,44 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useMemo } from 'react';
-import { Container, Row, Col, Card, Badge, Button, InputGroup, Form, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Button, InputGroup, Form } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 
-import styles from './NewsPage.module.css';
+import { getAllNews, News } from '../../servicesApi/NewsApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
-// Интерфейс для статьи
-interface NewsItem {
-    id: number;
-    title: string;
-    category: string;
-    categoryName: string;
-    excerpt: string;
-    content?: string;
-    date: string;
-    author: string;
-    readTime: string;
-    views: string;
-    comments: number;
-    featured?: boolean;
-    image?: string;
-}
+import styles from './NewsPage.module.css';
 
 const NewsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState('');
+    const [news, setNews] = useState<News[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     // Чтение параметров из URL
     const selectedCategory = searchParams.get('category') || 'all';
     const selectedNewsId = searchParams.get('id') ? parseInt(searchParams.get('id')!) : null;
 
-    const news: NewsItem[] = [
-        {
-            id: 1,
-            title: "Новые технологии в производстве поршней",
-            category: 'technology',
-            categoryName: "Технологии",
-            excerpt: "Современные методы литья и новые сплавы позволяют создавать поршни, которые служат на 30% дольше.",
-            content: "Полное содержание статьи о новых технологиях в производстве поршней...",
-            date: "15 марта 2024",
-            author: "Алексей Петров",
-            readTime: "5 мин",
-            views: "1.2k",
-            comments: 23,
-            featured: true
-        },
-        {
-            id: 2,
-            title: "Масляные фильтры: как выбрать и когда менять",
-            category: 'advice',
-            categoryName: "Советы",
-            excerpt: "Разбираемся в типах масляных фильтров, их особенностях и сроках замены.",
-            content: "Полное содержание статьи о масляных фильтрах...",
-            date: "12 марта 2024",
-            author: "Екатерина Смирнова",
-            readTime: "4 мин",
-            views: "876",
-            comments: 15
-        },
-        {
-            id: 3,
-            title: "Открытие нового склада запчастей в Москве",
-            category: 'company',
-            categoryName: "Новости компании",
-            excerpt: "Новый складской комплекс площадью 5000 кв.м позволит доставлять запчасти быстрее.",
-            content: "Полное содержание новости об открытии склада...",
-            date: "10 марта 2024",
-            author: "Иван Сидоров",
-            readTime: "3 мин",
-            views: "654",
-            comments: 8
-        },
-        {
-            id: 4,
-            title: "Обзор зимних шин 2024: тест драйв 10 моделей",
-            category: 'reviews',
-            categoryName: "Обзоры",
-            excerpt: "Тест-драйв 10 моделей зимних шин в различных условиях. Рейтинг и рекомендации по выбору.",
-            content: "Полный обзор зимних шин 2024...",
-            date: "8 марта 2024",
-            author: "Дмитрий Волков",
-            readTime: "8 мин",
-            views: "2.1k",
-            comments: 45,
-            featured: true
-        },
-        {
-            id: 5,
-            title: "Турбокомпрессоры: устройство, неисправности и ремонт",
-            category: 'technology',
-            categoryName: "Технологии",
-            excerpt: "Подробный разбор устройства турбокомпрессоров, типичные поломки и способы их устранения.",
-            content: "Полное руководство по турбокомпрессорам...",
-            date: "5 марта 2024",
-            author: "Алексей Петров",
-            readTime: "6 мин",
-            views: "1.5k",
-            comments: 31
-        },
-        {
-            id: 6,
-            title: "Салонные фильтры: почему важно менять их вовремя",
-            category: 'advice',
-            categoryName: "Советы",
-            excerpt: "Грязный салонный фильтр может стать причиной аллергии и заболеваний дыхательных путей.",
-            content: "Подробная статья о важности замены салонных фильтров...",
-            date: "3 марта 2024",
-            author: "Екатерина Смирнова",
-            readTime: "4 мин",
-            views: "723",
-            comments: 12
+    // Загрузка новостей из API
+    useEffect(() => {
+        fetchNews();
+    }, []);
+
+    const fetchNews = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await getAllNews();
+            console.log(data);
+            setNews(data);
+        } catch (err: any) {
+            console.error('Ошибка загрузки новостей:', err);
+            const errorMsg = err.serverMessage || err.message || 'Не удалось загрузить новости';
+            setError(errorMsg);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     // Обновление URL при изменении категории или выборе статьи
     const updateUrl = (category: string, newsId?: number | null) => {
@@ -134,8 +61,8 @@ const NewsPage = () => {
     };
 
     // Обработчик выбора статьи
-    const handleNewsSelect = (newsItem: NewsItem) => {
-        updateUrl(newsItem.category, newsItem.id);
+    const handleNewsSelect = (newsItem: News) => {
+        updateUrl(selectedCategory, newsItem.id);
     };
 
     // Обработчик закрытия статьи
@@ -143,40 +70,72 @@ const NewsPage = () => {
         updateUrl(selectedCategory);
     };
 
-    // Подсчет количества новостей в каждой категории
+    // Получение уникальных типов новостей для вкладок
     const categories = useMemo(() => {
-        const counts = {
-            all: news.length,
-            technology: news.filter(item => item.category === 'technology').length,
-            advice: news.filter(item => item.category === 'advice').length,
-            company: news.filter(item => item.category === 'company').length,
-            reviews: news.filter(item => item.category === 'reviews').length
-        };
+        const typeCounts: Record<string, number> = {};
 
-        return [
-            { id: 'all', name: 'Все новости', count: counts.all },
-            { id: 'technology', name: 'Технологии', count: counts.technology },
-            { id: 'advice', name: 'Советы', count: counts.advice },
-            { id: 'company', name: 'Новости компании', count: counts.company },
-            { id: 'reviews', name: 'Обзоры', count: counts.reviews }
+        // Подсчитываем количество новостей по каждому типу
+        news.forEach(item => {
+            const type = item.type || 'Новости';
+            typeCounts[type] = (typeCounts[type] || 0) + 1;
+        });
+
+        // Формируем массив категорий
+        const categoryList = [
+            { id: 'all', name: 'Все новости', count: news.length }
         ];
+
+        // Добавляем уникальные типы
+        Object.entries(typeCounts).forEach(([type, count]) => {
+            categoryList.push({
+                id: type.toLowerCase().replace(/\s+/g, '_'),
+                name: type,
+                count: count
+            });
+        });
+
+        return categoryList;
     }, [news]);
 
     // Фильтрация новостей по категории
-    const filteredNews = selectedCategory === 'all'
-        ? news
-        : news.filter(item => item.category === selectedCategory);
+    const filteredNews = useMemo(() => {
+        if (selectedCategory === 'all') {
+            return news;
+        }
 
-    // Поиск по заголовку и содержанию
-    const searchedNews = filteredNews.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+        // Находим имя категории по id
+        const category = categories.find(c => c.id === selectedCategory);
+        if (!category) return news;
+
+        return news.filter(item => item.type === category.name);
+    }, [news, selectedCategory, categories]);
+
+    // Поиск по тематике
+    const searchedNews = useMemo(() => {
+        if (!searchQuery.trim()) return filteredNews;
+
+        return filteredNews.filter(item =>
+            item.theme?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.body?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [filteredNews, searchQuery]);
 
     // Находим выбранную статью
     const selectedNews = selectedNewsId
         ? news.find(item => item.id === selectedNewsId)
         : null;
+
+    // Форматирование даты
+    const formatDate = (dateString: string | Date) => {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Дата не указана';
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}.${month}.${year}`;
+    };
 
     // Функция для сброса фильтров
     const resetFilters = () => {
@@ -184,8 +143,32 @@ const NewsPage = () => {
         updateUrl('all');
     };
 
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
+    if (error) {
+        return (
+            <Container fluid className={styles.pageContainer}>
+                <Row className="justify-content-center">
+                    <Col md={8} className="text-center">
+                        <div className={styles.errorContainer}>
+                            <h2>😕 Ошибка загрузки</h2>
+                            <p>{error}</p>
+                            <Button onClick={() => fetchNews()} className={styles.retryButton}>
+                                🔄 Попробовать снова
+                            </Button>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
+
     // Если выбрана конкретная статья, показываем её полное содержание
     if (selectedNews) {
+        const category = categories.find(c => c.name === selectedNews.type);
+
         return (
             <Container fluid className={styles.pageContainer}>
                 <Row className="mb-4">
@@ -203,38 +186,32 @@ const NewsPage = () => {
                 <Row className="justify-content-center">
                     <Col md={10} lg={8}>
                         <Card className={styles.fullArticleCard}>
-                            <Card.Img
-                                variant="top"
-                                src={`https://via.placeholder.com/1200x400/8B5A2B/ffffff?text=${selectedNews.categoryName}`}
-                                className={styles.fullArticleImage}
-                            />
+                            {selectedNews.image && (
+                                <Card.Img
+                                    variant="top"
+                                    src={selectedNews.image}
+                                    className={styles.fullArticleImage}
+                                    onError={(e) => {
+                                        e.currentTarget.src = '/placeholder.jpg';
+                                    }}
+                                />
+                            )}
                             <Card.Body className={styles.fullArticleBody}>
                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                     <Badge className={styles.categoryBadge}>
-                                        {selectedNews.categoryName}
+                                        {selectedNews.type || 'Новости'}
                                     </Badge>
                                     <small className={styles.dateText}>
-                                        📅 {selectedNews.date}
+                                        📅 {formatDate(selectedNews.date)}
                                     </small>
                                 </div>
 
                                 <h1 className={styles.fullArticleTitle}>
-                                    {selectedNews.title}
+                                    {selectedNews.theme}
                                 </h1>
 
-                                <div className={styles.articleMeta}>
-                                    <span className={styles.articleAuthor}>👤 {selectedNews.author}</span>
-                                    <span className={styles.articleStats}>
-                                        <span>⏱️ {selectedNews.readTime}</span>
-                                        <span>👁️ {selectedNews.views}</span>
-                                        <span>💬 {selectedNews.comments}</span>
-                                    </span>
-                                </div>
-
                                 <div className={styles.articleContent}>
-                                    <p className={styles.articleExcerpt}>{selectedNews.excerpt}</p>
-                                    <p>{selectedNews.content}</p>
-                                    <p>Дополнительный контент статьи... Здесь может быть подробное описание, изображения, видео и т.д.</p>
+                                    <p className={styles.articleExcerpt}>{selectedNews.body}</p>
                                 </div>
                             </Card.Body>
                         </Card>
@@ -317,68 +294,56 @@ const NewsPage = () => {
             </Row>
 
             {/* Сетка новостей */}
-            <Row xs={1} md={2} lg={3} className="g-4">
-                {searchedNews.map((item) => (
-                    <Col key={item.id}>
-                        <Card className={`h-100 ${styles.newsCard}`}>
-                            <div className={styles.imageWrapper}>
-                                <Card.Img
-                                    variant="top"
-                                    src={`https://via.placeholder.com/300x200/8B5A2B/ffffff?text=${item.categoryName}`}
-                                    className={styles.cardImage}
-                                />
-                                {item.featured && (
-                                    <Badge className={styles.featuredBadge}>
-                                        🔥 Популярное
-                                    </Badge>
-                                )}
-                            </div>
-                            <Card.Body className={styles.cardBody}>
-                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                    <Badge className={styles.categoryBadge}>
-                                        {item.categoryName}
-                                    </Badge>
-                                    <small className={styles.dateText}>
-                                        📅 {item.date}
-                                    </small>
+            {searchedNews.length > 0 ? (
+                <Row xs={1} md={2} lg={3} className="g-4">
+                    {searchedNews.map((item) => (
+                        <Col key={item.id}>
+                            <Card className={`h-100 ${styles.newsCard}`}>
+                                <div className={styles.imageWrapper}>
+                                    <Card.Img
+                                        variant="top"
+                                        src={item.image || '/placeholder.jpg'}
+                                        className={styles.cardImage}
+                                        onError={(e) => {
+                                            e.currentTarget.src = '/placeholder.jpg';
+                                        }}
+                                    />
                                 </div>
-
-                                <Card.Title className={styles.cardTitle}>
-                                    {item.title}
-                                </Card.Title>
-
-                                <Card.Text className={styles.cardText}>
-                                    {item.excerpt}
-                                </Card.Text>
-
-                                <div className="d-flex justify-content-between align-items-center mt-3">
-                                    <div className={styles.authorInfo}>
-                                        <span className={styles.authorName}>👤 {item.author}</span>
+                                <Card.Body className={styles.cardBody}>
+                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                        <Badge className={styles.categoryBadge}>
+                                            {item.type || 'Новости'}
+                                        </Badge>
+                                        <small className={styles.dateText}>
+                                            📅 {formatDate(item.date)}
+                                        </small>
                                     </div>
-                                    <Button
-                                        variant="link"
-                                        className={styles.readMoreBtn}
-                                        onClick={() => handleNewsSelect(item)}
-                                    >
-                                        Читать далее →
-                                    </Button>
-                                </div>
-                            </Card.Body>
 
-                            <Card.Footer className={styles.cardFooter}>
-                                <div className={styles.stats}>
-                                    <span className={styles.statItem}>⏱️ {item.readTime}</span>
-                                    <span className={styles.statItem}>👁️ {item.views}</span>
-                                    <span className={styles.statItem}>💬 {item.comments}</span>
-                                </div>
-                            </Card.Footer>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+                                    <Card.Title className={styles.cardTitle}>
+                                        {item.theme}
+                                    </Card.Title>
 
-            {/* Если новостей нет */}
-            {searchedNews.length === 0 && (
+                                    <Card.Text className={styles.cardText}>
+                                        {item.body.length > 200
+                                            ? `${item.body.substring(0, 200)}...`
+                                            : item.body}
+                                    </Card.Text>
+
+                                    <div className="d-flex justify-content-between align-items-center mt-3">
+                                        <Button
+                                            variant="link"
+                                            className={styles.readMoreBtn}
+                                            onClick={() => handleNewsSelect(item)}
+                                        >
+                                            Читать далее →
+                                        </Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            ) : (
                 <Row className="mt-5">
                     <Col className="text-center">
                         <div className={styles.noResults}>
