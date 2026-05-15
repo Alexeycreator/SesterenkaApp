@@ -1,10 +1,15 @@
+/* ============================================
+   ОСНОВНОЙ КОНТЕЙНЕР СТРАНИЦЫ
+   ============================================ */
 .pageContainer {
     background: linear-gradient(135deg, #F5F0E5 0%, #F0E5D5 50%, #E5D5C5 100%);
     min-height: 100vh;
     padding: 20px;
-    padding-top: 90px;
 }
 
+/* ============================================
+   ЗАГОЛОВКИ
+   ============================================ */
 .title {
     font-size: 2.5rem;
     font-weight: bold;
@@ -21,6 +26,9 @@
     margin-bottom: 20px;
 }
 
+/* ============================================
+   ИНФОРМАЦИЯ ОБ ОБНОВЛЕНИИ
+   ============================================ */
 .updateInfo {
     background: white;
     border-radius: 10px;
@@ -38,6 +46,9 @@
     font-size: 1.2rem;
 }
 
+/* ============================================
+   СЕКЦИИ ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ
+   ============================================ */
 .section {
     background: white;
     border-radius: 15px;
@@ -85,6 +96,9 @@
     margin-bottom: 0;
 }
 
+/* ============================================
+   КОНТАКТНАЯ ИНФОРМАЦИЯ
+   ============================================ */
 .contactInfo {
     background: linear-gradient(135deg, #c49b6b20, #b38b5b20);
     border-radius: 15px;
@@ -131,9 +145,75 @@
     font-size: 1.1rem;
 }
 
+/* ============================================
+   УВЕДОМЛЕНИЯ (ALERT)
+   ============================================ */
+.errorAlert {
+    margin-top: 50px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.warningAlert {
+    margin-top: 50px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 2px solid #f39c12;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
+.retryButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.retryButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* ============================================
+   КОНТЕЙНЕРЫ ОШИБОК
+   ============================================ */
+.emptyContainer {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 20px;
+    margin-top: 50px;
+    border: 2px dashed #D2B48C;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
 @media (max-width: 768px) {
+    .pageContainer {
+        padding-top: 80px;
+    }
+
     .title {
         font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
     }
 
     .sectionTitle {
@@ -149,5 +229,97 @@
     .contactItem {
         width: 100%;
         justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .section {
+        padding: 20px;
+    }
+
+    .sectionTitle {
+        font-size: 1.1rem;
+    }
+
+    .contactInfo {
+        padding: 20px;
+    }
+
+    .contactTitle {
+        font-size: 1.2rem;
+    }
+}
+
+/* Стили для маркированных списков */
+.listItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-left: 15px;
+    position: relative;
+}
+
+.listMarker {
+    color: #c49b6b;
+    font-size: 1rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.listText {
+    color: #34495e;
+    font-size: 1rem;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* Стили для нумерованных списков (опционально) */
+.numberedList {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.numberedListItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-left: 15px;
+    position: relative;
+}
+
+.numberedListMarker {
+    color: #c49b6b;
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 30px;
+}
+
+.numberedListText {
+    color: #34495e;
+    font-size: 1rem;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* Адаптивность для списков */
+@media (max-width: 768px) {
+
+    .listItem,
+    .numberedListItem {
+        gap: 8px;
+        padding-left: 10px;
+    }
+
+    .listText,
+    .numberedListText {
+        font-size: 0.95rem;
     }
 }

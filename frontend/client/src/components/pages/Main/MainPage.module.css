@@ -307,3 +307,127 @@
         font-size: 1.5rem;
     }
 }
+
+/* ============================================
+   НОВОСТИ
+   ============================================ */
+
+/* Карточка новости */
+.newsCard {
+    border: 2px solid transparent;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    height: 100%;
+}
+
+.newsCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #c49b6b;
+}
+
+.newsImageWrapper {
+    position: relative;
+    overflow: hidden;
+    height: 180px;
+}
+
+.newsImage {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.newsCard:hover .newsImage {
+    transform: scale(1.1);
+}
+
+.newsCardBody {
+    padding: 20px;
+}
+
+.newsMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.newsCategory {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 1px solid #8B5A2B;
+    color: white;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+.newsDate {
+    color: #95a5a6;
+    font-size: 0.8rem;
+}
+
+.newsTitle {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.newsCard:hover .newsTitle {
+    color: #8B5A2B;
+}
+
+.newsExcerpt {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+/* Кнопка "Все новости" */
+.allNewsButton {
+    display: inline-block;
+    background: transparent;
+    border: 2px solid #c49b6b;
+    color: #8B5A2B;
+    font-weight: 600;
+    padding: 10px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.allNewsButton:hover {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border-color: #8B5A2B;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    text-decoration: none;
+}
+
+/* Пустое состояние новостей */
+.noNews {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    border: 2px dashed #D2B48C;
+    color: #7f8c8d;
+}
+
+/* Ошибка */
+.errorAlert {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 2px solid #e74c3c;
+}

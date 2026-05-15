@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Alert, Card, Badge, Button } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { getCategories, Categories } from '../../servicesApi/CategoriesApi';
+import { getAllNews, News } from '../../servicesApi/NewsApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './MainPage.module.css';
 
@@ -12,10 +14,18 @@ let isLoading = false;
 let isInitialized = false;
 
 const MainPage = () => {
+    const navigate = useNavigate();
+
     // Состояние для категорий
     const [randomCategories, setRandomCategories] = useState<any[]>(cachedCategories || []);
-    const [loading, setLoading] = useState(!cachedCategories);
-    const [error, setError] = useState<string | null>(null);
+    const [loadingCategories, setLoadingCategories] = useState(!cachedCategories);
+    const [errorCategories, setErrorCategories] = useState<string | null>(null);
+
+    // Состояние для новостей
+    const [latestNews, setLatestNews] = useState<News[]>([]);
+    const [loadingNews, setLoadingNews] = useState(true);
+    const [errorNews, setErrorNews] = useState<string | null>(null);
+
     const isMounted = useRef(true);
 
     const defaultCategories = [
@@ -46,22 +56,20 @@ const MainPage = () => {
 
     // Функция для получения категорий из API (только один раз)
     const fetchCategories = async (forceRefresh: boolean = false) => {
-        // Если уже загружены и не принудительное обновление, используем кэш
         if (cachedCategories !== null && !forceRefresh) {
             if (isMounted.current) {
                 selectRandomCategories(cachedCategories);
-                setLoading(false);
+                setLoadingCategories(false);
             }
             return;
         }
 
-        // Если уже идет загрузка, ждем
         if (isLoading) return;
 
         isLoading = true;
         if (isMounted.current) {
-            setLoading(true);
-            setError(null);
+            setLoadingCategories(true);
+            setErrorCategories(null);
         }
 
         try {
@@ -79,25 +87,41 @@ const MainPage = () => {
                 apiCategories = defaultCategories;
             }
 
-            // Сохраняем в кэш
             cachedCategories = apiCategories;
 
             if (isMounted.current) {
                 selectRandomCategories(apiCategories);
-                setError(null);
+                setErrorCategories(null);
             }
         } catch (error: any) {
             console.error('Ошибка загрузки категорий:', error);
             if (isMounted.current) {
                 const errorMsg = error.serverMessage || error.message || 'Не удалось загрузить категории';
-                setError(errorMsg);
+                setErrorCategories(errorMsg);
                 selectRandomCategories(defaultCategories);
             }
         } finally {
             isLoading = false;
             if (isMounted.current) {
-                setLoading(false);
+                setLoadingCategories(false);
             }
+        }
+    };
+
+    // Функция для получения последних новостей
+    const fetchLatestNews = async () => {
+        try {
+            setLoadingNews(true);
+            setErrorNews(null);
+            const data = await getAllNews();
+            const latest = data.slice(0, 3);
+            setLatestNews(latest);
+        } catch (error: any) {
+            console.error('Ошибка загрузки новостей:', error);
+            const errorMsg = error.serverMessage || error.message || 'Не удалось загрузить новости';
+            setErrorNews(errorMsg);
+        } finally {
+            setLoadingNews(false);
         }
     };
 
@@ -118,20 +142,36 @@ const MainPage = () => {
         fetchCategories(true);
     };
 
-    // Загрузка категорий при монтировании компонента
+    // Обработчик клика по новости
+    const handleNewsClick = (newsId: number) => {
+        navigate(`/news?id=${newsId}`);
+    };
+
+    // Форматирование даты
+    const formatDate = (dateString: string | Date) => {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Дата не указана';
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}.${month}.${year}`;
+    };
+
+    // Загрузка данных при монтировании компонента
     useEffect(() => {
         isMounted.current = true;
 
-        // Загружаем данные только если они еще не загружены
         if (!isInitialized) {
             isInitialized = true;
             fetchCategories();
+            fetchLatestNews();
         } else if (cachedCategories) {
             selectRandomCategories(cachedCategories);
-            setLoading(false);
+            setLoadingCategories(false);
         }
 
-        // Слушаем событие обновления категорий (из админки)
         const handleCategoriesUpdate = () => {
             forceRefreshCategories();
         };
@@ -142,6 +182,10 @@ const MainPage = () => {
             isMounted.current = false;
             window.removeEventListener('categoriesUpdated', handleCategoriesUpdate);
         };
+    }, []);
+
+    useEffect(()=>{
+        fetchLatestNews();
     }, []);
 
     const advantages = [
@@ -166,6 +210,10 @@ const MainPage = () => {
             description: 'Профессиональная помощь в подборе'
         }
     ];
+
+    if (loadingCategories && loadingNews) {
+        return <LoadingSpinner />;
+    }
 
     return (
         <Container fluid className={styles.pageContainer}>
@@ -203,19 +251,19 @@ const MainPage = () => {
                 </Col>
             </Row>
 
-            {/* Отображение ошибки */}
-            {error && (
+            {/* Отображение ошибки категорий */}
+            {errorCategories && (
                 <Row className="mb-4">
                     <Col>
-                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
-                            <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
-                            <p>{error}</p>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorCategories(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки категорий!</Alert.Heading>
+                            <p>{errorCategories}</p>
                         </Alert>
                     </Col>
                 </Row>
             )}
 
-            {loading ? (
+            {loadingCategories ? (
                 <Row className="mb-5">
                     <Col className="text-center">
                         <div className={styles.loader}>Загрузка категорий...</div>
@@ -238,7 +286,6 @@ const MainPage = () => {
                         ))}
                     </Row>
 
-                    {/* Кнопка обновления категорий */}
                     <Row className="mb-5">
                         <Col className="text-center">
                             <button
@@ -250,6 +297,99 @@ const MainPage = () => {
                         </Col>
                     </Row>
                 </>
+            )}
+
+            {/* Новости */}
+            <Row className="mb-4">
+                <Col>
+                    <h2 className={styles.sectionTitle}>📰 Последние новости</h2>
+                    <p className={styles.sectionSubtitle}>
+                        Будьте в курсе последних событий
+                    </p>
+                </Col>
+            </Row>
+
+            {/* Отображение ошибки новостей */}
+            {errorNews && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorNews(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки новостей!</Alert.Heading>
+                            <p>{errorNews}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+
+            {loadingNews ? (
+                <Row className="mb-5">
+                    <Col className="text-center">
+                        <div className={styles.loader}>Загрузка новостей...</div>
+                    </Col>
+                </Row>
+            ) : latestNews.length > 0 ? (
+                <>
+                    <Row xs={1} md={3} className="g-4 mb-4">
+                        {latestNews.map((news) => (
+                            <Col key={news.id}>
+                                <Card className={styles.newsCard} onClick={() => handleNewsClick(news.id)}>
+                                    <div className={styles.newsImageWrapper}>
+                                        <Card.Img
+                                            variant="top"
+                                            src={news.image || '/placeholder.jpg'}
+                                            className={styles.newsImage}
+                                            onError={(e) => {
+                                                e.currentTarget.src = '/placeholder.jpg';
+                                            }}
+                                        />
+                                    </div>
+                                    <Card.Body className={styles.newsCardBody}>
+                                        <div className={styles.newsMeta}>
+                                            <Badge className={styles.newsCategory}>
+                                                {news.type || 'Новости'}
+                                            </Badge>
+                                            <small className={styles.newsDate}>
+                                                📅 {formatDate(news.date)}
+                                            </small>
+                                        </div>
+                                        <Card.Title className={styles.newsTitle}>
+                                            {news.theme}
+                                        </Card.Title>
+                                        <Card.Text className={styles.newsExcerpt}>
+                                            {news.body.length > 120
+                                                ? `${news.body.substring(0, 120)}...`
+                                                : news.body}
+                                        </Card.Text>
+                                        <Button
+                                            className={styles.readMoreBtn}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleNewsClick(news.id);
+                                            }}
+                                        >
+                                            Читать далее →
+                                        </Button>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                    <Row className="mb-5">
+                        <Col className="text-center">
+                            <Link to="/news" className={styles.allNewsButton}>
+                                Все новости →
+                            </Link>
+                        </Col>
+                    </Row>
+                </>
+            ) : (
+                <Row className="mb-5">
+                    <Col className="text-center">
+                        <div className={styles.noNews}>
+                            <p>Новостей пока нет</p>
+                        </div>
+                    </Col>
+                </Row>
             )}
 
             {/* Преимущества */}

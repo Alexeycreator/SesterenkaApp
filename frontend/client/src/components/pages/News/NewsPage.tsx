@@ -266,8 +266,6 @@ const NewsPage = () => {
                         {categories.map(cat => (
                             <Button
                                 key={cat.id}
-                                variant={selectedCategory === cat.id ? "primary" : "outline-secondary"}
-                                size="sm"
                                 onClick={() => handleCategoryChange(cat.id)}
                                 className={selectedCategory === cat.id ? styles.activeFilter : styles.filterButton}
                             >

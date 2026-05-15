@@ -74,7 +74,7 @@
     background: linear-gradient(135deg, #c49b6b, #b38b5b);
     border: 2px solid #8B5A2B;
     color: white;
-    font-weight: 500;
+    font-weight: 600;
     padding: 10px 24px;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -83,6 +83,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    text-decoration: none;
 }
 
 .searchButton:hover,
@@ -92,89 +93,96 @@
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
     color: white;
+    text-decoration: none;
 }
 
 /* Кнопка "Назад" */
 .backButton {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    color: white;
-    font-weight: 500;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    text-decoration: none;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b) !important;
+    border: 2px solid #8B5A2B !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
 }
 
 .backButton:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
-    color: white;
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3) !important;
+    color: white !important;
+    text-decoration: none !important;
 }
 
 /* Кнопка "Читать далее" */
 .readMoreBtn {
-    background: transparent;
-    border: 2px solid #c49b6b;
-    color: #8B5A2B;
-    font-weight: 500;
-    padding: 8px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    text-decoration: none;
+    padding: 8px 20px;
+    background: transparent !important;
+    border: 2px solid #c49b6b !important;
+    border-radius: 8px !important;
+    color: #8B5A2B !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
 }
 
 .readMoreBtn:hover {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border-color: #8B5A2B;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+    background: linear-gradient(135deg, #c49b6b, #b38b5b) !important;
+    border-color: #8B5A2B !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3) !important;
+    text-decoration: none !important;
 }
 
-/* Кнопка фильтра (неактивная) */
+/* Кнопка фильтра (неактивная) - соответствует secondary кнопке */
 .filterButton {
-    background: transparent;
-    border: 2px solid #c49b6b;
-    color: #8B5A2B;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    padding: 8px 15px;
-    border-radius: 8px;
-    cursor: pointer;
+    background: transparent !important;
+    border: 2px solid #c49b6b !important;
+    color: #8B5A2B !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 8px 15px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 0.9rem !important;
 }
 
 .filterButton:hover {
-    background: rgba(196, 155, 107, 0.1);
-    border-color: #8B5A2B;
-    color: #5a3e2b;
-    transform: translateY(-2px);
+    background: rgba(196, 155, 107, 0.1) !important;
+    border-color: #8B5A2B !important;
+    color: #5a3e2b !important;
+    transform: translateY(-2px) !important;
 }
 
-/* Активный фильтр */
+/* Активный фильтр - соответствует primary кнопке */
 .activeFilter {
-    background: linear-gradient(135deg, #c49b6b, #b38b5b);
-    border: 2px solid #8B5A2B;
-    color: white;
-    font-weight: 500;
-    padding: 8px 15px;
-    border-radius: 8px;
-    cursor: pointer;
+    background: linear-gradient(135deg, #c49b6b, #b38b5b) !important;
+    border: 2px solid #8B5A2B !important;
+    color: white !important;
+    font-weight: 500 !important;
+    padding: 8px 15px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 0.9rem !important;
 }
 
 .activeFilter:hover {
-    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    color: white;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
 }
 
 .categoryCount {
@@ -333,6 +341,23 @@
     margin-bottom: 20px;
 }
 
+.resetButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    padding: 10px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.resetButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
 /* ============================================
    ОШИБКА
    ============================================ */
@@ -342,6 +367,24 @@
     background: white;
     border-radius: 20px;
     margin-top: 50px;
+}
+
+.retryButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white;
+    font-weight: 600;
+    padding: 10px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.retryButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
 /* ============================================

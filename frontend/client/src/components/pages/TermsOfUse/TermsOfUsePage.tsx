@@ -1,102 +1,131 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
+
+import { getAllTermsOfUse, TermsOfUse } from '../../servicesApi/TermsOfUseApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './TermsOfUsePage.module.css';
 
 const TermsOfUsePage = () => {
-    const sections = [
-        {
-            title: "1. Общие условия",
-            icon: "📜",
-            content: [
-                "Используя сайт https://koleso-porshen.ru (далее — Сайт), вы соглашаетесь с условиями настоящего пользовательского соглашения. Если вы не согласны с условиями, пожалуйста, не используйте Сайт.",
-                "Настоящее Соглашение может быть изменено Администрацией без какого-либо специального уведомления. Новая редакция Соглашения вступает в силу с момента ее размещения на Сайте.",
-                "Администрация сайта оставляет за собой право в любое время изменять оформление Сайта, его содержание, перечень товаров, изменять или дополнять используемые скрипты, программное обеспечение и другие объекты, используемые или хранящиеся на Сайте."
-            ]
-        },
-        {
-            title: "2. Регистрация на сайте",
-            icon: "📝",
-            content: [
-                "Для оформления заказа или получения доступа к некоторым функциям Сайта, пользователю необходимо зарегистрироваться, создав учетную запись.",
-                "При регистрации пользователь обязуется предоставить достоверную и полную информацию о себе и поддерживать эту информацию в актуальном состоянии.",
-                "После успешной регистрации пользователь получает логин и пароль, за безопасность которых он несет ответственность.",
-                "Администрация сайта не несет ответственности за убытки, возникшие в результате несанкционированного доступа к аккаунту пользователя."
-            ]
-        },
-        {
-            title: "3. Порядок оформления заказа",
-            icon: "🛒",
-            content: [
-                "Заказ товара осуществляется путем добавления товара в корзину и последующего оформления заказа с указанием необходимых данных для доставки.",
-                "После оформления заказа пользователь получает подтверждение на указанный email с деталями заказа.",
-                "Цена товара указывается на Сайте и может быть изменена Администрацией в одностороннем порядке. При этом цена заказанного товара изменению не подлежит.",
-                "Отсутствие товара на складе не является основанием для отказа в его поставке, если иное не указано в карточке товара."
-            ]
-        },
-        {
-            title: "4. Доставка и получение товара",
-            icon: "🚚",
-            content: [
-                "Доставка товаров осуществляется по территории РФ через транспортные компании или курьерские службы.",
-                "Сроки доставки зависят от региона и выбранного способа доставки и указываются при оформлении заказа.",
-                "При получении товара необходимо проверить его комплектность и отсутствие повреждений в присутствии курьера или представителя транспортной компании.",
-                "Претензии по внешнему виду и комплектности товара после его получения не принимаются, за исключением случаев, когда недостатки не могли быть обнаружены при обычной приемке."
-            ]
-        },
-        {
-            title: "5. Оплата товара",
-            icon: "💳",
-            content: [
-                "Оплата товара производится одним из способов, указанных на Сайте: банковской картой, электронными деньгами, наличными при получении или безналичным переводом.",
-                "При оплате банковской картой обработка платежей производится через защищенные каналы связи с использованием современных протоколов безопасности.",
-                "Данные банковской карты не сохраняются на Сайте и не доступны Администрации."
-            ]
-        },
-        {
-            title: "6. Возврат товара и денежных средств",
-            icon: "🔄",
-            content: [
-                "Покупатель вправе отказаться от товара в любое время до его передачи, а после передачи товара — в течение 14 дней, если товар не был в употреблении, сохранены его товарный вид, потребительские свойства, пломбы, фабричные ярлыки.",
-                "Для возврата товара необходимо заполнить заявление и передать его вместе с товаром в пункт выдачи или отправить транспортной компанией.",
-                "Возврат денежных средств осуществляется тем же способом, которым была произведена оплата, в течение 10 рабочих дней с момента получения возвращенного товара.",
-                "Товары надлежащего качества, имеющие индивидуально-определенные свойства, возврату не подлежат."
-            ]
-        },
-        {
-            title: "7. Права и обязанности сторон",
-            icon: "🤝",
-            content: [
-                "Пользователь обязуется не использовать Сайт для распространения информации, противоречащей законодательству РФ.",
-                "Администрация вправе приостановить или прекратить доступ пользователя к Сайту в случае нарушения условий настоящего Соглашения.",
-                "Администрация не несет ответственности за временные сбои в работе Сайта, потерю информации или другие убытки, связанные с использованием Сайта.",
-                "Все спорные вопросы решаются путем переговоров, а при недостижении согласия — в судебном порядке по месту нахождения Администрации."
-            ]
-        },
-        {
-            title: "8. Интеллектуальная собственность",
-            icon: "©️",
-            content: [
-                "Все материалы, размещенные на Сайте, включая тексты, графические изображения, логотипы, являются объектами интеллектуальной собственности и защищены законом.",
-                "Использование материалов Сайта без письменного разрешения Администрации не допускается."
-            ]
-        },
-        {
-            title: "9. Реквизиты компании",
-            icon: "🏢",
-            content: [
-                "ИП Петров Иван Иванович",
-                "ИНН: 123456789012",
-                "ОГРНИП: 123456789012345",
-                "Юридический адрес: 123456, г. Москва, ул. Пальмовая, д. 13",
-                "Телефон: +7 (901) 339-95-22",
-                "Email: vm96276915@gmail.com"
-            ]
+    const [termsOfUse, setTermsOfUse] = useState<TermsOfUse[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [serverError, setServerError] = useState<string | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<string>('');
+
+    useEffect(() => {
+        fetchTermsOfUse();
+    }, []);
+
+    const fetchTermsOfUse = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            setServerError(null);
+            const data = await getAllTermsOfUse();
+            setTermsOfUse(data);
+
+            if (data && data.length > 0) {
+                if (data[0].date) {
+                    setLastUpdated(new Date(data[0].date).toLocaleDateString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    }));
+                } else {
+                    setLastUpdated(new Date().toLocaleDateString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    }));
+                }
+            }
+        } catch (err: any) {
+            console.error('Ошибка загрузки пользовательского соглашения:', err);
+            const errorMsg = err.serverMessage || err.message || 'Не удалось загрузить пользовательское соглашение';
+            setServerError(errorMsg);
+            setError(errorMsg);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
+
+    // Функция для разбиения текста на абзацы
+    const splitContentIntoParagraphs = (content: string) => {
+        if (!content) return [];
+        // Разбиваем по \r\n, \n, и удаляем пустые строки
+        const paragraphs = content.split(/\r?\n/).filter(p => p.trim() !== '');
+        return paragraphs;
+    };
+
+    // Функция для определения, является ли строка маркированным списком
+    const isBulletPoint = (text: string) => {
+        const bulletPatterns = /^[-•*]\s|^\d+[.)]\s|^[а-яА-Я][.)]\s/i;
+        return bulletPatterns.test(text.trim());
+    };
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
+    if (error && termsOfUse.length === 0) {
+        return (
+            <Container fluid className={styles.pageContainer}>
+                <Row className="justify-content-center">
+                    <Col md={8} lg={6}>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                            <p>{error}</p>
+                            <hr />
+                            <div className="d-flex justify-content-end">
+                                <button onClick={() => fetchTermsOfUse()} className={styles.retryButton}>
+                                    🔄 Попробовать снова
+                                </button>
+                            </div>
+                        </Alert>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
+
+    if (termsOfUse.length === 0) {
+        return (
+            <Container fluid className={styles.pageContainer}>
+                <Row className="justify-content-center">
+                    <Col md={8} lg={6}>
+                        <div className={styles.emptyContainer}>
+                            <Alert variant="warning" className={styles.warningAlert}>
+                                <Alert.Heading>📄 Информация отсутствует</Alert.Heading>
+                                <p>Пользовательское соглашение временно недоступно</p>
+                                <hr />
+                                <div className="d-flex justify-content-end">
+                                    <button onClick={() => fetchTermsOfUse()} className={styles.retryButton}>
+                                        🔄 Обновить
+                                    </button>
+                                </div>
+                            </Alert>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
 
     return (
         <Container fluid className={styles.pageContainer}>
+            {/* Отображение ошибки от сервера (если есть, но данные загружены частично) */}
+            {serverError && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setServerError(null)} dismissible>
+                            <Alert.Heading>⚠️ Внимание!</Alert.Heading>
+                            <p>{serverError}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+
             {/* Заголовок */}
             <Row className="mb-5">
                 <Col>
@@ -112,7 +141,7 @@ const TermsOfUsePage = () => {
                 <Col>
                     <div className={styles.updateInfo}>
                         <span className={styles.updateIcon}>📅</span>
-                        Последнее обновление: 15 марта 2026 года
+                        Последнее обновление: {lastUpdated || 'Дата не указана'}
                     </div>
                 </Col>
             </Row>
@@ -120,21 +149,36 @@ const TermsOfUsePage = () => {
             {/* Секции соглашения */}
             <Row>
                 <Col lg={12}>
-                    {sections.map((section, index) => (
-                        <div key={index} className={styles.section}>
-                            <h2 className={styles.sectionTitle}>
-                                <span className={styles.sectionIcon}>{section.icon}</span>
-                                {section.title}
-                            </h2>
-                            <div className={styles.sectionContent}>
-                                {section.content.map((paragraph, idx) => (
-                                    <p key={idx} className={styles.paragraph}>
-                                        {paragraph}
-                                    </p>
-                                ))}
+                    {termsOfUse.map((section) => {
+                        const paragraphs = splitContentIntoParagraphs(section.content);
+
+                        return (
+                            <div key={section.id} className={styles.section}>
+                                <h2 className={styles.sectionTitle}>
+                                    <span className={styles.sectionIcon}>{section.icon || '📜'}</span>
+                                    {section.title}
+                                </h2>
+                                <div className={styles.sectionContent}>
+                                    {paragraphs.map((paragraph, idx) => {
+                                        if (isBulletPoint(paragraph)) {
+                                            const cleanText = paragraph.replace(/^[-•*]\s|^\d+[.)]\s|^[а-яА-Я][.)]\s/, '');
+                                            return (
+                                                <div key={idx} className={styles.listItem}>
+                                                    <span className={styles.listMarker}>•</span>
+                                                    <span className={styles.listText}>{cleanText}</span>
+                                                </div>
+                                            );
+                                        }
+                                        return (
+                                            <p key={idx} className={styles.paragraph}>
+                                                {paragraph}
+                                            </p>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </Col>
             </Row>
 

@@ -1,93 +1,129 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
+
+import { getAllPrivacyPolicy, PrivacyPolicy } from '../../servicesApi/PrivacyPolicyApi';
+import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './PrivacyPolicyPage.module.css';
 
 const PrivacyPolicyPage = () => {
-    const sections = [
-        {
-            title: "1. Общие положения",
-            icon: "📋",
-            content: [
-                "Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. №152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые магазином «Колесо и поршень» (далее – Оператор).",
-                "Оператор ставит своей важнейшей целью и условием осуществления своей деятельности соблюдение прав и свобод человека и гражданина при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.",
-                "Настоящая политика Оператора в отношении обработки персональных данных (далее – Политика) применяется ко всей информации, которую Оператор может получить о посетителях веб-сайта https://koleso-porshen.ru."
-            ]
-        },
-        {
-            title: "2. Основные понятия",
-            icon: "📌",
-            content: [
-                "Автоматизированная обработка персональных данных – обработка персональных данных с помощью средств вычислительной техники;",
-                "Блокирование персональных данных – временное прекращение обработки персональных данных (за исключением случаев, если обработка необходима для уточнения персональных данных);",
-                "Веб-сайт – совокупность графических и информационных материалов, а также программ для ЭВМ и баз данных, обеспечивающих их доступность в сети интернет по сетевому адресу https://koleso-porshen.ru;",
-                "Информационная система персональных данных — совокупность содержащихся в базах данных персональных данных, и обеспечивающих их обработку информационных технологий и технических средств;",
-                "Обезличивание персональных данных — действия, в результате которых невозможно определить без использования дополнительной информации принадлежность персональных данных конкретному Пользователю или иному субъекту персональных данных;",
-                "Пользователь – любой посетитель веб-сайта https://koleso-porshen.ru."
-            ]
-        },
-        {
-            title: "3. Оператор может обрабатывать следующие персональные данные Пользователя",
-            icon: "📊",
-            content: [
-                "Фамилия, имя, отчество;",
-                "Номер телефона;",
-                "Адрес электронной почты;",
-                "Адрес доставки товара;",
-                "Также на сайте происходит сбор и обработка обезличенных данных о посетителях (в т.ч. файлов «cookie») с помощью сервисов интернет-статистики (Яндекс Метрика и Гугл Аналитика и других).",
-                "Вышеперечисленные данные далее по тексту Политики объединены общим понятием Персональные данные."
-            ]
-        },
-        {
-            title: "4. Цели обработки персональных данных",
-            icon: "🎯",
-            content: [
-                "Цель обработки персональных данных Пользователя — информирование Пользователя посредством отправки электронных писем; заключение, исполнение и прекращение гражданско-правовых договоров; предоставление доступа Пользователю к сервисам, информации и/или материалам, содержащимся на веб-сайте.",
-                "Также Оператор имеет право направлять Пользователю уведомления о новых продуктах и услугах, специальных предложениях и различных событиях. Пользователь всегда может отказаться от получения информационных сообщений, направив Оператору письмо на адрес электронной почты vm96276915@gmail.com с пометкой «Отказ от уведомлений о новых продуктах и услугах и специальных предложениях».",
-                "Обезличенные данные Пользователей, собираемые с помощью сервисов интернет-статистики, служат для сбора информации о действиях Пользователей на сайте, улучшения качества сайта и его содержания."
-            ]
-        },
-        {
-            title: "5. Правовые основания обработки персональных данных",
-            icon: "⚖️",
-            content: [
-                "Оператор обрабатывает персональные данные Пользователя только в случае их заполнения и/или отправки Пользователем самостоятельно через специальные формы, расположенные на сайте https://koleso-porshen.ru. Заполняя соответствующие формы и/или отправляя свои персональные данные Оператору, Пользователь выражает свое согласие с данной Политикой.",
-                "Оператор обрабатывает обезличенные данные о Пользователе в случае, если это разрешено в настройках браузера Пользователя (включено сохранение файлов «cookie» и использование технологии JavaScript)."
-            ]
-        },
-        {
-            title: "6. Порядок сбора, хранения, передачи и других видов обработки персональных данных",
-            icon: "🔒",
-            content: [
-                "Безопасность персональных данных, которые обрабатываются Оператором, обеспечивается путем реализации правовых, организационных и технических мер, необходимых для выполнения в полном объеме требований действующего законодательства в области защиты персональных данных.",
-                "Оператор обеспечивает сохранность персональных данных и принимает все возможные меры, исключающие доступ к персональным данным неуполномоченных лиц.",
-                "Персональные данные Пользователя никогда, ни при каких условиях не будут переданы третьим лицам, за исключением случаев, связанных с исполнением действующего законодательства.",
-                "В случае выявления неточностей в персональных данных, Пользователь может актуализировать их самостоятельно, путем направления Оператору уведомление на адрес электронной почты Оператора vm96276915@gmail.com с пометкой «Актуализация персональных данных».",
-                "Срок обработки персональных данных является неограниченным. Пользователь может в любой момент отозвать свое согласие на обработку персональных данных, направив Оператору уведомление посредством электронной почты на электронный адрес Оператора vm96276915@gmail.com с пометкой «Отзыв согласия на обработку персональных данных»."
-            ]
-        },
-        {
-            title: "7. Трансграничная передача персональных данных",
-            icon: "🌐",
-            content: [
-                "Оператор до начала осуществления трансграничной передачи персональных данных обязан убедиться в том, что иностранным государством, на территорию которого предполагается осуществлять передачу персональных данных, обеспечивается надежная защита прав субъектов персональных данных.",
-                "Трансграничная передача персональных данных на территории иностранных государств, не отвечающих вышеуказанным требованиям, может осуществляться только в случае наличия согласия в письменной форме субъекта персональных данных на трансграничную передачу его персональных данных и/или исполнения договора, стороной которого является субъект персональных данных."
-            ]
-        },
-        {
-            title: "8. Заключительные положения",
-            icon: "📝",
-            content: [
-                "Пользователь может получить любые разъяснения по интересующим вопросам, касающимся обработки его персональных данных, обратившись к Оператору с помощью электронной почты vm96276915@gmail.com.",
-                "В данном документе будут отражены любые изменения политики обработки персональных данных Оператором. Политика действует бессрочно до замены ее новой версией.",
-                "Актуальная версия Политики в свободном доступе расположена в сети Интернет по адресу https://koleso-porshen.ru/privacy_policy."
-            ]
+    const [privacyPolicy, setPrivacyPolicy] = useState<PrivacyPolicy[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [serverError, setServerError] = useState<string | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<string>('');
+
+    useEffect(() => {
+        fetchPrivacyPolicy();
+    }, []);
+
+    const fetchPrivacyPolicy = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            setServerError(null);
+            const data = await getAllPrivacyPolicy();
+            setPrivacyPolicy(data);
+
+            if (data && data.length > 0) {
+                if (data[0].date) {
+                    setLastUpdated(new Date(data[0].date).toLocaleDateString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    }));
+                } else {
+                    setLastUpdated(new Date().toLocaleDateString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    }));
+                }
+            }
+        } catch (err: any) {
+            console.error('Ошибка загрузки политики конфиденциальности:', err);
+            const errorMsg = err.serverMessage || err.message || 'Не удалось загрузить политику конфиденциальности';
+            setServerError(errorMsg);
+            setError(errorMsg);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
+
+    // Функция для разбиения текста на абзацы
+    const splitContentIntoParagraphs = (content: string) => {
+        if (!content) return [];
+        const paragraphs = content.split(/\r?\n/).filter(p => p.trim() !== '');
+        return paragraphs;
+    };
+
+    // Функция для определения, является ли строка маркированным списком
+    const isBulletPoint = (text: string) => {
+        const bulletPatterns = /^[-•*]\s|^\d+[.)]\s|^[а-яА-Я][.)]\s/i;
+        return bulletPatterns.test(text.trim());
+    };
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
+    if (error && privacyPolicy.length === 0) {
+        return (
+            <Container fluid className={styles.pageContainer}>
+                <Row className="justify-content-center">
+                    <Col md={8} lg={6}>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
+                            <Alert.Heading>❌ Ошибка загрузки!</Alert.Heading>
+                            <p>{error}</p>
+                            <hr />
+                            <div className="d-flex justify-content-end">
+                                <button onClick={() => fetchPrivacyPolicy()} className={styles.retryButton}>
+                                    🔄 Попробовать снова
+                                </button>
+                            </div>
+                        </Alert>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
+
+    if (privacyPolicy.length === 0) {
+        return (
+            <Container fluid className={styles.pageContainer}>
+                <Row className="justify-content-center">
+                    <Col md={8} lg={6}>
+                        <div className={styles.emptyContainer}>
+                            <Alert variant="warning" className={styles.warningAlert}>
+                                <Alert.Heading>📄 Информация отсутствует</Alert.Heading>
+                                <p>Политика конфиденциальности временно недоступна</p>
+                                <hr />
+                                <div className="d-flex justify-content-end">
+                                    <button onClick={() => fetchPrivacyPolicy()} className={styles.retryButton}>
+                                        🔄 Обновить
+                                    </button>
+                                </div>
+                            </Alert>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
 
     return (
         <Container fluid className={styles.pageContainer}>
-            {/* Заголовок */}
+            {serverError && (
+                <Row className="mb-4">
+                    <Col>
+                        <Alert variant="danger" className={styles.errorAlert} onClose={() => setServerError(null)} dismissible>
+                            <Alert.Heading>⚠️ Внимание!</Alert.Heading>
+                            <p>{serverError}</p>
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
+
             <Row className="mb-5">
                 <Col>
                     <h1 className={styles.title}>Политика конфиденциальности</h1>
@@ -97,38 +133,50 @@ const PrivacyPolicyPage = () => {
                 </Col>
             </Row>
 
-            {/* Дата обновления */}
             <Row className="mb-4">
                 <Col>
                     <div className={styles.updateInfo}>
                         <span className={styles.updateIcon}>📅</span>
-                        Последнее обновление: 15 марта 2026 года
+                        Последнее обновление: {lastUpdated || 'Дата не указана'}
                     </div>
                 </Col>
             </Row>
 
-            {/* Секции политики */}
             <Row>
                 <Col lg={12}>
-                    {sections.map((section, index) => (
-                        <div key={index} className={styles.section}>
-                            <h2 className={styles.sectionTitle}>
-                                <span className={styles.sectionIcon}>{section.icon}</span>
-                                {section.title}
-                            </h2>
-                            <div className={styles.sectionContent}>
-                                {section.content.map((paragraph, idx) => (
-                                    <p key={idx} className={styles.paragraph}>
-                                        {paragraph}
-                                    </p>
-                                ))}
+                    {privacyPolicy.map((section) => {
+                        const paragraphs = splitContentIntoParagraphs(section.content);
+
+                        return (
+                            <div key={section.id} className={styles.section}>
+                                <h2 className={styles.sectionTitle}>
+                                    <span className={styles.sectionIcon}>{section.icon || '📜'}</span>
+                                    {section.title}
+                                </h2>
+                                <div className={styles.sectionContent}>
+                                    {paragraphs.map((paragraph, idx) => {
+                                        if (isBulletPoint(paragraph)) {
+                                            const cleanText = paragraph.replace(/^[-•*]\s|^\d+[.)]\s|^[а-яА-Я][.)]\s/, '').trim();
+                                            return (
+                                                <div key={idx} className={styles.listItem}>
+                                                    <span className={styles.listMarker}>•</span>
+                                                    <span className={styles.listText}>{cleanText}</span>
+                                                </div>
+                                            );
+                                        }
+                                        return (
+                                            <p key={idx} className={styles.paragraph}>
+                                                {paragraph}
+                                            </p>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </Col>
             </Row>
 
-            {/* Контактная информация */}
             <Row className="mt-5">
                 <Col>
                     <div className={styles.contactInfo}>
