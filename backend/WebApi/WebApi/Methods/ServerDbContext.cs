@@ -21,6 +21,8 @@ public sealed class ServerDbContext(DbContextOptions<ServerDbContext> options) :
     public DbSet<WarehousesAddressesModel> WarehousesAddresses { get; set; }
     public DbSet<InformationsModel> Informations { get; set; }
     public DbSet<NewsModel> News { get; set; }
+    public DbSet<TermsOfUseModel> TermsOfUse { get; set; }
+    public DbSet<PrivacyPolicyModel> PrivacyPolicy { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
