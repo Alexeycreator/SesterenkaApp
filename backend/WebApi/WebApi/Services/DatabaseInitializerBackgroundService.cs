@@ -72,6 +72,9 @@ public sealed class DatabaseInitializerBackgroundService : BackgroundService
                 { "Categories", "SQL/InitCategories.sql" },
                 { "Manufacturers", "SQL/InitManufacturers.sql" },
                 { "Warehouses", "SQL/InitWarehouses.sql" },
+                {"News", "SQL/InitNews.sql"},
+                {"PrivacyPolicy", "SQL/InitPrivacyPolicy.sql"},
+                {"TermsOfUse", "SQL/InitTermsOfUse.sql"},
 
                 // Связанные справочники
                 { "CarModels", "SQL/InitCarModels.sql" },
