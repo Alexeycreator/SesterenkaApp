@@ -9,6 +9,8 @@ import LoadingSpinner from '../../LoadingSpinner';
 import styles from './NewsPage.module.css';
 
 const NewsPage = () => {
+    const apiImage = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState('');
     const [news, setNews] = useState<News[]>([]);
@@ -29,7 +31,6 @@ const NewsPage = () => {
             setLoading(true);
             setError(null);
             const data = await getAllNews();
-            console.log(data);
             setNews(data);
         } catch (err: any) {
             console.error('Ошибка загрузки новостей:', err);
@@ -189,7 +190,7 @@ const NewsPage = () => {
                             {selectedNews.image && (
                                 <Card.Img
                                     variant="top"
-                                    src={selectedNews.image}
+                                    src={`${apiImage}/${selectedNews.image}`}
                                     className={styles.fullArticleImage}
                                     onError={(e) => {
                                         e.currentTarget.src = '/placeholder.jpg';
@@ -211,8 +212,11 @@ const NewsPage = () => {
                                 </h1>
 
                                 <div className={styles.articleContent}>
-                                    <p className={styles.articleExcerpt}>{selectedNews.body}</p>
-                                </div>
+                                    {selectedNews.body.split(/\r\n|\n/).map((paragraph, index) => (
+                                        <p key={index} className={styles.articleExcerpt}>
+                                            {paragraph}
+                                        </p>
+                                    ))}                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -300,7 +304,7 @@ const NewsPage = () => {
                                 <div className={styles.imageWrapper}>
                                     <Card.Img
                                         variant="top"
-                                        src={item.image || '/placeholder.jpg'}
+                                        src={`${apiImage}/${item.image}` || '/placeholder.jpg'}
                                         className={styles.cardImage}
                                         onError={(e) => {
                                             e.currentTarget.src = '/placeholder.jpg';
