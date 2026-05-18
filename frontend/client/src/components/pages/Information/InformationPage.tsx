@@ -224,29 +224,39 @@ const InformationPage = () => {
                         </Col>
                     </Row>
                     <Row xs={1} md={2} lg={4} className="g-4 mb-5 justify-content-center">
-                        {employees.map((user, index) => (
-                            <Col key={user.id || index}>
-                                <div className={styles.teamCard}>
-                                    <div className={styles.teamIcon}>
-                                        {user.gender === 'Женский' ? '👩‍💼' : '👨‍💼'}
-                                    </div>
-                                    <h3 className={styles.teamName}>
-                                        {`${user.secondName} ${user.firstName}`}
-                                    </h3>
-                                    <div className={styles.teamPosition}>
-                                        {user.position === 'администратор' ? 'администратор' : (user.position || 'сотрудник')}
-                                    </div>
-                                    {user.email && (
-                                        <div className={styles.teamEmailWrapper}>
-                                            <span className={styles.teamEmailIcon}>📧</span>
-                                            <div className={styles.teamEmail} title={user.email}>
-                                                {user.email}
-                                            </div>
+                        {[...employees]
+                            .sort((a, b) => {
+                                if (a.position === 'администратор' && b.position !== 'администратор') {
+                                    return -1
+                                };
+                                if (a.position !== 'администратор' && b.position === 'администратор') {
+                                    return 1;
+                                }
+                                return 0;
+                            })
+                            .map((user, index) => (
+                                <Col key={user.id || index}>
+                                    <div className={styles.teamCard}>
+                                        <div className={styles.teamIcon}>
+                                            {user.gender === 'Женский' ? '👩‍💼' : '👨‍💼'}
                                         </div>
-                                    )}
-                                </div>
-                            </Col>
-                        ))}
+                                        <h3 className={styles.teamName}>
+                                            {`${user.secondName} ${user.firstName}`}
+                                        </h3>
+                                        <div className={styles.teamPosition}>
+                                            {user.position === 'администратор' ? 'администратор' : (user.position || 'сотрудник')}
+                                        </div>
+                                        {user.email && (
+                                            <div className={styles.teamEmailWrapper}>
+                                                <span className={styles.teamEmailIcon}>📧</span>
+                                                <div className={styles.teamEmail} title={user.email}>
+                                                    {user.email}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </Col>
+                            ))}
                     </Row>
                 </>
             )}
