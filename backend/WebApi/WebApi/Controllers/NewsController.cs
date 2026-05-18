@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
@@ -32,7 +33,7 @@ public sealed class NewsController(ServerDbContext dbContext) : ControllerBase
                     responseNews.Add(new NewsModel()
                     {
                         Id = news.Id,
-                        Body = news.Body,
+                        Body = ParsingStringData(news.Body),
                         Date = news.Date,
                         Image = news.Image,
                         Theme = news.Theme,
@@ -51,5 +52,38 @@ public sealed class NewsController(ServerDbContext dbContext) : ControllerBase
             loggerNewsController.Error($"Внутренняя ошибка сервера: {ex.Message}");
             return StatusCode(500, new { message = $"Внутренняя ошибка сервера: {ex.Message}" });
         }
+    }
+    
+    private string ParsingStringData(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            throw new ArgumentNullException(nameof(text), "Текст не может быть null или пустым");
+        }
+
+        const char separator = ';';
+        if (!text.Contains(separator))
+        {
+            return text;
+        }
+
+        StringBuilder parsingBuilder = new StringBuilder();
+        string[] parts = text.Split(separator);
+
+        for (int i = 0; i < parts.Length; i++)
+        {
+            string trimmedPart = parts[i].Trim();
+            if (!string.IsNullOrEmpty(trimmedPart))
+            {
+                parsingBuilder.Append(trimmedPart);
+
+                if (i < parts.Length - 1)
+                {
+                    parsingBuilder.AppendLine();
+                }
+            }
+        }
+
+        return parsingBuilder.ToString();
     }
 }
