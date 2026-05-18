@@ -46,12 +46,12 @@ function App() {
   const { isServerAvailable, checking, checkServer } = useServerStatus();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    if (!checking && isServerAvailable && !isInitialized) {
-      setIsInitialized(true);
-      navigate('/', { replace: true });
-    }
-  }, [checking, isServerAvailable, navigate, isInitialized]);
+  // useEffect(() => {
+  //   if (!checking && isServerAvailable && !isInitialized) {
+  //     setIsInitialized(true);
+  //     navigate('/', { replace: true });
+  //   }
+  // }, [checking, isServerAvailable, navigate, isInitialized]);
 
   // Слушаем событие для повторной проверки сервера (например, после обновления данных)
   useEffect(() => {
