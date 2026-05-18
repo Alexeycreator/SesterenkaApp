@@ -119,9 +119,9 @@ export const getManagementStocks = async (): Promise<StockManagementDto> => {
     }
 };
 
-export const updateStock = async (stockId: number, quantity: number): Promise<void> => {
+export const updateStock = async (stockId: number, quantity: number, userId: number): Promise<void> => {
     try {
-        await api.put(`/Stocks/update-stock?stockId=${stockId}&quantity=${quantity}`);
+        await api.put(`/Stocks/update-stock?stockId=${stockId}&quantity=${quantity}&userId=${userId}`);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -143,9 +143,9 @@ export const createStock = async (stockData: {
     products_Id: number;
     warehouses_Id: number;
     quantity: number;
-}): Promise<void> => {
+}, userId: number): Promise<void> => {
     try {
-        await api.post('/Stocks/create-stock', stockData);
+        await api.post(`/Stocks/create-stock?userId=${userId}`, stockData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -163,9 +163,9 @@ export const createStock = async (stockData: {
     }
 };
 
-export const deleteStock = async (stockId: number): Promise<void> => {
+export const deleteStock = async (stockId: number, userId: number): Promise<void> => {
     try {
-        await api.delete(`/Stocks/delete-stock?stockId=${stockId}`);
+        await api.delete(`/Stocks/delete-stock?stockId=${stockId}&userId=${userId}`);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
