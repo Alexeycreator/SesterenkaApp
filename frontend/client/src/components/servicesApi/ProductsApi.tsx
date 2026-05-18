@@ -80,9 +80,9 @@ export const getControlProducts = async (): Promise<ControlProductsData> => {
     }
 };
 
-export const createProductControlPanel = async (productsData: any): Promise<void> => {
+export const createProductControlPanel = async (productsData: any, userId: number): Promise<void> => {
     try {
-        await api.post<Product>(`/Products/admin-or-employee-panel-create-product`, productsData);
+        await api.post<Product>(`/Products/admin-or-employee-panel-create-product?userId=${userId}`, productsData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -101,9 +101,9 @@ export const createProductControlPanel = async (productsData: any): Promise<void
     }
 };
 
-export const updateProductControlPanel = async (productId: number, productsData: any): Promise<void> => {
+export const updateProductControlPanel = async (productId: number, productsData: any, userId: number): Promise<void> => {
     try {
-        await api.put<Product>(`/Products/admin-or-employee-panel-update-product?productId=${productId}`, productsData);
+        await api.put<Product>(`/Products/admin-or-employee-panel-update-product?productId=${productId}&userId=${userId}`, productsData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -122,9 +122,9 @@ export const updateProductControlPanel = async (productId: number, productsData:
     }
 };
 
-export const deleteProductControlPanel = async (productId: number): Promise<void> => {
+export const deleteProductControlPanel = async (productId: number, userId: number): Promise<void> => {
     try {
-        await api.delete<Product>(`/Products/admin-or-employee-panel-delete-product?productId=${productId}`);
+        await api.delete<Product>(`/Products/admin-or-employee-panel-delete-product?productId=${productId}&userId=${userId}`);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);

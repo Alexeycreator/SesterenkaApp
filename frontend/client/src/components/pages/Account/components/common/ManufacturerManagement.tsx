@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, InputGroup, Row, Col, Alert } from 'react-bootstrap';
 
 import { createManufacturer, deleteManufacturer, getManufacturers, Manufacturer, updateManufacturer } from '../../../../servicesApi/ManufacturersApi';
+import { useAuth } from '../../../../../contexts/AuthContext';
 
 import styles from '../AdminPanel.module.css';
 
@@ -12,6 +13,7 @@ interface ManufacturerManagementProps {
 }
 
 export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ show, onHide, onRefresh }) => {
+    const { user: currentUser, role: userRole } = useAuth();
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -80,10 +82,10 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
 
         try {
             if (editingManufacturer) {
-                await updateManufacturer(editingManufacturer.id, { name: formData.name });
+                await updateManufacturer(editingManufacturer.id, { name: formData.name }, currentUser?.id || 0);
                 showSuccess('Бренд успешно обновлен');
             } else {
-                await createManufacturer({ name: formData.name });
+                await createManufacturer({ name: formData.name }, currentUser?.id || 0);
                 showSuccess('Бренд успешно добавлен');
             }
             resetForm();
@@ -121,7 +123,7 @@ export const ManufacturerManagement: React.FC<ManufacturerManagementProps> = ({ 
             setSaving(true);
             setErrorMessage(null);
             try {
-                await deleteManufacturer(id);
+                await deleteManufacturer(id, currentUser?.id || 0);
                 showSuccess('Бренд успешно удален');
                 await loadManufacturers();
                 if (onRefresh) onRefresh();

@@ -62,9 +62,9 @@ export const getCategoriesById = async (id: number): Promise<Categories> => {
     }
 };
 
-export const createCategory = async (categoryData: { name: string; icon: string; description: string }): Promise<Categories> => {
+export const createCategory = async (categoryData: { name: string; icon: string; description: string }, userId: number): Promise<Categories> => {
     try {
-        const response = await api.post<Categories>('/Categories/create-category', categoryData);
+        const response = await api.post<Categories>(`/Categories/create-category?userId=${userId}`, categoryData);
         return response.data;
     } catch (error: any) {
         if (error.response) {
@@ -83,9 +83,9 @@ export const createCategory = async (categoryData: { name: string; icon: string;
     }
 };
 
-export const updateCategory = async (categoryId: number, categoryData: { name: string; icon?: string; description?: string }): Promise<void> => {
+export const updateCategory = async (categoryId: number, userId: number, categoryData: { name: string; icon?: string; description?: string }): Promise<void> => {
     try {
-        await api.put(`/Categories/update-category?categoryId=${categoryId}`, categoryData);
+        await api.put(`/Categories/update-category?categoryId=${categoryId}&userId=${userId}`, categoryData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -103,9 +103,9 @@ export const updateCategory = async (categoryId: number, categoryData: { name: s
     }
 };
 
-export const deleteCategory = async (categoryId: number): Promise<void> => {
+export const deleteCategory = async (categoryId: number, userId: number): Promise<void> => {
     try {
-        await api.delete(`/Categories/delete-category?categoryId=${categoryId}`);
+        await api.delete(`/Categories/delete-category?categoryId=${categoryId}&userId=${userId}`);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);

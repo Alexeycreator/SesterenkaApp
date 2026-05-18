@@ -37,15 +37,30 @@ public sealed class CategoriesController(ServerDbContext dbContext) : Controller
     }
 
     [HttpPost("create-category")]
-    public async Task<IActionResult> CreateCategoriesAsync([FromBody] CategoriesModel? request)
+    public async Task<IActionResult> CreateCategoriesAsync([FromBody] CategoriesModel? request, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerCategoriesController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerCategoriesController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             if (request == null)
             {
                 loggerCategoriesController.Error($"Данные не предоставлены");
-                return BadRequest(new
-                    { message = "Данные не предоставлены" });
+                return BadRequest(new { message = "Данные не предоставлены" });
             }
 
             if (string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Description) ||
@@ -85,10 +100,27 @@ public sealed class CategoriesController(ServerDbContext dbContext) : Controller
     }
 
     [HttpPut("update-category")]
-    public async Task<IActionResult> UpdateCategoriesAsync(int categoryId, [FromBody] CategoriesModel request)
+    public async Task<IActionResult> UpdateCategoriesAsync(int categoryId, int userId,
+        [FromBody] CategoriesModel request)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerCategoriesController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerCategoriesController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var categories = await dbContext.Categories.FindAsync(categoryId);
             if (categories == null)
             {
@@ -124,10 +156,26 @@ public sealed class CategoriesController(ServerDbContext dbContext) : Controller
     }
 
     [HttpDelete("delete-category")]
-    public async Task<IActionResult> DeleteCategoriesAsync(int categoryId)
+    public async Task<IActionResult> DeleteCategoriesAsync(int categoryId, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerCategoriesController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerCategoriesController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var categories = await dbContext.Categories.FindAsync(categoryId);
             if (categories == null)
             {

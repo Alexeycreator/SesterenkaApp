@@ -37,10 +37,26 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
     }
 
     [HttpPost("create-manufacturer")]
-    public async Task<IActionResult> CreateManufacturerAsync([FromBody] ManufacturersModel? request)
+    public async Task<IActionResult> CreateManufacturerAsync([FromBody] ManufacturersModel? request, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerManufacturersController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerManufacturersController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             if (request == null)
             {
                 loggerManufacturersController.Error($"Данные не предоставлены");
@@ -81,10 +97,27 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
     }
 
     [HttpPut("update-manufacturer")]
-    public async Task<IActionResult> UpdateManufacturerAsync(int manufacturerId, [FromBody] ManufacturersModel request)
+    public async Task<IActionResult> UpdateManufacturerAsync(int manufacturerId, [FromBody] ManufacturersModel request,
+        int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerManufacturersController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerManufacturersController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var manufacturers = await dbContext.Manufacturers.FindAsync(manufacturerId);
             if (manufacturers == null)
             {
@@ -113,10 +146,26 @@ public sealed class ManufacturersController(ServerDbContext dbContext) : Control
     }
 
     [HttpDelete("delete-manufacturer")]
-    public async Task<IActionResult> DeleteManufacturerAsync(int manufacturerId)
+    public async Task<IActionResult> DeleteManufacturerAsync(int manufacturerId, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerManufacturersController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerManufacturersController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var manufacturer = await dbContext.Manufacturers.FindAsync(manufacturerId);
             if (manufacturer == null)
             {

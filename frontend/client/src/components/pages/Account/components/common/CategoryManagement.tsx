@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 
 import { createCategory, deleteCategory, getCategories, Categories, updateCategory } from '../../../../servicesApi/CategoriesApi';
+import { useAuth } from '../../../../../contexts/AuthContext';
 
 import styles from '../AdminPanel.module.css';
 
@@ -12,6 +13,7 @@ interface CategoryManagementProps {
 }
 
 export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, onHide, onRefresh }) => {
+    const { user: currentUser, role: userRole } = useAuth();
     const [categories, setCategories] = useState<Categories[]>([]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -94,7 +96,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
 
         try {
             if (editingCategory) {
-                await updateCategory(editingCategory.id, {
+                await updateCategory(editingCategory.id, currentUser?.id || 0, {
                     name: formData.name,
                     icon: iconToSend,
                     description: formData.description
@@ -105,7 +107,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
                     name: formData.name,
                     icon: iconToSend,
                     description: formData.description
-                });
+                }, currentUser?.id || 0);
                 showSuccess('Категория успешно добавлена');
             }
             resetForm();
@@ -147,7 +149,7 @@ export const CategoryManagement: React.FC<CategoryManagementProps> = ({ show, on
             setSaving(true);
             setErrorMessage(null);
             try {
-                await deleteCategory(id);
+                await deleteCategory(id, currentUser?.id || 0);
                 showSuccess('Категория успешно удалена');
                 await loadCategories();
                 if (onRefresh) onRefresh();

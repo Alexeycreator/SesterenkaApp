@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Row, Col, InputGroup, Alert } from 'react-bootstrap';
 
 import { createStock, deleteStock, getManagementStocks, updateStock } from '../../../../servicesApi/StocksApi';
+import { useAuth } from '../../../../../contexts/AuthContext';
 
 import styles from '../AdminPanel.module.css';
 
@@ -12,6 +13,7 @@ interface StockManagementProps {
 }
 
 export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, onRefresh }) => {
+    const { user: currentUser, role: userRole } = useAuth();
     const [stockData, setStockData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -118,14 +120,14 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
 
         try {
             if (editingStock) {
-                await updateStock(editingStock.id, formData.quantity);
+                await updateStock(editingStock.id, formData.quantity, currentUser?.id || 0);
                 showSuccess('Остатки успешно обновлены');
             } else {
                 await createStock({
                     products_Id: formData.productId,
                     warehouses_Id: formData.warehouseId,
                     quantity: formData.quantity
-                });
+                }, currentUser?.id || 0);
                 showSuccess('Остатки успешно добавлены');
             }
             resetForm();
@@ -167,7 +169,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({ show, onHide, 
             setSaving(true);
             setErrorMessage(null);
             try {
-                await deleteStock(id);
+                await deleteStock(id, currentUser?.id || 0);
                 showSuccess('Запись успешно удалена');
                 await loadData();
                 if (onRefresh) onRefresh();

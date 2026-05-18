@@ -204,7 +204,7 @@ export const AddressManagement: React.FC<AddressManagementProps> = ({ show, onHi
             setSaving(true);
             setErrorMessage(null);
             try {
-                await deleteAddress(id);
+                await deleteAddress(id, currentUser?.id || 0);
                 showSuccess('Адрес успешно удален');
                 await loadAddresses();
                 if (onRefresh) onRefresh();

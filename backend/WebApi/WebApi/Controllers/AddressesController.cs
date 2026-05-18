@@ -158,6 +158,21 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
         try
         {
             var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerAddressesController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerAddressesController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var existsAddress = await dbContext.Addresses.FindAsync(addressId);
             if (existsAddress == null)
             {
@@ -197,53 +212,40 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
 
             if (existsAddress.IsShop != address.IsShop)
             {
-                if (user != null && user.Role == "admin" && user.Position == "администратор")
+                existsAddress.IsShop = address.IsShop;
+                loggerAddressesController.Info($"Статус адреса изменен на 'магазин'");
+                var addressInformation = await dbContext.Addresses.FindAsync(existsAddress.Id);
+                if (addressInformation != null)
                 {
-                    existsAddress.IsShop = address.IsShop;
-                    loggerAddressesController.Info($"Статус адреса изменен на 'магазин'");
-                    var addressInformation = await dbContext.Addresses.FindAsync(existsAddress.Id);
-                    if (addressInformation != null)
+                    var information =
+                        await dbContext.Informations.FirstOrDefaultAsync(i =>
+                            i.Addresses_Id == addressInformation.Id);
+                    if (existsAddress.IsShop)
                     {
-                        var information =
-                            await dbContext.Informations.FirstOrDefaultAsync(i =>
-                                i.Addresses_Id == addressInformation.Id);
-                        if (existsAddress.IsShop)
+                        if (information == null)
                         {
-                            if (information == null)
+                            var newInformation = new InformationsModel()
                             {
-                                var newInformation = new InformationsModel()
-                                {
-                                    AboutUs = null,
-                                    Questions = null,
-                                    OurMission = null,
-                                    OurValues = null,
-                                    Users_Id = null,
-                                    Addresses_Id = addressInformation.Id
-                                };
+                                AboutUs = null,
+                                Questions = null,
+                                OurMission = null,
+                                OurValues = null,
+                                Users_Id = null,
+                                Addresses_Id = addressInformation.Id
+                            };
 
-                                await dbContext.Informations.AddAsync(newInformation);
-                                loggerAddressesController.Info($"Адрес магазина добавлен в таблицу информации");
-                            }
-                        }
-                        else
-                        {
-                            if (information != null)
-                            {
-                                dbContext.Informations.Remove(information);
-                                loggerAddressesController.Info($"Адрес магазина удален из таблицы информации");
-                            }
+                            await dbContext.Informations.AddAsync(newInformation);
+                            loggerAddressesController.Info($"Адрес магазина добавлен в таблицу информации");
                         }
                     }
-                }
-                else
-                {
-                    loggerAddressesController.Error(
-                        $"У пользователя {user?.Login} нет прав администратора или сотрудника для изменения состояния адреса (IsShop)");
-                    return BadRequest(new
+                    else
                     {
-                        message =
-                            $"У пользователя {user?.Login} нет прав администратора или сотрудника для изменения состояния адреса (IsShop)"
-                    });
+                        if (information != null)
+                        {
+                            dbContext.Informations.Remove(information);
+                            loggerAddressesController.Info($"Адрес магазина удален из таблицы информации");
+                        }
+                    }
                 }
             }
 
@@ -258,11 +260,27 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
         }
     }
 
-    [HttpDelete("delete-address/{addressId}")]
-    public async Task<IActionResult> DeleteAddressAsync(int addressId)
+    [HttpDelete("delete-address")]
+    public async Task<IActionResult> DeleteAddressAsync(int userId, int addressId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerAddressesController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerAddressesController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var address = await dbContext.Addresses.FirstOrDefaultAsync(a => a.Id == addressId);
             if (address == null)
             {

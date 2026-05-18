@@ -10,6 +10,7 @@ import {
 } from '../../../../servicesApi/ProductsApi';
 import { Manufacturer } from '../../../../servicesApi/ManufacturersApi';
 import { Categories } from '../../../../servicesApi/CategoriesApi';
+import { useAuth } from '../../../../../contexts/AuthContext';
 
 import styles from '../AdminPanel.module.css';
 
@@ -20,6 +21,7 @@ interface ProductManagementProps {
 }
 
 export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHide, onRefresh }) => {
+    const { user: currentUser, role: userRole } = useAuth();
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Categories[]>([]);
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
@@ -133,10 +135,10 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
             };
 
             if (editingProduct) {
-                await updateProductControlPanel(editingProduct.id, productData);
+                await updateProductControlPanel(editingProduct.id, productData, currentUser?.id || 0);
                 showSuccess('Товар успешно обновлен');
             } else {
-                await createProductControlPanel(productData);
+                await createProductControlPanel(productData, currentUser?.id || 0);
                 showSuccess('Товар успешно добавлен');
             }
             resetForm();
@@ -198,7 +200,7 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({ show, onHi
             setSaving(true);
             setErrorMessage(null);
             try {
-                await deleteProductControlPanel(id);
+                await deleteProductControlPanel(id, currentUser?.id || 0);
                 showSuccess('Товар успешно удален');
                 await loadData();
                 if (onRefresh) onRefresh();

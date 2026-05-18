@@ -61,9 +61,9 @@ export const getManufacturerById = async (id: number): Promise<Manufacturer> => 
     }
 };
 
-export const createManufacturer = async (manufacturerData: { name: string }): Promise<void> => {
+export const createManufacturer = async (manufacturerData: { name: string }, userId: number): Promise<void> => {
     try {
-        await api.post<Manufacturer>(`/Manufacturers/create-manufacturer`, manufacturerData);
+        await api.post<Manufacturer>(`/Manufacturers/create-manufacturer?userId=${userId}`, manufacturerData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -82,9 +82,9 @@ export const createManufacturer = async (manufacturerData: { name: string }): Pr
     }
 };
 
-export const updateManufacturer = async (manufacturerId: number, manufacturerData: { name: string }): Promise<void> => {
+export const updateManufacturer = async (manufacturerId: number, manufacturerData: { name: string }, userId: number): Promise<void> => {
     try {
-        await api.put<Manufacturer>(`/Manufacturers/update-manufacturer?manufacturerId=${manufacturerId}`, manufacturerData);
+        await api.put<Manufacturer>(`/Manufacturers/update-manufacturer?manufacturerId=${manufacturerId}&userId=${userId}`, manufacturerData);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);
@@ -103,9 +103,9 @@ export const updateManufacturer = async (manufacturerId: number, manufacturerDat
     }
 };
 
-export const deleteManufacturer = async (manufacturerId: number): Promise<void> => {
+export const deleteManufacturer = async (manufacturerId: number, userId: number): Promise<void> => {
     try {
-        await api.delete<Manufacturer>(`/Manufacturers/delete-manufacturer?manufacturerId=${manufacturerId}`);
+        await api.delete<Manufacturer>(`/Manufacturers/delete-manufacturer?manufacturerId=${manufacturerId}&userId=${userId}`);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);

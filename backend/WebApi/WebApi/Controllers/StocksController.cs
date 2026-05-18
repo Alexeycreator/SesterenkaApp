@@ -128,10 +128,26 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPut("update-stock")]
-    public async Task<IActionResult> UpdateStockAsync(int stockId, int quantity)
+    public async Task<IActionResult> UpdateStockAsync(int stockId, int quantity, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerStocksController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerStocksController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var stocks = await dbContext.Stocks.FindAsync(stockId);
             if (stocks != null)
             {
@@ -161,10 +177,26 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpDelete("delete-stock")]
-    public async Task<IActionResult> DeleteStockAsync(int stockId)
+    public async Task<IActionResult> DeleteStockAsync(int stockId, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerStocksController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerStocksController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var stocks = await dbContext.Stocks.FindAsync(stockId);
             if (stocks != null)
             {
@@ -188,10 +220,26 @@ public sealed class StocksController(ServerDbContext dbContext) : ControllerBase
     }
 
     [HttpPost("create-stock")]
-    public async Task<IActionResult> CreateStockAsync([FromBody] StocksModel request)
+    public async Task<IActionResult> CreateStockAsync([FromBody] StocksModel request, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerStocksController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerStocksController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var stocks = await dbContext.Stocks.Where(s =>
                     s.Products_Id == request.Products_Id && s.Warehouses_Id == request.Warehouses_Id)
                 .ToListAsync();

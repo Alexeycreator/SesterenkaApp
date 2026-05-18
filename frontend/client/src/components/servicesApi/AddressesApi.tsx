@@ -120,9 +120,9 @@ export const updateAddress = async (addressId: number, data: {
     }
 };
 
-export const deleteAddress = async (addressId: number): Promise<void> => {
+export const deleteAddress = async (userId: number, addressId: number): Promise<void> => {
     try {
-        await api.delete<Address>(`/Addresses/delete-address/${addressId}`);
+        await api.delete<Address>(`/Addresses/delete-address?userId=${userId}&addressId=${addressId}`);
     } catch (error: any) {
         if (error.response) {
             console.log('Ошибка ответа:', error.response.data);

@@ -179,10 +179,26 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpPost("admin-or-employee-panel-create-product")]
-    public async Task<IActionResult> CreateProductControlPanelAsync([FromBody] ProductsModel? request)
+    public async Task<IActionResult> CreateProductControlPanelAsync([FromBody] ProductsModel? request, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerProductsController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerProductsController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             if (request == null)
             {
                 loggerProductsController.Error("Данные пустые");
@@ -263,10 +279,26 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpPut("admin-or-employee-panel-update-product")]
-    public async Task<IActionResult> UpdateProductControlPanelAsync(int productId, ProductsModel? request)
+    public async Task<IActionResult> UpdateProductControlPanelAsync(int productId, ProductsModel? request, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerProductsController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerProductsController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             if (request == null)
             {
                 loggerProductsController.Error($"Данные не предоставлены");
@@ -363,10 +395,26 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
     }
 
     [HttpDelete("admin-or-employee-panel-delete-product")]
-    public async Task<IActionResult> DeleteProductControlPanelAsync(int productId)
+    public async Task<IActionResult> DeleteProductControlPanelAsync(int productId, int userId)
     {
         try
         {
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                loggerProductsController.Error($"Пользователя (id = {userId}) не существует");
+                return NotFound(new { message = $"Пользователя не существует" });
+            }
+
+            if (user.Role != "admin")
+            {
+                if (user.Role != "employee")
+                {
+                    loggerProductsController.Error($"У пользователя {user.Login} недостаточно прав");
+                    return BadRequest(new { message = $"У пользователя {user.Login} недостаточно прав" });
+                }
+            }
+
             var product = await dbContext.Products.FindAsync(productId);
             if (product == null)
             {
