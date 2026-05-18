@@ -452,9 +452,6 @@ const OrderItemsPage = () => {
             <Modal
                 show={showAuthModal}
                 onHide={() => {
-                    if (!isAuthenticated) {
-                        navigate('/');
-                    }
                     setShowAuthModal(false);
                     setAuthError('');
                     setAuthLogin('');
