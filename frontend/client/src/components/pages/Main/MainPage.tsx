@@ -15,6 +15,7 @@ let isInitialized = false;
 
 const MainPage = () => {
     const navigate = useNavigate();
+    const apiImage = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
 
     // Состояние для категорий
     const [randomCategories, setRandomCategories] = useState<any[]>(cachedCategories || []);
@@ -184,7 +185,7 @@ const MainPage = () => {
         };
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchLatestNews();
     }, []);
 
@@ -336,7 +337,7 @@ const MainPage = () => {
                                     <div className={styles.newsImageWrapper}>
                                         <Card.Img
                                             variant="top"
-                                            src={news.image || '/placeholder.jpg'}
+                                            src={`${apiImage}/${news.image}` || '/placeholder.jpg'}
                                             className={styles.newsImage}
                                             onError={(e) => {
                                                 e.currentTarget.src = '/placeholder.jpg';
