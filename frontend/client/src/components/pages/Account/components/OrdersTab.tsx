@@ -102,11 +102,10 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({ ordersData, loading, error
                                 </div>
                             </div>
                             <Button
-                                variant="link"
                                 className={styles.orderDetailsBtn}
                                 onClick={() => navigate(`/order/${order.id}`)}
                             >
-                                Подробнее →
+                                Подробнее
                             </Button>
                         </div>
                     ))}

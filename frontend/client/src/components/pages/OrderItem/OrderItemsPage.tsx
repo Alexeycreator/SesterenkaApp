@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Container, Row, Col, Card, Button, Form, Modal, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -9,13 +9,6 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { getNumberOrder } from '../../servicesApi/OrderItemsApi';
 
 import styles from './OrderItemsPage.module.css';
-
-// Кэш для данных (за пределами компонента)
-let cachedOrderItemData: OrderItem | null = null;
-let cachedProducts: Product[] | null = null;
-let cachedOrderId: number | null = null;
-let isLoading = false;
-let isInitialized = false;
 
 // Функция для уведомления об изменении корзины
 const notifyCartUpdate = () => {
@@ -29,16 +22,16 @@ const OrderItemsPage = () => {
     const { user: currentUser, isAuthenticated, login } = useAuth();
 
     // состояние корзины
-    const [orderItemData, setOrderItemData] = useState<OrderItem | null>(cachedOrderItemData);
-    const [currentOrderId, setCurrentOrderId] = useState<number | null>(cachedOrderId);
-    const [loadingOrderItem, setLoadingOrderItem] = useState(!cachedOrderItemData);
+    const [orderItemData, setOrderItemData] = useState<OrderItem | null>(null);
+    const [currentOrderId, setCurrentOrderId] = useState<number | null>(null);
+    const [loadingOrderItem, setLoadingOrderItem] = useState(true);
     const [errorOrderItem, setErrorOrderItem] = useState<string | null>(null);
     const [serverError, setServerError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     // состояние товаров
     const [productData, setProductData] = useState<OrderItemDto[]>([]);
-    const [productIdData, setProductIdData] = useState<Product[]>(cachedProducts || []);
+    const [productIdData, setProductIdData] = useState<Product[]>([]);
 
     // состояние модального окна авторизации
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -51,11 +44,9 @@ const OrderItemsPage = () => {
     const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
     const [updatingQuantityId, setUpdatingQuantityId] = useState<number | null>(null);
 
-    // флаг для отслеживания первого рендера
-    const isFirstRender = useRef(true);
-    const previousAuthState = useRef(isAuthenticated);
-    const isInitialLoadDone = useRef(false);
+    // флаги
     const isMounted = useRef(true);
+    const isLoading = useRef(false);
 
     const showSuccess = (message: string) => {
         setSuccessMessage(message);
@@ -68,29 +59,15 @@ const OrderItemsPage = () => {
     };
 
     // получение позиций корзины
-    const fetchOrderItem = async (skipAuthCheck: boolean = false, showLoader: boolean = true, forceRefresh: boolean = false) => {
-        if (!skipAuthCheck && (!isAuthenticated || !currentUser)) {
+    const fetchOrderItem = useCallback(async (showLoader: boolean = true, forceRefresh: boolean = false) => {
+        if (!isAuthenticated || !currentUser) {
             setLoadingOrderItem(false);
-            if (!isAuthenticated) {
-                setShowAuthModal(true);
-            }
             return;
         }
 
-        // Если данные уже загружены и не принудительное обновление
-        if (cachedOrderItemData !== null && !forceRefresh && isInitialized) {
-            if (isMounted.current) {
-                setOrderItemData(cachedOrderItemData);
-                setProductData(cachedOrderItemData?.items || []);
-                setLoadingOrderItem(false);
-            }
-            return;
-        }
+        if (isLoading.current && !forceRefresh) return;
 
-        // Если уже идет загрузка
-        if (isLoading) return;
-
-        isLoading = true;
+        isLoading.current = true;
         if (showLoader && isMounted.current) {
             setLoadingOrderItem(true);
             setErrorOrderItem(null);
@@ -98,10 +75,6 @@ const OrderItemsPage = () => {
 
         try {
             const orderItem = await getOrderItemData(currentUser?.login || '', currentUser?.role || '');
-
-            // Сохраняем в кэш
-            cachedOrderItemData = orderItem;
-            isInitialized = true;
 
             if (isMounted.current) {
                 setOrderItemData(orderItem);
@@ -127,47 +100,71 @@ const OrderItemsPage = () => {
                 }
             }
         } finally {
-            isLoading = false;
+            isLoading.current = false;
             if (showLoader && isMounted.current) {
                 setLoadingOrderItem(false);
             }
         }
-    };
+    }, [isAuthenticated, currentUser]);
 
-    const fetchProductIdData = async (forceRefresh: boolean = false) => {
-        if (cachedProducts !== null && !forceRefresh) {
-            if (isMounted.current) {
-                setProductIdData(cachedProducts);
-            }
-            return;
-        }
-
+    const fetchProductIdData = useCallback(async () => {
         try {
             const products = await getProducts();
-            cachedProducts = products;
             if (isMounted.current) {
                 setProductIdData(products);
             }
         } catch (err: any) {
             console.error('Ошибка загрузки данных товара:', err);
         }
-    };
+    }, []);
 
-    const fetchOrderId = async () => {
+    const fetchOrderId = useCallback(async () => {
         if (!currentUser?.id) return;
 
         try {
             const orderId = await getNumberOrder(currentUser.id);
-            if (orderId > 0) {
-                cachedOrderId = orderId;
-                if (isMounted.current) {
-                    setCurrentOrderId(orderId);
-                }
+            if (orderId > 0 && isMounted.current) {
+                setCurrentOrderId(orderId);
             }
         } catch (error) {
             console.error('Ошибка получения ID заказа:', error);
         }
-    };
+    }, [currentUser?.id]);
+
+    // Загрузка данных при монтировании и при изменении авторизации
+    useEffect(() => {
+        isMounted.current = true;
+
+        if (isAuthenticated && currentUser) {
+            fetchOrderItem(true, true);
+            fetchProductIdData();
+            fetchOrderId();
+        } else {
+            setLoadingOrderItem(false);
+            setOrderItemData(null);
+            setProductData([]);
+        }
+
+        return () => {
+            isMounted.current = false;
+        };
+    }, [isAuthenticated, currentUser, fetchOrderItem, fetchProductIdData, fetchOrderId]);
+
+    // Подписка на событие обновления корзины
+    useEffect(() => {
+        const handleCartUpdate = () => {
+            if (isMounted.current && isAuthenticated && currentUser) {
+                fetchOrderItem(true, true);
+                fetchOrderId();
+            }
+        };
+
+        window.addEventListener('cartUpdated', handleCartUpdate);
+
+        return () => {
+            window.removeEventListener('cartUpdated', handleCartUpdate);
+        };
+    }, [isAuthenticated, currentUser, fetchOrderItem, fetchOrderId]);
 
     // Обработчик авторизации через модальное окно
     const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -181,13 +178,9 @@ const OrderItemsPage = () => {
                 setShowAuthModal(false);
                 setAuthLogin('');
                 setAuthPassword('');
-                setOrderItemData(null);
-                setProductData([]);
-                // Сбрасываем кэш
-                cachedOrderItemData = null;
-                isInitialized = false;
-                await fetchOrderItem(true, true, true);
-                await fetchProductIdData(true);
+                await fetchOrderItem(true, true);
+                await fetchProductIdData();
+                await fetchOrderId();
                 notifyCartUpdate();
             } else {
                 setAuthError('Неверный логин или пароль');
@@ -198,50 +191,6 @@ const OrderItemsPage = () => {
             setAuthLoading(false);
         }
     };
-
-    // хуки
-    useEffect(() => {
-        isMounted.current = true;
-
-        if (!isFirstRender.current) {
-            if (previousAuthState.current === true && isAuthenticated === false) {
-                setOrderItemData(null);
-                setProductData([]);
-                setLoadingOrderItem(false);
-                setShowAuthModal(false);
-                notifyCartUpdate();
-                navigate('/', { replace: true });
-                return;
-            }
-
-            if (previousAuthState.current === false && isAuthenticated === true) {
-                fetchOrderItem(true, true);
-                fetchProductIdData();
-                return;
-            }
-        }
-
-        previousAuthState.current = isAuthenticated;
-        isFirstRender.current = false;
-
-        if (isAuthenticated && !isInitialLoadDone.current) {
-            isInitialLoadDone.current = true;
-            fetchOrderItem(false, true);
-            fetchProductIdData();
-        } else if (!isAuthenticated) {
-            setLoadingOrderItem(false);
-        }
-
-        return () => {
-            isMounted.current = false;
-        };
-    }, [isAuthenticated, currentUser]);
-
-    useEffect(() => {
-        if (isAuthenticated && currentUser?.id) {
-            fetchOrderId();
-        }
-    }, [isAuthenticated, currentUser]);
 
     // функция обновления количества одного товара
     const updateQuantity = async (id: number, newQuantity: number) => {
@@ -258,14 +207,12 @@ const OrderItemsPage = () => {
         try {
             await updateOrderItemQuantity(id, newQuantity);
             notifyCartUpdate();
-            // Сбрасываем кэш при изменении
-            cachedOrderItemData = null;
-            await fetchOrderItem(true, true, true);
+            await fetchOrderItem(true, true);
         } catch (error: any) {
             console.error('Не удалось обновить количество:', error);
             const errorMsg = error.serverMessage || error.message || 'Не удалось обновить количество';
             showError(errorMsg);
-            await fetchOrderItem(true, true, true);
+            await fetchOrderItem(true, true);
         } finally {
             setUpdatingQuantityId(null);
         }
@@ -289,14 +236,12 @@ const OrderItemsPage = () => {
         try {
             await deleteOrderItem(orderId, productId, currentUser.id);
             notifyCartUpdate();
-            // Сбрасываем кэш при удалении
-            cachedOrderItemData = null;
-            await fetchOrderItem(true, false, true);
+            await fetchOrderItem(true, true);
         } catch (error: any) {
             console.error('Ошибка удаления:', error);
             const errorMsg = error.serverMessage || error.message || 'Не удалось удалить товар из корзины';
             showError(errorMsg);
-            await fetchOrderItem(true, false, true);
+            await fetchOrderItem(true, true);
         } finally {
             setDeletingItemId(null);
         }

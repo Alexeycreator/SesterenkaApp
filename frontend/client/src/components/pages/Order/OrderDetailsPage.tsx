@@ -13,6 +13,8 @@ let isLoading = false;
 let currentOrderId: number | null = null;
 
 const OrderDetailsPage = () => {
+    const apiImage = process.env.REACT_APP_API_URL_IMAGES || 'http://localhost:5027';
+
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const orderId = Number(id);
@@ -166,11 +168,10 @@ const OrderDetailsPage = () => {
                 <Col>
                     <div className={styles.header}>
                         <Button
-                            variant="link"
                             className={styles.backButton}
                             onClick={() => navigate('/personalAccount?tab=orders')}
                         >
-                            ← Назад к заказам
+                            Назад к заказам
                         </Button>
                         <h1 className={styles.title}>Заказ #{order.nameOrder}</h1>
                         <div className={styles.statusWrapper}>
@@ -245,7 +246,7 @@ const OrderDetailsPage = () => {
                                     <div key={item.id} className={styles.orderItem}>
                                         <div className={styles.itemImage}>
                                             <img
-                                                src={item.image || '/placeholder.jpg'}
+                                                src={`${apiImage}/${item.image}` || '/placeholder.jpg'}
                                                 alt={item.nameProduct}
                                                 onError={(e) => {
                                                     e.currentTarget.src = '/placeholder.jpg';
