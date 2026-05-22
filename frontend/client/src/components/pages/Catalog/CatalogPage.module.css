@@ -612,3 +612,21 @@
         min-height: 300px;
     }
 }
+
+/* Предупреждение о необходимости авторизации */
+.warningAlert {
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    border: 2px solid #ff9800;
+    border-radius: 12px;
+    color: #e65100;
+    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+}
+
+.warningAlert :global(.alert-heading) {
+    color: #e65100;
+    font-weight: 600;
+}
+
+.warningAlert hr {
+    border-top-color: #ff9800;
+}
