@@ -326,6 +326,12 @@ public sealed class UsersController(
             loggerUsersController.Info($"Пол обновлен");
         }
 
+        if (userDto.Login != null)
+        {
+            existsUser.Login = userDto.Login;
+            loggerUsersController.Info($"Логин обновлен");
+        }
+
         if (userDto.Birthday.HasValue)
         {
             existsUser.Birthday = userDto.Birthday.Value;

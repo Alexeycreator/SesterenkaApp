@@ -16,7 +16,10 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errors, setErrors] = useState<{ phoneNumber?: string; email?: string }>({});
+
+    // Только поля, которые определены в UpdateClientRequest
     const [editedUser, setEditedUser] = useState({
         firstName: currentUser?.firstName || '',
         secondName: currentUser?.secondName || '',
@@ -25,8 +28,46 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
         phoneNumber: currentUser?.phoneNumber || '',
         birthday: currentUser?.birthday || '',
         gender: currentUser?.gender || 'Мужской',
-        login: currentUser?.login || ''
+        login: currentUser?.login || '',
+        age: currentUser?.age || 0,
+        role: currentUser?.role || 'user',
+        position: currentUser?.position || 'пользователь'
     });
+
+    // Функция для вычисления возраста на основе даты рождения
+    const calculateAge = (birthDate: string): number => {
+        if (!birthDate) return 0;
+
+        const today = new Date();
+        const birth = new Date(birthDate);
+
+        if (isNaN(birth.getTime())) return 0;
+
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+
+        return age;
+    };
+
+    // Обновление возраста при изменении даты рождения
+    const handleBirthdayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const birthday = e.target.value;
+        const newAge = calculateAge(birthday);
+
+        setEditedUser(prev => ({
+            ...prev,
+            birthday: birthday,
+            age: newAge
+        }));
+
+        if (serverError) {
+            setServerError(null);
+        }
+    };
 
     // Валидация номера телефона
     const validatePhoneNumber = (phone: string): boolean => {
@@ -63,8 +104,14 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
         if (name === 'email' && errors.email) {
             setErrors(prev => ({ ...prev, email: undefined }));
         }
+        if (name === 'phoneNumber' && errors.phoneNumber) {
+            setErrors(prev => ({ ...prev, phoneNumber: undefined }));
+        }
         if (serverError) {
             setServerError(null);
+        }
+        if (successMessage) {
+            setSuccessMessage(null);
         }
     };
 
@@ -74,6 +121,9 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
         setEditedUser(prev => ({ ...prev, [name]: value }));
         if (serverError) {
             setServerError(null);
+        }
+        if (successMessage) {
+            setSuccessMessage(null);
         }
     };
 
@@ -93,43 +143,53 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
     };
 
     const saveProfile = async () => {
-        // Очищаем предыдущие ошибки
         setServerError(null);
+        setSuccessMessage(null);
 
         if (!validateForm()) {
             return;
         }
 
+        if (!currentUser?.id) {
+            setServerError('ID пользователя не найден');
+            return;
+        }
+
         setLoading(true);
+
         try {
-            await clientApi.update(currentUser?.id, editedUser);
+            await clientApi.update(currentUser.id, editedUser);
+
             if (refreshUserData) {
                 await refreshUserData();
             }
+
             if (onRefresh) {
                 onRefresh();
             }
 
             setIsEditing(false);
-            alert('Данные успешно обновлены');
+            setSuccessMessage('Данные успешно обновлены');
+
+            // Автоматически скрыть сообщение через 5 секунд
+            setTimeout(() => setSuccessMessage(null), 5000);
         } catch (error: any) {
             console.error('Ошибка обновления:', error);
 
-            // Обработка ошибок от сервера
-            if (error.serverMessage) {
-                setServerError(error.serverMessage);
-            } else if (error.message) {
-                setServerError(error.message);
-            } else if (error.response?.data?.message) {
+            if (error.response?.data?.message) {
                 setServerError(error.response.data.message);
             } else if (error.response?.data?.errors) {
-                // Обработка валидационных ошибок
                 const validationErrors = error.response.data.errors;
                 const errorMessages = Object.values(validationErrors).flat().join(', ');
                 setServerError(errorMessages);
+            } else if (error.message) {
+                setServerError(error.message);
             } else {
                 setServerError('Не удалось обновить данные. Попробуйте позже.');
             }
+
+            // Автоматически скрыть ошибку через 5 секунд
+            setTimeout(() => setServerError(null), 5000);
         } finally {
             setLoading(false);
         }
@@ -143,13 +203,14 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
             value = value.slice(0, 11);
         }
 
+        let formattedValue = value;
         if (value.startsWith('8') || value.startsWith('7')) {
-            setEditedUser(prev => ({ ...prev, phoneNumber: value }));
+            formattedValue = value;
         } else if (value.startsWith('9') && value.length === 10) {
-            setEditedUser(prev => ({ ...prev, phoneNumber: `+7${value}` }));
-        } else {
-            setEditedUser(prev => ({ ...prev, phoneNumber: value }));
+            formattedValue = `+7${value}`;
         }
+
+        setEditedUser(prev => ({ ...prev, phoneNumber: formattedValue }));
 
         if (errors.phoneNumber) {
             setErrors(prev => ({ ...prev, phoneNumber: undefined }));
@@ -157,9 +218,41 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
         if (serverError) {
             setServerError(null);
         }
+        if (successMessage) {
+            setSuccessMessage(null);
+        }
+    };
+
+    // Сброс формы при отмене редактирования
+    const handleCancelEdit = () => {
+        setEditedUser({
+            firstName: currentUser?.firstName || '',
+            secondName: currentUser?.secondName || '',
+            surName: currentUser?.surName || '',
+            email: currentUser?.email || '',
+            phoneNumber: currentUser?.phoneNumber || '',
+            birthday: currentUser?.birthday || '',
+            gender: currentUser?.gender || 'Мужской',
+            login: currentUser?.login || '',
+            age: currentUser?.age || 0,
+            role: currentUser?.role || 'user',
+            position: currentUser?.position || 'пользователь'
+        });
+        setErrors({});
+        setServerError(null);
+        setSuccessMessage(null);
+        setIsEditing(false);
     };
 
     const birthdayCorrectDate = formatBirthdayDate(currentUser?.birthday);
+    const birthdayInputValue = editedUser.birthday ? new Date(editedUser.birthday).toISOString().split('T')[0] : '';
+
+    // Склонение слова "год"
+    const getAgeWord = (age: number): string => {
+        if (age % 10 === 1 && age % 100 !== 11) return 'год';
+        if (age % 10 >= 2 && age % 10 <= 4 && (age % 100 < 10 || age % 100 >= 20)) return 'года';
+        return 'лет';
+    };
 
     return (
         <Card className={styles.contentCard}>
@@ -168,7 +261,13 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
                     <h2 className={styles.sectionTitle}>Личные данные</h2>
                     <Button
                         className={styles.editButton}
-                        onClick={() => setIsEditing(!isEditing)}
+                        onClick={() => {
+                            if (isEditing) {
+                                handleCancelEdit();
+                            } else {
+                                setIsEditing(true);
+                            }
+                        }}
                         variant="outline-secondary"
                         disabled={loading}
                     >
@@ -176,10 +275,28 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
                     </Button>
                 </div>
 
+                {/* Отображение успешного сообщения */}
+                {successMessage && (
+                    <Alert
+                        variant="success"
+                        className={styles.successAlert}
+                        onClose={() => setSuccessMessage(null)}
+                        dismissible
+                    >
+                        <Alert.Heading>✅ Успешно!</Alert.Heading>
+                        <p>{successMessage}</p>
+                    </Alert>
+                )}
+
                 {/* Отображение ошибки от сервера */}
                 {serverError && (
-                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setServerError(null)} dismissible>
-                        <Alert.Heading>Ошибка!</Alert.Heading>
+                    <Alert
+                        variant="danger"
+                        className={styles.errorAlert}
+                        onClose={() => setServerError(null)}
+                        dismissible
+                    >
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
                         <p>{serverError}</p>
                     </Alert>
                 )}
@@ -196,7 +313,6 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
                                         value={editedUser.login}
                                         onChange={handleTextInputChange}
                                         className={styles.formInput}
-                                        isInvalid={!!serverError && serverError.includes('логин')}
                                     />
                                 </Form.Group>
                             </Col>
@@ -280,10 +396,13 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
                                     <Form.Control
                                         type="date"
                                         name="birthday"
-                                        value={editedUser.birthday?.split('T')[0] || ''}
-                                        onChange={handleTextInputChange}
+                                        value={birthdayInputValue}
+                                        onChange={handleBirthdayChange}
                                         className={styles.formInput}
                                     />
+                                    <small className="text-muted">
+                                        Возраст: {editedUser.age} {getAgeWord(editedUser.age)}
+                                    </small>
                                 </Form.Group>
                             </Col>
                             <Col md={6}>
@@ -330,6 +449,10 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ currentUser, onRefresh }
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>Дата рождения:</span>
                             <span className={styles.infoValue}>{birthdayCorrectDate}</span>
+                        </div>
+                        <div className={styles.infoRow}>
+                            <span className={styles.infoLabel}>Возраст:</span>
+                            <span className={styles.infoValue}>{currentUser?.age || 0} {getAgeWord(currentUser?.age || 0)}</span>
                         </div>
                     </div>
                 )}
