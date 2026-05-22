@@ -8,6 +8,7 @@ import { CategoryManagement } from './common/CategoryManagement';
 import { ManufacturerManagement } from './common/ManufacturerManagement';
 import { StockManagement } from './common/StockManagement';
 import { AddressManagement } from './common/AddressManagement';
+import { NewsManagement } from './common/NewsManagement';
 
 import styles from './AdminPanel.module.css';
 
@@ -32,6 +33,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
     const [showManufacturerModal, setShowManufacturerModal] = useState(false);
     const [showStockModal, setShowStockModal] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
+    const [showNewsModal, setShowNewsModal] = useState(false);
 
     useEffect(() => {
         loadUsers();
@@ -193,6 +195,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
                             </Card.Body>
                         </Card>
                     </Col>
+                    <Col md={4}>
+                        <Card className={styles.adminCard} onClick={() => setShowNewsModal(true)}>
+                            <Card.Body className={styles.cardBody}>
+                                <h3>📰 Новости</h3>
+                                <p>Управление новостями и статьями</p>
+                                <Button className={styles.cardLink}>Управление новостями →</Button>
+                            </Card.Body>
+                        </Card>
+                    </Col>
                 </Row>
 
                 {/* Управление пользователями с поиском */}
@@ -289,17 +300,41 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefresh, userRole }) =
                 </div>
 
                 {/* Модальные окна */}
-                <ProductManagement show={showProductModal} onHide={() => setShowProductModal(false)} onRefresh={onRefresh} />
-                <CategoryManagement show={showCategoryModal} onHide={() => setShowCategoryModal(false)} onRefresh={onRefresh} />
-                <ManufacturerManagement show={showManufacturerModal} onHide={() => setShowManufacturerModal(false)} onRefresh={onRefresh} />
-                <StockManagement show={showStockModal} onHide={() => setShowStockModal(false)} onRefresh={onRefresh} />
-                <AddressManagement show={showAddressModal} onHide={() => setShowAddressModal(false)} onRefresh={onRefresh} />
-
+                <ProductManagement
+                    show={showProductModal}
+                    onHide={() => setShowProductModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <CategoryManagement
+                    show={showCategoryModal}
+                    onHide={() => setShowCategoryModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <ManufacturerManagement
+                    show={showManufacturerModal}
+                    onHide={() => setShowManufacturerModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <StockManagement
+                    show={showStockModal}
+                    onHide={() => setShowStockModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <AddressManagement
+                    show={showAddressModal}
+                    onHide={() => setShowAddressModal(false)}
+                    onRefresh={onRefresh}
+                />
                 <UserOrdersModal
                     show={showOrdersModal}
                     onHide={() => setShowOrdersModal(false)}
                     userLogin={selectedUser?.login || ''}
                     userName={`${selectedUser?.secondName} ${selectedUser?.firstName}`}
+                />
+                <NewsManagement
+                    show={showNewsModal}
+                    onHide={() => setShowNewsModal(false)}
+                    onRefresh={onRefresh}
                 />
 
                 {/* Модальное окно подтверждения удаления */}
