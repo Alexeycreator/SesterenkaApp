@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 import { Product } from '../../../servicesApi/ProductsApi';
 import { Categories } from '../../../servicesApi/CategoriesApi';
@@ -29,10 +30,12 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
     apiUrl,
     isAuthenticated
 }) => {
+    const navigate = useNavigate();
     const [addingToCart, setAddingToCart] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [imgError, setImgError] = useState(false);
     const [cartError, setCartError] = useState<string | null>(null);
+    const [showAuthWarning, setShowAuthWarning] = useState(false);
 
     const productStock = getProductStock(selectedProduct.id);
     const quantity = productStock?.totalQuantity ?? 0;
@@ -41,6 +44,13 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
     const imageSrc = imgError ? '/placeholder.jpg' : `${apiUrl}/${selectedProduct.image}`;
 
     const handleAddToCart = async () => {
+        // Проверка авторизации
+        if (!isAuthenticated) {
+            setShowAuthWarning(true);
+            setTimeout(() => setShowAuthWarning(false), 15000);
+            return;
+        }
+
         if (addingToCart) return;
 
         setAddingToCart(true);
@@ -59,6 +69,10 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
         }
     };
 
+    const handleNavigateToLogin = () => {
+        navigate('/personalAccount');
+    };
+
     return (
         <Container fluid className={styles.pageContainer}>
             <Row className="mb-4">
@@ -73,6 +87,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Col>
             </Row>
 
+            {/* Уведомление об успешном добавлении */}
             {showSuccess && (
                 <Row className="mb-3">
                     <Col>
@@ -83,12 +98,43 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Row>
             )}
 
+            {/* Уведомление об ошибке добавления */}
             {cartError && (
                 <Row className="mb-3">
                     <Col>
                         <div className={styles.errorAlert}>
                             ❌ {cartError}
                         </div>
+                    </Col>
+                </Row>
+            )}
+
+            {/* Предупреждение о необходимости авторизации */}
+            {showAuthWarning && (
+                <Row className="mb-3">
+                    <Col>
+                        <Alert
+                            variant="warning"
+                            className={styles.warningAlert}
+                            onClose={() => setShowAuthWarning(false)}
+                            dismissible
+                        >
+                            <Alert.Heading>🔒 Требуется авторизация</Alert.Heading>
+                            <p>
+                                Для добавления товара в корзину необходимо войти в аккаунт
+                                или зарегистрироваться.
+                            </p>
+                            <hr />
+                            <div className="d-flex justify-content-end gap-2">
+                                <Button
+                                    variant="outline-secondary"
+                                    onClick={() => setShowAuthWarning(false)}
+                                    size="sm"
+                                >
+                                    Закрыть
+                                </Button>
+                            </div>
+                        </Alert>
                     </Col>
                 </Row>
             )}
