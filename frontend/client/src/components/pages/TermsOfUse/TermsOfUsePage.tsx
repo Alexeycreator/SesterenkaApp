@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Button } from 'react-bootstrap';
 
 import { getAllTermsOfUse, TermsOfUse } from '../../servicesApi/TermsOfUseApi';
+import { TermsOfUseManagement } from './common/TermsOfUseManagement';
+import { useAuth } from '../../../contexts/AuthContext';
 import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './TermsOfUsePage.module.css';
 
 const TermsOfUsePage = () => {
+    const { user, isAuthenticated, role } = useAuth();
     const [termsOfUse, setTermsOfUse] = useState<TermsOfUse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [serverError, setServerError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
+    const [showManagementModal, setShowManagementModal] = useState(false);
+
+    const isAdmin = role === 'admin';
 
     useEffect(() => {
         fetchTermsOfUse();
@@ -53,7 +59,6 @@ const TermsOfUsePage = () => {
     // Функция для разбиения текста на абзацы
     const splitContentIntoParagraphs = (content: string) => {
         if (!content) return [];
-        // Разбиваем по \r\n, \n, и удаляем пустые строки
         const paragraphs = content.split(/\r?\n/).filter(p => p.trim() !== '');
         return paragraphs;
     };
@@ -114,6 +119,21 @@ const TermsOfUsePage = () => {
 
     return (
         <Container fluid className={styles.pageContainer}>
+            {/* Кнопка управления для администратора */}
+            {isAdmin && (
+                <Row className="mb-4">
+                    <Col className="text-end">
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => setShowManagementModal(true)}
+                            className={styles.adminButton}
+                        >
+                            ⚙️ Управление разделами
+                        </Button>
+                    </Col>
+                </Row>
+            )}
+
             {/* Отображение ошибки от сервера (если есть, но данные загружены частично) */}
             {serverError && (
                 <Row className="mb-4">
@@ -183,17 +203,26 @@ const TermsOfUsePage = () => {
             </Row>
 
             {/* Согласие */}
-            <Row className="mt-5">
-                <Col>
-                    <div className={styles.agreementInfo}>
-                        <h3 className={styles.agreementTitle}>✓ Принимаю условия</h3>
-                        <p className={styles.agreementText}>
-                            Используя сайт «Колесо и поршень», вы подтверждаете, что ознакомились
-                            с условиями настоящего пользовательского соглашения и принимаете их.
-                        </p>
-                    </div>
-                </Col>
-            </Row>
+            {isAuthenticated && (
+                <Row className="mt-5">
+                    <Col>
+                        <div className={styles.agreementInfo}>
+                            <h3 className={styles.agreementTitle}>✓ Принимаю условия</h3>
+                            <p className={styles.agreementText}>
+                                Используя сайт «Колесо и поршень», вы подтверждаете, что ознакомились
+                                с условиями настоящего пользовательского соглашения и принимаете их.
+                            </p>
+                        </div>
+                    </Col>
+                </Row>
+            )}
+
+            {/* Модальное окно управления */}
+            <TermsOfUseManagement
+                show={showManagementModal}
+                onHide={() => setShowManagementModal(false)}
+                onRefresh={fetchTermsOfUse}
+            />
         </Container>
     );
 };

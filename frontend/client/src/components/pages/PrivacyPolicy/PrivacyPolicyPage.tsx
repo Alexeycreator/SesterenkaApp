@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Button } from 'react-bootstrap';
 
 import { getAllPrivacyPolicy, PrivacyPolicy } from '../../servicesApi/PrivacyPolicyApi';
+import { PrivacyPolicyManagement } from './common/PrivacyPolicyManagement';
+import { useAuth } from '../../../contexts/AuthContext';
 import LoadingSpinner from '../../LoadingSpinner';
 
 import styles from './PrivacyPolicyPage.module.css';
 
 const PrivacyPolicyPage = () => {
+    const { role } = useAuth();
     const [privacyPolicy, setPrivacyPolicy] = useState<PrivacyPolicy[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [serverError, setServerError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
+    const [showManagementModal, setShowManagementModal] = useState(false);
+
+    const isAdmin = role === 'admin';
 
     useEffect(() => {
         fetchPrivacyPolicy();
@@ -113,6 +119,21 @@ const PrivacyPolicyPage = () => {
 
     return (
         <Container fluid className={styles.pageContainer}>
+            {/* Кнопка управления для администратора */}
+            {isAdmin && (
+                <Row className="mb-4">
+                    <Col className="text-end">
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => setShowManagementModal(true)}
+                            className={styles.adminButton}
+                        >
+                            ⚙️ Управление разделами
+                        </Button>
+                    </Col>
+                </Row>
+            )}
+
             {serverError && (
                 <Row className="mb-4">
                     <Col>
@@ -202,6 +223,13 @@ const PrivacyPolicyPage = () => {
                     </div>
                 </Col>
             </Row>
+
+            {/* Модальное окно управления */}
+            <PrivacyPolicyManagement
+                show={showManagementModal}
+                onHide={() => setShowManagementModal(false)}
+                onRefresh={fetchPrivacyPolicy}
+            />
         </Container>
     );
 };

@@ -323,3 +323,19 @@
         font-size: 0.95rem;
     }
 }
+
+.adminButton {
+    background: linear-gradient(135deg, #c49b6b, #b38b5b);
+    border: 2px solid #8B5A2B;
+    color: white !important;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.adminButton:hover {
+    background: linear-gradient(135deg, #b38b5b, #8B5A2B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
