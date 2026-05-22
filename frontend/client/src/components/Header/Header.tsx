@@ -24,6 +24,7 @@ interface RegistrationFormData {
     confirmPassword: string;
     agreeToNews: boolean;
     agreeToPersonalData: boolean;
+    agreeToTerms: boolean;
 }
 
 interface HeaderState {
@@ -68,7 +69,8 @@ export default class Header extends Component<{}, HeaderState> {
         password: '',
         confirmPassword: '',
         agreeToNews: false,
-        agreeToPersonalData: false
+        agreeToPersonalData: false,
+        agreeToTerms: false
     };
 
     state: HeaderState = {
@@ -268,13 +270,17 @@ export default class Header extends Component<{}, HeaderState> {
     };
 
     handleClickOutside = (event: MouseEvent) => {
-        // Закрываем модальное окно авторизации
-        if (this.authRef.current && !this.authRef.current.contains(event.target as Node)) {
+        const target = event.target as Node;
+        const isInsideModal = !!document.querySelector('.modal.show')?.contains(target);
+        if (isInsideModal) {
+            return;
+        }
+
+        if (this.authRef.current && !this.authRef.current.contains(target)) {
             this.setState({ showAuth: false, authError: null, authFieldErrors: {}, authForm: { login: '', password: '' } });
         }
 
-        // Закрываем модальное окно регистрации
-        if (this.registrationRef.current && !this.registrationRef.current.contains(event.target as Node)) {
+        if (this.registrationRef.current && !this.registrationRef.current.contains(target)) {
             this.setState({
                 showRegistrationModal: false,
                 registrationError: null,
@@ -284,8 +290,7 @@ export default class Header extends Component<{}, HeaderState> {
             });
         }
 
-        // Закрываем меню пользователя
-        if (this.userMenuRef.current && !this.userMenuRef.current.contains(event.target as Node)) {
+        if (this.userMenuRef.current && !this.userMenuRef.current.contains(target)) {
             this.setState({ showUserMenu: false });
         }
     };
@@ -327,6 +332,9 @@ export default class Header extends Component<{}, HeaderState> {
         }
         if (!form.agreeToPersonalData) {
             errors.agreeToPersonalData = 'Необходимо согласие';
+        }
+        if (!form.agreeToTerms) {
+            errors.agreeToTerms = 'Необходимо принять условия пользовательского соглашения';
         }
 
         this.setState({ registrationFieldErrors: errors });
