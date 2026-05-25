@@ -34,7 +34,6 @@ export const ProductsList: React.FC<ProductsListProps> = ({
             <Row className="mb-4">
                 <Col>
                     <Button
-                        variant="link"
                         className={styles.backButton}
                         onClick={onBackToCategories}
                     >
@@ -80,7 +79,6 @@ export const ProductsList: React.FC<ProductsListProps> = ({
                     <Row className="mt-4 mb-4">
                         <Col>
                             <Button
-                                variant="link"
                                 className={styles.backButton}
                                 onClick={onBackToCategories}
                             >
@@ -96,7 +94,7 @@ export const ProductsList: React.FC<ProductsListProps> = ({
                     <Button
                         variant="primary"
                         onClick={onBackToCategories}
-                        className={styles.resetButton}
+                        className={styles.backButton}
                     >
                         ← Назад к категориям
                     </Button>

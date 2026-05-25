@@ -78,7 +78,6 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
             <Row className="mb-4">
                 <Col>
                     <Button
-                        variant="link"
                         className={styles.backButton}
                         onClick={onClose}
                     >
