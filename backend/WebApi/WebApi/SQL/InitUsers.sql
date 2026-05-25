@@ -33,6 +33,6 @@ VALUES (N'Иванов', N'Иван', N'Иванович', N'Мужской', '2
         N'$2a$12$buDyT7Us9kz3XJDDl8.nUutwiVESGLIqmAzS4iUqLW6XgU7kYr5xe', NULL, NULL, '2026-04-28 10:06:44.6108693', 0,
         NULL),
        (N'Тешебаева', N'Ксения', N'Сергеевна', N'Женский', '2003-03-13', 23, N'администратор', N'admin', N'89036451612',
-        N'teschebaeva.ksenia@gmail.com', N'teschebaeva.ksenia@gmail.com', N'password123',
+        N'teschebaeva.ksenia@gmail.com', N't_ksenia', N'password123',
         N'$2a$12$4DY7Q39CM7mEuvUzPAuxmuH0VZ7rLh9OqhLiuFGBJHlLe3YTI2fmW', NULL, NULL, '2026-05-15 18:42:39.3801220', 0,
         NULL);
