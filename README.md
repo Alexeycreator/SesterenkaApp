@@ -61,9 +61,9 @@
 <details>
 <summary><b>Подробная инструкция</b></summary>
   
-Для способов 2-4 необходимо наличие SQL Server 2019 и СУБД SSMS
+Для `способов 2-4` необходимо наличие SQL Server 2019 и СУБД SSMS
   
-## СПОСОБ 1 (docker-контейнер)
+## СПОСОБ 1 (`docker-контейнер`)
     1.	Перейти в репозиторий GitHub по адресу: https://github.com/Alexeycreator/SesterenkaApp
     2.	Скачать проект
     3.	Открыть cmd
@@ -81,7 +81,7 @@
 
 
 
-## СПОСОБ 2 (командный файл)
+## СПОСОБ 2 (`командный файл Start.bat`)
      1.	Перейти в репозиторий GitHub по адресу: https://github.com/Alexeycreator/SesterenkaApp
     2.	Скачать проект
     3.	Открыть СУБД SSMS для MS SQL Server 2019
@@ -93,7 +93,7 @@
     9.	Просмотр приложения
 
 
-## СПОСОБ 3 (cmd)
+## СПОСОБ 3 (`cmd`)
     1.	Перейти в репозиторий GitHub по адресу: https://github.com/Alexeycreator/SesterenkaApp
     2.	Скачать проект
     3.	Открыть СУБД SSMS для MS SQL Server 2019
@@ -110,7 +110,7 @@
     14.	Перейти в браузер (например Google Chrome, Microsoft Edge и др.) и написать в строку запроса: http://localhost:3000
     15.	Просмотр приложения
 
-## СПОСОБ 4 (IDE)
+## СПОСОБ 4 (`IDE`)
     1.	Перейти в репозиторий GitHub по адресу: https://github.com/Alexeycreator/SesterenkaApp
     2.	Скачать проект
     3.	(Опционально) Проверить корректность строки подключения в файле appsettings.json, который располагается по пути: …\backend\WebApi\WebApi\appsettings.json на корректность названия имени SQL сервера (используется SQLEXPRESS)
