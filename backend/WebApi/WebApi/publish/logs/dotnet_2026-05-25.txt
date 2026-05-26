@@ -1,0 +1,230 @@
+2026-05-25 13:18:01.7308 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 13:18:01.7308 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 13:18:01.9752 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 13:18:04.2958 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-25 13:18:04.3830 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-25 13:18:14.4161 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 13:18:24.4548 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 13:18:34.4917 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 13:18:44.5250 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-25 13:18:54.5606 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 13:19:04.5981 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-25 13:19:13.4448 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 13:19:13.4598 [Info] WebApi.Services.DatabaseBackupBackgroundService Подключени к БД прошло успешно
+2026-05-25 13:19:13.5403 [Error] WebApi.Services.DatabaseBackupBackgroundService Ошибка при создании резервной копии по пути C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak: невозможно открыть устройство резервного копирования C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak. Ошибка операционной системы 5(Отказано в доступе.).
+BACKUP DATABASE прервано с ошибкой.. Будет применен путь по умолчанию: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 13:19:13.7277 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД успешно создана.
+2026-05-25 13:19:13.7484 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД скопирована из C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak и добавлена в C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 13:19:13.7484 [Info] WebApi.Services.DatabaseInitializerBackgroundService Сервис фонового добавления данных по умолчанию в БД останавливается
+2026-05-25 13:19:14.6373 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-25 13:19:24.6775 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-25 13:19:34.7150 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 13:20:00.7993 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 13:20:00.7993 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 13:20:01.0448 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 13:20:02.6928 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-25 13:20:02.7553 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-25 13:20:12.7884 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 13:20:22.8187 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 13:20:32.8321 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 13:20:42.9052 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-25 13:20:52.9162 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 13:21:02.9357 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-25 13:21:05.0815 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 13:21:05.0958 [Info] WebApi.Services.DatabaseBackupBackgroundService Подключени к БД прошло успешно
+2026-05-25 13:21:05.0958 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 13:21:05.1254 [Error] WebApi.Services.DatabaseBackupBackgroundService Ошибка при создании резервной копии по пути C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak: невозможно открыть устройство резервного копирования C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak. Ошибка операционной системы 5(Отказано в доступе.).
+BACKUP DATABASE прервано с ошибкой.. Будет применен путь по умолчанию: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 13:21:05.1254 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 13:21:05.2760 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД успешно создана.
+2026-05-25 13:21:05.2957 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД скопирована из C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak и добавлена в C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 13:21:05.2957 [Info] WebApi.Services.DatabaseInitializerBackgroundService Сервис фонового добавления данных по умолчанию в БД останавливается
+2026-05-25 13:21:12.9678 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-25 13:21:22.9720 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-25 13:21:32.9913 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 14:04:24.2833 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 14:04:24.2833 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 14:04:24.5913 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 14:04:27.6904 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-25 14:04:27.7435 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-25 14:04:27.8362 [Info] lambda_method51 Данные об адресах магазинов успешно добавлены
+2026-05-25 14:04:37.7671 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 14:04:47.7879 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 14:04:57.8070 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 14:05:07.8224 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-25 14:05:17.8426 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 14:05:27.8753 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-25 14:05:37.9069 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-25 14:05:47.9225 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-25 14:05:57.9493 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 14:06:07.9774 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Products уже содержит 195 записей. Пропускаем заполнение.
+2026-05-25 14:06:18.0034 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица WarehousesAddresses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 14:06:28.0149 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Users уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 14:06:38.0466 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Orders уже содержит 15 записей. Пропускаем заполнение.
+2026-05-25 14:06:48.0759 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица OrderItems уже содержит 13 записей. Пропускаем заполнение.
+2026-05-25 14:06:58.0862 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица ProductCarApplicability уже содержит 149 записей. Пропускаем заполнение.
+2026-05-25 14:07:08.1082 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Stocks уже содержит 38 записей. Пропускаем заполнение.
+2026-05-25 14:07:18.1319 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Informations уже содержит 5 записей. Пропускаем заполнение.
+2026-05-25 14:12:41.0413 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-25 14:12:41.0413 [Info] lambda_method541 Заполнение данных о адресах
+2026-05-25 14:12:41.0413 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-25 14:12:41.0413 [Info] lambda_method541 Заполнение данных о миссиях
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных информации о компании
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о вопросах
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о адресах
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о адресах
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Список сотрудников не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Список адресов не получен для страницы информации
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Список адресов не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'наши задачи' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 14:12:41.0444 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 14:16:05.9997 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 14:16:05.9997 [Info] WebApi.Services.DatabaseBackupBackgroundService Подключени к БД прошло успешно
+2026-05-25 14:16:05.9997 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 14:16:06.0335 [Error] WebApi.Services.DatabaseBackupBackgroundService Ошибка при создании резервной копии по пути C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak: невозможно открыть устройство резервного копирования C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak. Ошибка операционной системы 5(Отказано в доступе.).
+BACKUP DATABASE прервано с ошибкой.. Будет применен путь по умолчанию: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 14:16:06.0335 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 14:16:06.2351 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД успешно создана.
+2026-05-25 14:16:06.2566 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД скопирована из C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak и добавлена в C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 14:16:06.2566 [Info] WebApi.Services.DatabaseInitializerBackgroundService Сервис фонового добавления данных по умолчанию в БД останавливается
+2026-05-25 20:39:22.4736 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 20:39:22.4736 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 20:39:22.7413 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 20:39:24.7457 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-25 20:39:24.8185 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-25 20:39:34.8254 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 20:39:44.8366 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 20:39:54.8488 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 20:40:04.8610 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-25 20:40:14.8736 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 20:40:24.8772 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-25 20:40:34.8943 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-25 20:40:44.8999 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-25 20:40:54.9217 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-25 20:41:04.9263 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Products уже содержит 195 записей. Пропускаем заполнение.
+2026-05-25 20:41:14.9320 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица WarehousesAddresses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 20:41:24.9467 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Users уже содержит 10 записей. Пропускаем заполнение.
+2026-05-25 20:41:32.4990 [Info] lambda_method51 Данные об адресах магазинов успешно добавлены
+2026-05-25 20:41:34.9603 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Orders уже содержит 15 записей. Пропускаем заполнение.
+2026-05-25 20:41:45.0338 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица OrderItems уже содержит 13 записей. Пропускаем заполнение.
+2026-05-25 20:41:55.0507 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица ProductCarApplicability уже содержит 149 записей. Пропускаем заполнение.
+2026-05-25 20:42:05.0520 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Stocks уже содержит 38 записей. Пропускаем заполнение.
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о сотруднике
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о адресах
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о задачах
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о миссиях
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных информации о компании
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о вопросах
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о сотруднике
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о адресах
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о задачах
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о сотруднике
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о адресах
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о задачах
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Список сотрудников не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Список адресов не получен для страницы информации
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о задачах
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Info] lambda_method542 Заполнение данных о сотруднике
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Список адресов не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'наши задачи' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'о нас' не получен для страницы информации
+2026-05-25 20:42:07.6659 [Warn] lambda_method542 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-25 20:42:15.0580 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Informations уже содержит 5 записей. Пропускаем заполнение.
+2026-05-25 20:42:19.8370 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 20:42:19.8370 [Info] WebApi.Services.DatabaseBackupBackgroundService Подключени к БД прошло успешно
+2026-05-25 20:42:19.8370 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 20:42:19.8828 [Error] WebApi.Services.DatabaseBackupBackgroundService Ошибка при создании резервной копии по пути C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak: невозможно открыть устройство резервного копирования C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak. Ошибка операционной системы 5(Отказано в доступе.).
+BACKUP DATABASE прервано с ошибкой.. Будет применен путь по умолчанию: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 20:42:19.8828 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 20:42:20.0167 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД успешно создана.
+2026-05-25 20:42:20.0316 [Info] WebApi.Services.DatabaseBackupBackgroundService Резервная копия БД скопирована из C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak и добавлена в C:\Users\Алексей\Desktop\Учеба\github\SesterenkaApp\backend\WebApi\WebApi\publish\Backups\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 20:42:20.0358 [Info] WebApi.Services.DatabaseInitializerBackgroundService Сервис фонового добавления данных по умолчанию в БД останавливается
+2026-05-25 19:52:47.2936 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 19:52:47.3005 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 19:52:47.4775 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 20:01:56.3559 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 20:07:45.0766 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 20:07:45.0766 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 20:07:45.2336 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 20:10:32.1239 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 20:13:20.6319 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 20:13:20.6426 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 20:13:20.7927 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 20:15:43.5556 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 20:15:43.5972 [Error] WebApi.Services.DatabaseBackupBackgroundService Ошибка при создании резервной копии по пути : Cannot open database "ShesterenkaApp" requested by the login. The login failed.
+Login failed for user 'sa'.. Будет применен путь по умолчанию: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup__2026-05-25.bak
+2026-05-25 20:15:43.6170 [Error] WebApi.Services.DatabaseBackupBackgroundService Неизвестная ошибка: BeginExecuteNonQuery requires an open and available Connection. The connection's current state is closed.
+2026-05-25 20:15:43.6209 [Info] WebApi.Services.DatabaseInitializerBackgroundService Сервис фонового добавления данных по умолчанию в БД останавливается
+2026-05-25 20:22:23.1108 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 20:22:23.1108 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 20:22:23.2577 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 20:22:24.7971 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-25 20:22:24.8172 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:22:34.8693 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:22:42.8421 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:22:52.8537 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:02.8701 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:10.8076 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:20.8384 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:30.8460 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:38.7285 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:48.7353 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:23:58.7437 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Products не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:24:06.7295 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица WarehousesAddresses не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:24:16.7382 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Users не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:24:26.7638 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Orders не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:24:34.6705 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица OrderItems не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:24:44.6814 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица ProductCarApplicability не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:24:54.6844 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Stocks не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:25:02.5108 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Informations не существует. Сначала нужно создать структуру БД.
+2026-05-25 20:26:10.9335 [Info] WebApi.Services.DatabaseBackupBackgroundService Создание резервной копии при КОРРЕКТНОЙ остановке сервера.
+2026-05-25 20:26:10.9361 [Info] WebApi.Services.DatabaseBackupBackgroundService Подключени к БД прошло успешно
+2026-05-25 20:26:10.9420 [Info] WebApi.Services.DatabaseBackupBackgroundService Удален существующий файл: /app/Backups/backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 20:26:10.9938 [Error] WebApi.Services.DatabaseBackupBackgroundService Ошибка при создании резервной копии по пути /app/Backups/backup_ShesterenkaApp_2026-05-25.bak: Cannot open backup device '/app/Backups/backup_ShesterenkaApp_2026-05-25.bak'. Operating system error 5(Access is denied.).
+BACKUP DATABASE is terminating abnormally.. Будет применен путь по умолчанию: C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak
+2026-05-25 20:26:11.0400 [Error] WebApi.Services.DatabaseBackupBackgroundService Неизвестная ошибка: Cannot open backup device 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\backup_ShesterenkaApp_2026-05-25.bak'. Operating system error 5(Access is denied.).
+BACKUP DATABASE is terminating abnormally.
+2026-05-25 20:26:11.0400 [Info] WebApi.Services.DatabaseInitializerBackgroundService Сервис фонового добавления данных по умолчанию в БД останавливается
+2026-05-25 20:26:18.5401 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-25 20:26:18.5401 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-25 20:26:18.6946 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-25 20:26:20.1105 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-25 20:26:20.1538 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitAddresses.sql
+2026-05-25 20:26:28.0966 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitCarBrands.sql
+2026-05-25 20:26:38.1105 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitCarModifications.sql
+2026-05-25 20:26:48.1309 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitCategories.sql
+2026-05-25 20:26:56.0467 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitManufacturers.sql
+2026-05-25 20:27:06.0891 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitWarehouses.sql
+2026-05-25 20:27:16.1262 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitNews.sql
+2026-05-25 20:27:24.1007 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitPrivacyPolicy.sql
+2026-05-25 20:27:34.1116 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitTermsOfUse.sql
+2026-05-25 20:27:44.1376 [Info] WebApi.Services.DatabaseInitializerBackgroundService Файл скрипта не найден: SQL/InitCarModels.sql
