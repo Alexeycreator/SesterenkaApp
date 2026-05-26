@@ -1,0 +1,63 @@
+services:
+  database:
+    image: rapidfort/microsoft-sql-server-2019-ib:latest
+    container_name: sesterenka_database
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Password123
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+      - ./backend/WebApi/WebApi/Backups:/backups
+    networks:
+      - app-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Password123" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    image: mcr.microsoft.com/dotnet/aspnet:9.0
+    container_name: sesterenka_backend
+    volumes:
+      - ./backend/WebApi/WebApi/publish:/app
+    working_dir: /app
+    ports:
+      - "5027:5027"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=database;Database=ShesterenkaApp;User Id=sa;Password=YourStrong!Password123;TrustServerCertificate=True;
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+    command: >
+      sh -c "
+        apt-get update &&
+        apt-get install -y curl &&
+        dotnet WebApi.dll --urls=http://0.0.0.0:5027
+      "
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    container_name: sesterenka_frontend
+    volumes:
+      - ./frontend/client/build:/usr/share/nginx/html
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  sql_data:
+
+networks:
+  app-network:
+    driver: bridge
