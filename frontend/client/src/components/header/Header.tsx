@@ -15,7 +15,7 @@ import styles from './Header.module.css';
 interface RegistrationFormData {
     firstName: string;
     secondName: string;
-    surName: string | null;
+    surName?: string | null;
     email: string;
     phone: string;
     gender: 'Мужской' | 'Женский';
@@ -61,7 +61,7 @@ export default class Header extends Component<{}, HeaderState> {
     private readonly initialRegistrationForm: RegistrationFormData = {
         firstName: '',
         secondName: '',
-        surName: '',
+        surName: null,
         email: '',
         phone: '',
         gender: 'Мужской',
@@ -301,7 +301,9 @@ export default class Header extends Component<{}, HeaderState> {
 
         if (!form.secondName.trim()) errors.secondName = 'Введите фамилию';
         if (!form.firstName.trim()) errors.firstName = 'Введите имя';
-        if (!form.surName?.trim()) errors.surName = 'Введите отчество';
+        if (form.surName && !form.surName.trim()) {
+            errors.surName = 'Отчество не может быть пустым';
+        }
         if (!form.email.trim()) {
             errors.email = 'Введите email';
         } else if (!/\S+@\S+\.\S+/.test(form.email)) {
@@ -441,7 +443,7 @@ export default class Header extends Component<{}, HeaderState> {
         this.setState(prev => ({
             registrationForm: {
                 ...prev.registrationForm,
-                [name]: type === 'checkbox' ? checked : value
+                [name]: type === 'checkbox' ? checked : value === '' && name === 'surName' ? null : value
             }
         }));
     };
