@@ -43,16 +43,14 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: nginx:alpine
+    image: node:18-alpine
     container_name: sesterenka_frontend
+    working_dir: /app
     volumes:
-      - ./frontend/client/build:/usr/share/nginx/html
+        - ./frontend/client/build:/app
     ports:
-      - "3000:80"
-    depends_on:
-      - backend
-    networks:
-      - app-network
+        - "3000:3000"
+    command: ["npx", "serve", "-s", ".", "-l", "3000"]
     restart: unless-stopped
 
 volumes:
