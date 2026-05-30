@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button, Modal, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ChangePasswordModal } from '../components/ChangePasswordModal';
@@ -13,6 +14,7 @@ export interface SettingsTabProps {
 }
 
 export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh }) => {
+    const navigate = useNavigate();
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh
             showSuccess('Аккаунт успешно удален');
             setTimeout(() => {
                 logout();
-                window.location.href = '/';
+                navigate('/');
             }, 1500);
         } catch (error: any) {
             console.error('Ошибка удаления аккаунта:', error);
@@ -46,20 +48,45 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh
         }
     };
 
+    const handlePasswordChangeSuccess = () => {
+        showSuccess('Пароль успешно изменен');
+        setTimeout(() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('tokenExpiry');
+            logout();
+            window.dispatchEvent(new CustomEvent('authChange', { detail: { user: null } }));
+            navigate('/', { replace: true });
+        }, 1500);
+    };
+
+    const handlePasswordChangeError = (error: any) => {
+        console.error('Ошибка смены пароля:', error);
+        if (error.response?.data?.message) {
+            showError(error.response.data.message);
+        } else if (error.message) {
+            showError(error.message);
+        } else {
+            showError('Не удалось изменить пароль. Попробуйте позже.');
+        }
+    };
+
+    const handleCloseError = () => setErrorMessage(null);
+    const handleCloseSuccess = () => setSuccessMessage(null);
+
     return (
         <Card className={styles.contentCard}>
             <Card.Body>
                 <h2 className={styles.sectionTitle}>Настройки аккаунта</h2>
 
-                {/* Уведомления */}
                 {successMessage && (
-                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
+                    <Alert variant="success" className={styles.successAlert} onClose={handleCloseSuccess} dismissible>
                         <Alert.Heading>✅ Успешно!</Alert.Heading>
                         <p>{successMessage}</p>
                     </Alert>
                 )}
                 {errorMessage && (
-                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setErrorMessage(null)} dismissible>
+                    <Alert variant="danger" className={styles.errorAlert} onClose={handleCloseError} dismissible>
                         <Alert.Heading>❌ Ошибка!</Alert.Heading>
                         <p>{errorMessage}</p>
                     </Alert>
@@ -88,7 +115,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh
                     </Button>
                 </div>
 
-                {/* Модальное окно подтверждения удаления */}
                 <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered>
                     <Modal.Header closeButton>
                         <Modal.Title>Удаление аккаунта</Modal.Title>
@@ -107,10 +133,11 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser, onRefresh
                     </Modal.Footer>
                 </Modal>
 
-                {/* Компонент смены пароля */}
                 <ChangePasswordModal
                     show={showPasswordModal}
                     onHide={() => setShowPasswordModal(false)}
+                    onSuccess={handlePasswordChangeSuccess}
+                    onError={handlePasswordChangeError}
                     userId={currentUser?.id}
                     userLogin={currentUser?.login}
                 />

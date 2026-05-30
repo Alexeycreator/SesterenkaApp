@@ -1,236 +1,263 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-
-import { useAuth } from '../../../../contexts/AuthContext';
-import { changePassword } from '../../../../service/IndexAuth';
+import { changePassword } from '../../../../service/user//Requests';
 
 import styles from './ChangePasswordModal.module.css';
 
 interface ChangePasswordModalProps {
     show: boolean;
     onHide: () => void;
+    onSuccess?: () => void;
+    onError?: (error: any) => void;
     userId?: number;
     userLogin?: string;
 }
 
 export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
-    show, onHide, userId, userLogin
+    show,
+    onHide,
+    onSuccess,
+    onError,
+    userId,
+    userLogin
 }) => {
-    const { login, logout, setUser } = useAuth();
-    const [isChanging, setIsChanging] = useState(false);
-    const [oldPassword, setOldPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [oldPasswordError, setOldPasswordError] = useState('');
-    const [newPasswordError, setNewPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
-    const [serverError, setServerError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [warningMessage, setWarningMessage] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<{
+        currentPassword?: string;
+        newPassword?: string;
+        confirmPassword?: string;
+    }>({});
 
-    const showSuccess = (message: string) => {
-        setSuccessMessage(message);
-        setTimeout(() => setSuccessMessage(null), 3000);
+    const resetForm = () => {
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setError(null);
+        setWarningMessage(null);
+        setFieldErrors({});
     };
 
-    const showError = (message: string) => {
-        setServerError(message);
-        setTimeout(() => setServerError(null), 5000);
-    };
+    const validateForm = (): boolean => {
+        const errors: typeof fieldErrors = {};
 
-    const handleChangePassword = async () => {
-        if (!userId) {
-            showError('Ошибка: пользователь не авторизован');
-            return;
-        }
-
-        // Валидация
-        if (!oldPassword) {
-            setOldPasswordError('Введите текущий пароль');
-            return;
+        if (!currentPassword) {
+            errors.currentPassword = 'Введите текущий пароль';
         }
         if (!newPassword) {
-            setNewPasswordError('Введите новый пароль');
-            return;
+            errors.newPassword = 'Введите новый пароль';
+        } else if (newPassword.length < 6) {
+            errors.newPassword = 'Пароль должен быть не менее 6 символов';
         }
-        if (newPassword.length < 6) {
-            setNewPasswordError('Пароль должен быть не менее 6 символов');
-            return;
+        if (!confirmPassword) {
+            errors.confirmPassword = 'Подтвердите новый пароль';
+        } else if (newPassword !== confirmPassword) {
+            errors.confirmPassword = 'Пароли не совпадают';
         }
-        if (newPassword !== confirmPassword) {
-            setConfirmPasswordError('Пароли не совпадают');
+
+        // Проверка на совпадение старого и нового пароля - показываем Alert
+        if (currentPassword && newPassword && currentPassword === newPassword) {
+            setWarningMessage('Новый пароль не должен совпадать с текущим');
+            return false;
+        } else {
+            setWarningMessage(null);
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Очищаем предыдущие предупреждения
+        setWarningMessage(null);
+
+        if (!validateForm()) {
             return;
         }
 
-        setServerError(null);
-        setIsChanging(true);
+        if (!userId) {
+            setError('Пользователь не авторизован');
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
 
         try {
-            await changePassword(userId, oldPassword, newPassword);
+            await changePassword(userId, currentPassword, newPassword);
 
-            // Обновляем токен с новым паролем
-            try {
-                const loginResponse = await login(userLogin || '', newPassword);
-                localStorage.setItem('token', loginResponse.token);
-                localStorage.setItem('user', JSON.stringify(loginResponse.user));
-                setUser(loginResponse.user);
+            resetForm();
+            onHide();
 
-                showSuccess('Пароль успешно изменен');
-                setTimeout(() => {
-                    onHide();
-                    setOldPassword('');
-                    setNewPassword('');
-                    setConfirmPassword('');
-                }, 1500);
-            } catch (loginError) {
-                showError('Пароль изменен, но требуется повторный вход');
-                setTimeout(() => {
-                    logout();
-                    window.location.href = '/login';
-                }, 2000);
+            if (onSuccess) {
+                onSuccess();
             }
-        } catch (error: any) {
-            console.error('Ошибка:', error);
-            if (error.statusCode === 401) {
-                setOldPasswordError('Неверный текущий пароль');
-            } else if (error.serverMessage) {
-                showError(error.serverMessage);
-            } else if (error.message) {
-                showError(error.message);
-            } else {
-                showError('Не удалось изменить пароль');
+        } catch (err: any) {
+            console.error('Ошибка смены пароля:', err);
+
+            let errorMessage = 'Не удалось изменить пароль';
+
+            // Обработка разных форматов ошибок
+            if (err.response?.data?.message) {
+                errorMessage = err.response.data.message;
+            } else if (err.response?.data?.errors) {
+                const errors = Object.values(err.response.data.errors).flat();
+                errorMessage = errors.join(', ');
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+
+            setError(errorMessage);
+
+            if (onError) {
+                onError(err);
             }
         } finally {
-            setIsChanging(false);
+            setLoading(false);
         }
+    };
+
+    const handleClose = () => {
+        resetForm();
+        onHide();
     };
 
     return (
-        <Modal show={show} onHide={onHide} centered>
+        <Modal show={show} onHide={handleClose} centered className={styles.modal}>
             <Modal.Header closeButton>
                 <Modal.Title>Изменение пароля</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {/* Уведомления */}
-                {successMessage && (
-                    <Alert variant="success" className={styles.successAlert} onClose={() => setSuccessMessage(null)} dismissible>
-                        <Alert.Heading>✅ Успешно!</Alert.Heading>
-                        <p>{successMessage}</p>
-                    </Alert>
-                )}
-                {serverError && (
-                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setServerError(null)} dismissible>
-                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
-                        <p>{serverError}</p>
+                {/* Предупреждение о совпадении паролей */}
+                {warningMessage && (
+                    <Alert
+                        variant="danger"
+                        className={styles.warningAlert}
+                        onClose={() => setWarningMessage(null)}
+                        dismissible
+                    >
+                        <Alert.Heading>⚠️ Ошибка</Alert.Heading>
+                        <p>{warningMessage}</p>
                     </Alert>
                 )}
 
-                <Form>
-                    {/* Старый пароль */}
+                {/* Ошибка от сервера */}
+                {error && (
+                    <Alert variant="danger" className={styles.errorAlert} onClose={() => setError(null)} dismissible>
+                        <Alert.Heading>❌ Ошибка!</Alert.Heading>
+                        <p>{error}</p>
+                    </Alert>
+                )}
+
+                <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
                         <Form.Label>Текущий пароль *</Form.Label>
                         <div className={styles.passwordInputWrapper}>
                             <Form.Control
-                                type={showOldPassword ? 'text' : 'password'}
-                                value={oldPassword}
+                                type={showCurrentPassword ? "text" : "password"}
+                                value={currentPassword}
                                 onChange={(e) => {
-                                    setOldPassword(e.target.value);
-                                    setOldPasswordError('');
-                                    setServerError(null);
+                                    setCurrentPassword(e.target.value);
+                                    setFieldErrors(prev => ({ ...prev, currentPassword: undefined }));
+                                    setWarningMessage(null);
                                 }}
+                                isInvalid={!!fieldErrors.currentPassword}
                                 placeholder="Введите текущий пароль"
-                                isInvalid={!!oldPasswordError}
                                 className={styles.passwordInput}
+                                required
                             />
                             <Button
+                                type="button"
                                 variant="link"
+                                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                                 className={styles.passwordToggle}
-                                onClick={() => setShowOldPassword(!showOldPassword)}
                             >
-                                {showOldPassword ? '🙈' : '👁️'}
+                                {showCurrentPassword ? "🙈" : "👁️"}
                             </Button>
                         </div>
                         <Form.Control.Feedback type="invalid">
-                            {oldPasswordError}
+                            {fieldErrors.currentPassword}
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    {/* Новый пароль */}
                     <Form.Group className="mb-3">
                         <Form.Label>Новый пароль *</Form.Label>
                         <div className={styles.passwordInputWrapper}>
                             <Form.Control
-                                type={showNewPassword ? 'text' : 'password'}
+                                type={showNewPassword ? "text" : "password"}
                                 value={newPassword}
                                 onChange={(e) => {
                                     setNewPassword(e.target.value);
-                                    setNewPasswordError('');
-                                    setServerError(null);
+                                    setFieldErrors(prev => ({ ...prev, newPassword: undefined }));
+                                    setWarningMessage(null);
                                 }}
+                                isInvalid={!!fieldErrors.newPassword}
                                 placeholder="Введите новый пароль"
-                                isInvalid={!!newPasswordError}
                                 className={styles.passwordInput}
+                                required
                             />
                             <Button
+                                type="button"
                                 variant="link"
-                                className={styles.passwordToggle}
                                 onClick={() => setShowNewPassword(!showNewPassword)}
+                                className={styles.passwordToggle}
                             >
-                                {showNewPassword ? '🙈' : '👁️'}
+                                {showNewPassword ? "🙈" : "👁️"}
                             </Button>
                         </div>
                         <Form.Control.Feedback type="invalid">
-                            {newPasswordError}
+                            {fieldErrors.newPassword}
                         </Form.Control.Feedback>
                         <Form.Text className="text-muted">
                             Пароль должен содержать не менее 6 символов
                         </Form.Text>
                     </Form.Group>
 
-                    {/* Подтверждение пароля */}
                     <Form.Group className="mb-3">
                         <Form.Label>Подтверждение пароля *</Form.Label>
                         <div className={styles.passwordInputWrapper}>
                             <Form.Control
-                                type={showConfirmPassword ? 'text' : 'password'}
+                                type={showNewPassword ? "text" : "password"}
                                 value={confirmPassword}
                                 onChange={(e) => {
                                     setConfirmPassword(e.target.value);
-                                    setConfirmPasswordError('');
-                                    setServerError(null);
+                                    setFieldErrors(prev => ({ ...prev, confirmPassword: undefined }));
+                                    setWarningMessage(null);
                                 }}
+                                isInvalid={!!fieldErrors.confirmPassword}
                                 placeholder="Повторите новый пароль"
-                                isInvalid={!!confirmPasswordError}
                                 className={styles.passwordInput}
+                                required
                             />
-                            <Button
-                                variant="link"
-                                className={styles.passwordToggle}
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            >
-                                {showConfirmPassword ? '🙈' : '👁️'}
-                            </Button>
                         </div>
                         <Form.Control.Feedback type="invalid">
-                            {confirmPasswordError}
+                            {fieldErrors.confirmPassword}
                         </Form.Control.Feedback>
                     </Form.Group>
+
+                    <div className="d-flex gap-2 mt-3">
+                        <Button variant="secondary" onClick={handleClose} disabled={loading} className="flex-grow-1">
+                            Отмена
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            disabled={loading}
+                            className={styles.submitButton}
+                        >
+                            {loading ? 'Сохранение...' : 'Сохранить'}
+                        </Button>
+                    </div>
                 </Form>
             </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Отмена
-                </Button>
-                <Button
-                    variant="primary"
-                    onClick={handleChangePassword}
-                    disabled={isChanging}
-                >
-                    {isChanging ? 'Сохранение...' : 'Сохранить'}
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
 };
