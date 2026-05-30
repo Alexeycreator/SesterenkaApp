@@ -164,54 +164,51 @@ public sealed class OrderItemsController(ServerDbContext dbContext) : Controller
             }
 
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Login == request.UserLogin);
-            if (user != null)
+            if (user == null)
             {
-                var ordersUser = await dbContext.Orders.Where(ou =>
-                        ou.Users_Id == user.Id && ou.Status != statusProcessing && ou.Status != statusCompleted)
-                    .ToListAsync();
+                loggerOrderItemsController.Error($"Пользователь {request.UserLogin} не найден");
+                return NotFound(new { message = "Пользователь не найден" });
+            }
 
-                if (ordersUser.Count == 0)
-                {
-                    loggerOrderItemsController.Info($"Создание заказа пользователя {request.UserLogin}");
-                    var order = new OrdersModel()
-                    {
-                        OrderDate = DateTime.Now,
-                        Status = statusBasket,
-                        Users_Id = user.Id,
-                        NameOrder = GenerateOrderNumber()
-                    };
-                    dbContext.Orders.Add(order);
-                    loggerOrderItemsController.Info($"Заказ успешно добавлен в БД");
-                    await dbContext.SaveChangesAsync();
-                    loggerOrderItemsController.Info($"Все изменения внесены в БД");
-                }
+            var order = await dbContext.Orders
+                .FirstOrDefaultAsync(o => o.Users_Id == user.Id && o.Status == statusBasket);
 
-                var orderId = ordersUser.Where(os => os.Status == statusBasket && os.Users_Id == user.Id)
-                    .Select(os => os.Id).FirstOrDefault();
+            if (order == null)
+            {
+                loggerOrderItemsController.Info($"Создание заказа для пользователя {request.UserLogin}");
+                order = new OrdersModel()
+                {
+                    OrderDate = DateTime.Now,
+                    Status = statusBasket,
+                    Users_Id = user.Id,
+                    NameOrder = GenerateOrderNumber()
+                };
+                dbContext.Orders.Add(order);
+                await dbContext.SaveChangesAsync();
+                loggerOrderItemsController.Info($"Заказ создан с Id = {order.Id}");
+            }
 
-                var existOrderItem =
-                    await dbContext.OrderItems.FirstOrDefaultAsync(oi =>
-                        oi.Products_Id == request.Product_Id && oi.Orders_Id == orderId);
-                if (existOrderItem != null)
+            var existOrderItem = await dbContext.OrderItems
+                .FirstOrDefaultAsync(oi => oi.Products_Id == request.Product_Id && oi.Orders_Id == order.Id);
+
+            if (existOrderItem != null)
+            {
+                existOrderItem.Quantity += request.Quantity;
+                dbContext.OrderItems.Update(existOrderItem);
+                loggerOrderItemsController.Info($"Обновление количества товара с id = {request.Product_Id} в корзине");
+            }
+            else
+            {
+                loggerOrderItemsController.Info($"Добавление товара в корзину");
+                var orderItem = new OrderItemsModel()
                 {
-                    existOrderItem.Quantity += request.Quantity;
-                    dbContext.OrderItems.Update(existOrderItem);
-                    loggerOrderItemsController.Info(
-                        $"Обновление количества товара с id = {request.Product_Id} в корзине");
-                }
-                else
-                {
-                    loggerOrderItemsController.Info($"Добавление товара в корзину");
-                    var orderItem = new OrderItemsModel()
-                    {
-                        Quantity = request.Quantity,
-                        PriceAtMoment = product.Price,
-                        Orders_Id = orderId,
-                        Products_Id = request.Product_Id
-                    };
-                    dbContext.OrderItems.Add(orderItem);
-                    loggerOrderItemsController.Info($"Товары добавлены в корзину");
-                }
+                    Quantity = request.Quantity,
+                    PriceAtMoment = product.Price,
+                    Orders_Id = order.Id,
+                    Products_Id = request.Product_Id
+                };
+                dbContext.OrderItems.Add(orderItem);
+                loggerOrderItemsController.Info($"Товар добавлен в корзину");
             }
 
             await dbContext.SaveChangesAsync();
