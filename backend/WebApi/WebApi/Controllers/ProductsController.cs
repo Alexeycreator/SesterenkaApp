@@ -422,8 +422,77 @@ public sealed class ProductsController(ServerDbContext dbContext) : ControllerBa
                 return NotFound(new { message = "Товар не найден" });
             }
 
+            var stocks = await dbContext.Stocks
+                .Where(s => s.Products_Id == productId).Include(stocksModel => stocksModel.Warehouses)
+                .ToListAsync();
+
+            var totalQuantity = stocks.Sum(s => s.Quantity);
+
+            if (totalQuantity > 0)
+            {
+                var warehousesWithStock = stocks
+                    .Where(s => s.Quantity > 0)
+                    .Select(s => new
+                    {
+                        WarehouseName = s.Warehouses != null ? s.Warehouses.Name : "Неизвестный склад",
+                        Quantity = s.Quantity
+                    })
+                    .ToList();
+
+                var warehouseDetails = string.Join(", ",
+                    warehousesWithStock.Select(w => $"{w.WarehouseName} (остаток: {w.Quantity} шт.)"));
+                loggerProductsController.Error(
+                    $"Товар '{product.Name}' (id = {productId}) нельзя удалить. Остатки на складах: {warehouseDetails}");
+                return BadRequest(new
+                {
+                    message = $"Невозможно удалить товар '{product.Name}', так как он ещё есть на складах. " +
+                              Environment.NewLine + $"Общий остаток: {totalQuantity} шт. " + Environment.NewLine +
+                              $"Детали: {warehouseDetails}. " + Environment.NewLine +
+                              $"Сначала необходимо полностью продать товар или обнулить остатки."
+                });
+            }
+
+            var orderItems = await dbContext.OrderItems
+                .Include(oi => oi.Orders)
+                .Where(oi => oi.Products_Id == productId && oi.Orders.Status == "В корзине")
+                .ToListAsync();
+            if (orderItems.Any())
+            {
+                var totalInCarts = orderItems.Sum(oi => oi.Quantity);
+                loggerProductsController.Error(
+                    $"Товар '{product.Name}' (id = {productId}) находится в корзинах пользователей. Количество: {totalInCarts} шт.");
+                return BadRequest(new
+                {
+                    message =
+                        $"Невозможно удалить товар '{product.Name}', так как он находится в корзинах пользователей ({totalInCarts} шт.). " +
+                        Environment.NewLine + $"Сначала необходимо очистить корзины."
+                });
+            }
+
+            var activeOrderItems = await dbContext.OrderItems
+                .Include(oi => oi.Orders)
+                .Where(oi => oi.Products_Id == productId &&
+                             oi.Orders.Status != "Отменен" &&
+                             oi.Orders.Status != "Выдан" &&
+                             oi.Orders.Status != "В корзине")
+                .ToListAsync();
+            if (activeOrderItems.Any())
+            {
+                var totalInOrders = activeOrderItems.Sum(oi => oi.Quantity);
+                var orderStatuses = activeOrderItems.Select(oi => oi.Orders.Status).Distinct();
+
+                loggerProductsController.Error(
+                    $"Товар '{product.Name}' (id = {productId}) находится в активных заказах. Статусы: {string.Join(", ", orderStatuses)}");
+                return BadRequest(new
+                {
+                    message =
+                        $"Невозможно удалить товар '{product.Name}', так как он находится в активных заказах (статусы: {string.Join(", ", orderStatuses)}). " +
+                        Environment.NewLine + $"Количество: {totalInOrders} шт."
+                });
+            }
+
             dbContext.Products.Remove(product);
-            loggerProductsController.Info($"Товар удален");
+            loggerProductsController.Info($"Товар '{product.Name}' (id = {productId}) успешно удален");
             await dbContext.SaveChangesAsync();
             loggerProductsController.Info($"Все изменения внесены в БД");
 
