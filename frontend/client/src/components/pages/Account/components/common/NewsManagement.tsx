@@ -6,6 +6,9 @@ import { useAuth } from '../../../../../contexts/AuthContext';
 
 import styles from '../AdminPanel.module.css';
 
+// Константа для изображения по умолчанию
+const DEFAULT_NEWS_IMAGE = 'Images/News/default.png';
+
 interface NewsManagementProps {
     show: boolean;
     onHide: () => void;
@@ -22,7 +25,7 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
-        date: new Date().toISOString().split('T')[0], // ← формат YYYY-MM-DD для input
+        date: new Date().toISOString().split('T')[0], // формат YYYY-MM-DD для input
         theme: '',
         body: '',
         image: '',
@@ -91,6 +94,20 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
         setTimeout(() => setErrorMessage(null), 5000);
     };
 
+    // Получение пути к изображению (с дефолтным значением)
+    const getImagePath = (): string => {
+        const trimmedImage = formData.image?.trim();
+        return trimmedImage || DEFAULT_NEWS_IMAGE;
+    };
+
+    // Получение даты в формате YYYY-MM-DD для отправки на сервер
+    const getFormattedDate = (): string => {
+        if (!formData.date) {
+            return new Date().toISOString().split('T')[0];
+        }
+        return formData.date;
+    };
+
     // Создание новости
     const handleCreate = async () => {
         if (!currentUser?.id) {
@@ -113,15 +130,17 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
         setFieldErrors({});
 
         try {
-            // Отправляем дату в формате ISO строки
+            // Подготавливаем данные для отправки
             const newsData = {
                 id: 0,
-                date: formData.date, // уже в формате YYYY-MM-DD
+                date: getFormattedDate(), // только дата без времени
                 theme: formData.theme.trim(),
                 body: formData.body.trim(),
-                image: formData.image.trim() || null,
+                image: getImagePath(),
                 type: formData.type
             };
+
+            console.log('Отправляемые данные (создание):', newsData);
 
             await createNews(currentUser.id, newsData);
             showSuccess('Новость успешно создана');
@@ -130,7 +149,7 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
             onRefresh?.();
         } catch (error: any) {
             console.error('Ошибка создания новости:', error);
-            
+
             // Обработка валидационных ошибок от сервера
             if (error.response?.data?.errors) {
                 setFieldErrors(error.response.data.errors);
@@ -173,15 +192,17 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
         setFieldErrors({});
 
         try {
-            // Отправляем дату в формате YYYY-MM-DD
+            // Подготавливаем данные для отправки
             const newsData = {
                 id: editingNews.id,
-                date: formData.date,
+                date: getFormattedDate(), // только дата без времени
                 theme: formData.theme.trim(),
                 body: formData.body.trim(),
-                image: formData.image.trim() || null,
+                image: getImagePath(),
                 type: formData.type
             };
+
+            console.log('Отправляемые данные (обновление):', newsData);
 
             await updateNews(currentUser.id, newsData);
             showSuccess('Новость успешно обновлена');
@@ -190,7 +211,7 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
             onRefresh?.();
         } catch (error: any) {
             console.error('Ошибка обновления новости:', error);
-            
+
             // Обработка валидационных ошибок от сервера
             if (error.response?.data?.errors) {
                 setFieldErrors(error.response.data.errors);
@@ -235,15 +256,16 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
     };
 
     const handleEdit = (newsItem: News) => {
-        // Преобразуем дату из объекта Date в строку YYYY-MM-DD
+        // Преобразуем дату в формат YYYY-MM-DD
         let dateStr = '';
         if (newsItem.date) {
+            // Если date пришёл как объект Date или строка
             const date = new Date(newsItem.date);
             if (!isNaN(date.getTime())) {
                 dateStr = date.toISOString().split('T')[0];
             }
         }
-        
+
         setEditingNews(newsItem);
         setFormData({
             date: dateStr || new Date().toISOString().split('T')[0],
@@ -365,9 +387,6 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
                                 <Form.Control.Feedback type="invalid">
                                     {fieldErrors.date}
                                 </Form.Control.Feedback>
-                                <Form.Text className="text-muted">
-                                    Если не указать, будет использована текущая дата
-                                </Form.Text>
                             </Form.Group>
 
                             <Form.Group className="mb-3">
@@ -418,11 +437,11 @@ export const NewsManagement: React.FC<NewsManagementProps> = ({ show, onHide, on
                                     type="text"
                                     value={formData.image}
                                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                    placeholder="Images/News/filename.jpg"
+                                    placeholder={DEFAULT_NEWS_IMAGE}
                                     disabled={saving}
                                 />
                                 <Form.Text className="text-muted">
-                                    Пример: Images/News/news-001.jpg
+                                    Если не указать, будет использовано изображение по умолчанию: {DEFAULT_NEWS_IMAGE}
                                 </Form.Text>
                             </Form.Group>
 

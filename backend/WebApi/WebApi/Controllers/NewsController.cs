@@ -97,7 +97,9 @@ public sealed class NewsController(ServerDbContext dbContext) : ControllerBase
                 return BadRequest(new { message = $"Тема новости обязательна для заполнения" });
             }
 
-            if (Convert.ToDateTime(request.Date) > DateTime.Now.AddDays(1))
+            var publicationDate = request.Date.ToDateTime(TimeOnly.MinValue);
+            var maxAllowedDate = DateTime.Now.AddDays(1);
+            if (publicationDate > maxAllowedDate)
             {
                 loggerNewsController.Error($"Дата опубликования должна быть актуальна на сегодняшний день");
                 return BadRequest(new { message = $"Дата опубликования должна быть актуальна на сегодняшний день" });
