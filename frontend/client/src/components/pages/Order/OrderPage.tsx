@@ -17,10 +17,7 @@ let isLoadingOrderItems = false;
 let isInitialized = false;
 
 const OrderPage = () => {
-    // для навигации
     const navigate = useNavigate();
-
-    // для проверки авторизации
     const { isAuthenticated, user } = useAuth();
 
     // состояния пунктов выдачи
@@ -47,7 +44,56 @@ const OrderPage = () => {
     // Состояние для модального окна подтверждения оплаты
     const [showPaymentModal, setShowPaymentModal] = useState(false);
 
+    // Состояния для редактируемых полей получателя
+    const [recipientData, setRecipientData] = useState({
+        fullName: '',
+        phone: '',
+        email: ''
+    });
+    const [fieldErrors, setFieldErrors] = useState<{
+        phone?: string;
+        email?: string;
+    }>({});
+
     const isMounted = useRef(true);
+
+    // Форматирование ФИО (без пустого отчества)
+    const formatFullName = () => {
+        const parts = [
+            user?.secondName,
+            user?.firstName,
+            user?.surName
+        ].filter(part => part && part.trim());
+        return parts.join(' ');
+    };
+
+    // Валидация телефона
+    const validatePhone = (phone: string): boolean => {
+        const phoneRegex = /^(\+7|7|8)\d{10}$/;
+        return phoneRegex.test(phone);
+    };
+
+    // Валидация email
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    // Валидация формы получателя
+    const validateRecipientForm = (): boolean => {
+        const errors: { phone?: string; email?: string } = {};
+
+        if (recipientData.phone && !validatePhone(recipientData.phone)) {
+            errors.phone = 'Неверный формат телефона. Используйте: 8XXXXXXXXXX, 7XXXXXXXXXX или +7XXXXXXXXXX';
+        }
+
+        if (recipientData.email && !validateEmail(recipientData.email)) {
+            errors.email = 'Неверный формат email';
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const showSuccess = (message: string) => {
         setSuccessMessage(message);
@@ -61,7 +107,6 @@ const OrderPage = () => {
 
     // получение адресов пунктов выдачи
     const fetchAddresses = async (forceRefresh: boolean = false) => {
-        // Если данные уже загружены и не принудительное обновление, используем кэш
         if (cachedAddresses !== null && !forceRefresh && isInitialized) {
             if (isMounted.current) {
                 setAddressesData(cachedAddresses);
@@ -70,7 +115,6 @@ const OrderPage = () => {
             return;
         }
 
-        // Если уже идет загрузка, ждем
         if (isLoadingAddresses) return;
 
         isLoadingAddresses = true;
@@ -81,8 +125,6 @@ const OrderPage = () => {
 
         try {
             const addresses = await getShopAddress();
-
-            // Сохраняем в кэш
             cachedAddresses = addresses;
             isInitialized = true;
 
@@ -118,7 +160,6 @@ const OrderPage = () => {
     const fetchOrderItems = async (forceRefresh: boolean = false) => {
         if (!user?.login) return;
 
-        // Если данные уже загружены и не принудительное обновление, используем кэш
         if (cachedOrderItems !== null && !forceRefresh) {
             if (isMounted.current) {
                 setOrderItemsData(cachedOrderItems);
@@ -128,7 +169,6 @@ const OrderPage = () => {
             return;
         }
 
-        // Если уже идет загрузка, ждем
         if (isLoadingOrderItems) return;
 
         isLoadingOrderItems = true;
@@ -139,8 +179,6 @@ const OrderPage = () => {
 
         try {
             const orderItems = await getOrderItemData(user.login, user.role || '');
-
-            // Сохраняем в кэш
             cachedOrderItems = orderItems;
 
             if (isMounted.current) {
@@ -172,6 +210,17 @@ const OrderPage = () => {
         }
     };
 
+    // Инициализация данных получателя из профиля
+    useEffect(() => {
+        if (user) {
+            setRecipientData({
+                fullName: formatFullName(),
+                phone: user.phoneNumber || '',
+                email: user.email || ''
+            });
+        }
+    }, [user]);
+
     // хуки
     useEffect(() => {
         isMounted.current = true;
@@ -179,7 +228,6 @@ const OrderPage = () => {
         fetchAddresses();
         fetchOrderItems();
 
-        // Слушаем событие обновления корзины
         const handleCartUpdate = () => {
             cachedOrderItems = null;
             fetchOrderItems(true);
@@ -193,12 +241,52 @@ const OrderPage = () => {
         };
     }, [user?.login]);
 
+    // Обработчик изменения полей получателя
+    const handleRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setRecipientData(prev => ({ ...prev, [name]: value }));
+
+        // Очищаем ошибки при изменении
+        if (name === 'phone' && fieldErrors.phone) {
+            setFieldErrors(prev => ({ ...prev, phone: undefined }));
+        }
+        if (name === 'email' && fieldErrors.email) {
+            setFieldErrors(prev => ({ ...prev, email: undefined }));
+        }
+    };
+
+    // Обработчик для телефона с форматированием
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, '');
+
+        if (value.length > 11) {
+            value = value.slice(0, 11);
+        }
+
+        let formattedValue = value;
+        if (value.startsWith('8') || value.startsWith('7')) {
+            formattedValue = value;
+        } else if (value.startsWith('9') && value.length === 10) {
+            formattedValue = `+7${value}`;
+        }
+
+        setRecipientData(prev => ({ ...prev, phone: formattedValue }));
+
+        if (fieldErrors.phone) {
+            setFieldErrors(prev => ({ ...prev, phone: undefined }));
+        }
+    };
+
     const total = orderItemsData?.totalAmount || 0;
 
-    // Обработчик подтверждения заказа с модальным окном
     const handleConfirmOrder = async () => {
         if (!selectedAddressShop) {
             showError('Пожалуйста, выберите пункт выдачи');
+            return;
+        }
+
+        if (!validateRecipientForm()) {
+            showError('Пожалуйста, исправьте ошибки в форме');
             return;
         }
 
@@ -219,11 +307,9 @@ const OrderPage = () => {
 
             await createOrder(orderData);
 
-            // Закрываем модальное окно и показываем успех
             setShowPaymentModal(false);
             showSuccess('Заказ успешно оформлен!');
 
-            // Очищаем кэш корзины
             cachedOrderItems = null;
 
             setTimeout(() => {
@@ -254,11 +340,15 @@ const OrderPage = () => {
                 return;
             }
 
+            if (!validateRecipientForm()) {
+                showError('Пожалуйста, исправьте ошибки в форме');
+                return;
+            }
+
             setStep(2);
             return;
         }
 
-        // Шаг 2 - показываем модальное окно с информацией об оплате
         setShowPaymentModal(true);
     };
 
@@ -266,7 +356,6 @@ const OrderPage = () => {
         return addressesData.find(a => a.id === selectedAddressShop);
     };
 
-    // Сброс подтверждения при закрытии модального окна
     const handleClosePaymentModal = () => {
         setShowPaymentModal(false);
     };
@@ -404,13 +493,11 @@ const OrderPage = () => {
                 </div>
             ) : (
                 <Row>
-                    {/* Форма оформления */}
                     <Col lg={8}>
                         <Card className={styles.checkoutCard}>
                             <Card.Body>
                                 <form onSubmit={handleSubmit}>
                                     {step === 1 ? (
-                                        // Шаг 1: Данные получателя и выбор пункта выдачи
                                         <>
                                             <h3 className={styles.sectionTitle}>🏪 Пункт выдачи</h3>
                                             <div className={styles.pickupPoints}>
@@ -449,7 +536,8 @@ const OrderPage = () => {
                                                         <Form.Control
                                                             type="text"
                                                             name="fullName"
-                                                            value={`${user?.secondName} ${user?.firstName} ${user?.surName}`}
+                                                            value={recipientData.fullName}
+                                                            onChange={handleRecipientChange}
                                                             required
                                                             disabled={!isAuthenticated}
                                                             placeholder="Иванов Иван Иванович"
@@ -462,11 +550,19 @@ const OrderPage = () => {
                                                         <Form.Control
                                                             type="tel"
                                                             name="phone"
-                                                            value={user?.phoneNumber}
+                                                            value={recipientData.phone}
+                                                            onChange={handlePhoneChange}
+                                                            isInvalid={!!fieldErrors.phone}
                                                             required
                                                             disabled={!isAuthenticated}
-                                                            placeholder="+7 (999) 123-45-67"
+                                                            placeholder="+7XXXXXXXXXX"
                                                         />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {fieldErrors.phone}
+                                                        </Form.Control.Feedback>
+                                                        <Form.Text className="text-muted">
+                                                            Формат: 8XXXXXXXXXX, 7XXXXXXXXXX или +7XXXXXXXXXX
+                                                        </Form.Text>
                                                     </Form.Group>
                                                 </Col>
                                             </Row>
@@ -476,15 +572,19 @@ const OrderPage = () => {
                                                 <Form.Control
                                                     type="email"
                                                     name="email"
-                                                    value={user?.email}
+                                                    value={recipientData.email}
+                                                    onChange={handleRecipientChange}
+                                                    isInvalid={!!fieldErrors.email}
                                                     required
                                                     disabled={!isAuthenticated}
                                                     placeholder="example@mail.ru"
                                                 />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {fieldErrors.email}
+                                                </Form.Control.Feedback>
                                             </Form.Group>
                                         </>
                                     ) : (
-                                        // Шаг 2: Подтверждение заказа
                                         <>
                                             <h3 className={styles.sectionTitle}>📋 Ваш заказ</h3>
                                             <div className={styles.orderItems}>
@@ -512,9 +612,9 @@ const OrderPage = () => {
 
                                             <h3 className={styles.sectionTitle}>👤 Данные получателя</h3>
                                             <div className={styles.addressSummary}>
-                                                <p><strong>{user?.secondName} {user?.firstName} {user?.surName}</strong></p>
-                                                <p>{user?.phoneNumber}</p>
-                                                <p>{user?.email}</p>
+                                                <p><strong>{recipientData.fullName}</strong></p>
+                                                <p>{recipientData.phone}</p>
+                                                <p>{recipientData.email}</p>
                                             </div>
                                         </>
                                     )}
@@ -530,7 +630,6 @@ const OrderPage = () => {
                                                 ← Назад
                                             </Button>
                                         )}
-
                                         <Button
                                             type="submit"
                                             className={styles.submitButton}
@@ -546,7 +645,6 @@ const OrderPage = () => {
                         </Card>
                     </Col>
 
-                    {/* Итоговая информация */}
                     <Col lg={4}>
                         <Card className={styles.summaryCard}>
                             <Card.Body>
