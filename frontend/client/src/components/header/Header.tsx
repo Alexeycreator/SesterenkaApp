@@ -56,7 +56,8 @@ export default class Header extends Component<{}, HeaderState> {
     private fetchTimeout: NodeJS.Timeout | null = null;
     private isFetching = false;
     private debounceTimeout: NodeJS.Timeout | null = null;
-    private readonly DEBOUNCE_DELAY = 300;
+    private readonly DEBOUNCE_DELAY = 500;
+    private lastCartCount = 0; // Запоминаем последнее значение
 
     private readonly initialRegistrationForm: RegistrationFormData = {
         firstName: '',
@@ -100,26 +101,29 @@ export default class Header extends Component<{}, HeaderState> {
             this.fetchCartItemsCount();
         }
 
-        window.addEventListener('cartUpdated', this.handleCartUpdateDebounced);
+        window.addEventListener('cartUpdated', this.handleCartUpdate);
     }
 
     componentDidUpdate(prevProps: {}, prevState: HeaderState) {
         const currentUser = this.context?.user;
         const prevUser = prevState.user;
+        const currentIsAuthenticated = this.context?.isAuthenticated;
+        const prevIsAuthenticated = prevState.user !== null;
 
-        if (prevUser !== currentUser) {
-            const { isAuthenticated } = this.context || {};
-            if (isAuthenticated && currentUser) {
+        // Только при изменении статуса авторизации
+        if (currentIsAuthenticated !== prevIsAuthenticated) {
+            if (currentIsAuthenticated && currentUser) {
                 this.fetchCartItemsCount();
             } else {
                 this.setState({ cartItemsCount: 0 });
+                this.lastCartCount = 0;
             }
         }
     }
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
-        window.removeEventListener('cartUpdated', this.handleCartUpdateDebounced);
+        window.removeEventListener('cartUpdated', this.handleCartUpdate);
 
         if (this.fetchTimeout) {
             clearTimeout(this.fetchTimeout);
@@ -129,48 +133,57 @@ export default class Header extends Component<{}, HeaderState> {
         }
     }
 
-    handleCartUpdateDebounced = () => {
-        if (this.debounceTimeout) {
-            clearTimeout(this.debounceTimeout);
-        }
-        this.debounceTimeout = setTimeout(() => {
-            const { isAuthenticated, user } = this.context || {};
-            if (isAuthenticated && user) {
-                this.fetchCartItemsCount();
+    handleCartUpdate = () => {
+        // Просто обновляем корзину без лишних вызовов
+        if (this.context?.isAuthenticated && this.context?.user) {
+            // Отменяем предыдущий таймаут
+            if (this.debounceTimeout) {
+                clearTimeout(this.debounceTimeout);
             }
-        }, this.DEBOUNCE_DELAY);
+            this.debounceTimeout = setTimeout(() => {
+                this.fetchCartItemsCount();
+            }, this.DEBOUNCE_DELAY);
+        }
     };
 
     fetchCartItemsCount = async () => {
         const { user, isAuthenticated } = this.context || {};
 
         if (!isAuthenticated || !user) {
-            this.setState({ cartItemsCount: 0 });
+            if (this.state.cartItemsCount !== 0) {
+                this.setState({ cartItemsCount: 0 });
+                this.lastCartCount = 0;
+            }
             return;
         }
 
+        // Предотвращаем повторные вызовы
         if (this.isFetching) return;
 
         this.isFetching = true;
 
         try {
             const orderItem = await getOrderItemData(user.login || '', user.role || '');
+            let newCount = 0;
+
             if (orderItem && orderItem.items && orderItem.items.length > 0) {
-                const totalCount = orderItem.items.reduce((sum, item) => sum + item.quantity, 0);
-                if (this.state.cartItemsCount !== totalCount) {
-                    this.setState({ cartItemsCount: totalCount });
-                }
-            } else {
-                if (this.state.cartItemsCount !== 0) {
-                    this.setState({ cartItemsCount: 0 });
-                }
+                newCount = orderItem.items.reduce((sum, item) => sum + item.quantity, 0);
+            }
+
+            // Обновляем только если значение изменилось
+            if (this.lastCartCount !== newCount) {
+                this.lastCartCount = newCount;
+                this.setState({ cartItemsCount: newCount });
             }
         } catch (error: any) {
-            if (error.statusCode !== 404) {
-                console.error('Не удалось загрузить корзину:', error.message || error.serverMessage);
-            }
             if (error.statusCode === 404) {
-                this.setState({ cartItemsCount: 0 });
+                // Корзина пуста
+                if (this.lastCartCount !== 0) {
+                    this.lastCartCount = 0;
+                    this.setState({ cartItemsCount: 0 });
+                }
+            } else if (error.statusCode !== 404) {
+                console.error('Не удалось загрузить корзину:', error.message || error.serverMessage);
             }
         } finally {
             this.isFetching = false;
@@ -224,8 +237,6 @@ export default class Header extends Component<{}, HeaderState> {
             });
 
             await this.fetchCartItemsCount();
-            const event = new CustomEvent('cartUpdated');
-            window.dispatchEvent(event);
         } catch (error: any) {
             if (error.response?.status === 401) {
                 this.setState({
@@ -248,8 +259,8 @@ export default class Header extends Component<{}, HeaderState> {
             showUserMenu: false,
             cartItemsCount: 0
         });
-        const event = new CustomEvent('cartUpdated');
-        window.dispatchEvent(event);
+        this.lastCartCount = 0;
+        window.dispatchEvent(new CustomEvent('cartUpdated'));
     };
 
     switchToRegistration = () => {
@@ -410,8 +421,6 @@ export default class Header extends Component<{}, HeaderState> {
             });
 
             await this.fetchCartItemsCount();
-            const event = new CustomEvent('cartUpdated');
-            window.dispatchEvent(event);
         } catch (error: any) {
             console.error('Ошибка регистрации:', error);
             if (error.statusCode === 409) {
