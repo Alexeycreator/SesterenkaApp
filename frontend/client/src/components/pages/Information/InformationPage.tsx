@@ -16,35 +16,44 @@ const InformationPage = () => {
     const navigate = useNavigate();
 
     // состояния информации
-    const [loadingInformation, setLoadingInformation] = useState(true);
+    const [loadingInformation, setLoadingInformation] = useState(!cachedData); // ← Используем кэш для начального состояния
     const [errorInformation, setErrorInformation] = useState<string | null>(null);
 
     // данные для отображения
-    const [aboutUsList, setAboutUsList] = useState<string[]>([]);
-    const [questionsList, setQuestionsList] = useState<string[]>([]);
-    const [ourMissionList, setOurMissionList] = useState<string[]>([]);
-    const [ourValuesList, setOurValuesList] = useState<string[]>([]);
-
-    // сотрудники и адреса
-    const [employees, setEmployees] = useState<any[]>([]);
-    const [shops, setShops] = useState<any[]>([]);
+    const [aboutUsList, setAboutUsList] = useState<string[]>(cachedData?.aboutUs || []);
+    const [questionsList, setQuestionsList] = useState<string[]>(cachedData?.questions || []);
+    const [ourMissionList, setOurMissionList] = useState<string[]>(cachedData?.ourMission || []);
+    const [ourValuesList, setOurValuesList] = useState<string[]>(cachedData?.ourValues || []);
+    const [employees, setEmployees] = useState<any[]>(cachedData?.usersInfo || []);
+    const [shops, setShops] = useState<any[]>(() => {
+        if (cachedData?.addressesInfo) {
+            return cachedData.addressesInfo.filter((addr: any) => addr.isShop === true);
+        }
+        return [];
+    });
 
     const isMounted = useRef(true);
+    const isInitialMount = useRef(true);
+
+    // Функция для обновления состояния из данных
+    const updateStateFromData = (data: any) => {
+        if (!isMounted.current) return;
+
+        setAboutUsList(data.aboutUs || []);
+        setQuestionsList(data.questions || []);
+        setOurMissionList(data.ourMission || []);
+        setOurValuesList(data.ourValues || []);
+        setEmployees(data.usersInfo || []);
+
+        const shopAddresses = (data.addressesInfo || []).filter((addr: any) => addr.isShop === true);
+        setShops(shopAddresses);
+    };
 
     const fetchInformation = async (forceRefresh: boolean = false) => {
         // Если данные уже загружены и не принудительное обновление, используем кэш
         if (cachedData !== null && !forceRefresh && isInitialized) {
             if (isMounted.current) {
-                const firstItem = cachedData;
-
-                setAboutUsList(firstItem.aboutUs || []);
-                setQuestionsList(firstItem.questions || []);
-                setOurMissionList(firstItem.ourMission || []);
-                setOurValuesList(firstItem.ourValues || []);
-                setEmployees(firstItem.usersInfo || []);
-
-                const shopAddresses = (firstItem.addressesInfo || []).filter((addr: any) => addr.isShop === true);
-                setShops(shopAddresses);
+                updateStateFromData(cachedData);
                 setLoadingInformation(false);
             }
             return;
@@ -70,14 +79,7 @@ const InformationPage = () => {
                 isInitialized = true;
 
                 if (isMounted.current) {
-                    setAboutUsList(firstItem.aboutUs || []);
-                    setQuestionsList(firstItem.questions || []);
-                    setOurMissionList(firstItem.ourMission || []);
-                    setOurValuesList(firstItem.ourValues || []);
-                    setEmployees(firstItem.usersInfo || []);
-
-                    const shopAddresses = (firstItem.addressesInfo || []).filter((addr: any) => addr.isShop === true);
-                    setShops(shopAddresses);
+                    updateStateFromData(firstItem);
                     setErrorInformation(null);
                 }
             }
@@ -107,14 +109,20 @@ const InformationPage = () => {
     useEffect(() => {
         isMounted.current = true;
 
-        // Загружаем данные только один раз
-        if (!isInitialized) {
+        // Загружаем данные только если кэш пуст или это первый монтирование
+        if (!cachedData || !isInitialized) {
             fetchInformation();
+        } else {
+            // Если кэш есть, но состояние загрузки true, сбрасываем его
+            if (loadingInformation) {
+                setLoadingInformation(false);
+            }
         }
 
         // Слушаем событие обновления данных
         const handleDataUpdate = () => {
             if (isMounted.current) {
+                // Сбрасываем кэш при обновлении
                 cachedData = null;
                 isInitialized = false;
                 fetchInformation(true);
@@ -129,6 +137,14 @@ const InformationPage = () => {
             window.removeEventListener('authChange', handleDataUpdate);
             window.removeEventListener('categoriesUpdated', handleDataUpdate);
         };
+    }, []); // Пустой массив зависимостей
+
+    // Эффект для обновления при навигации (без перезагрузки страницы)
+    useEffect(() => {
+        // Сбрасываем загрузку при монтировании
+        if (cachedData && !loadingInformation) {
+            setLoadingInformation(false);
+        }
     }, []);
 
     if (loadingInformation) {
