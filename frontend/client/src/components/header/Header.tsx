@@ -169,6 +169,9 @@ export default class Header extends Component<{}, HeaderState> {
             if (error.statusCode !== 404) {
                 console.error('Не удалось загрузить корзину:', error.message || error.serverMessage);
             }
+            if (error.statusCode === 404) {
+                this.setState({ cartItemsCount: 0 });
+            }
         } finally {
             this.isFetching = false;
         }

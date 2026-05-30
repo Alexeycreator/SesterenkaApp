@@ -237,6 +237,9 @@ const OrderItemsPage = () => {
             await deleteOrderItem(orderId, productId, currentUser.id);
             notifyCartUpdate();
             await fetchOrderItem(true, true);
+
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
+
         } catch (error: any) {
             console.error('Ошибка удаления:', error);
             const errorMsg = error.serverMessage || error.message || 'Не удалось удалить товар из корзины';
