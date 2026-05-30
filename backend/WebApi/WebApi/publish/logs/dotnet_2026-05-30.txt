@@ -1,0 +1,415 @@
+2026-05-30 15:12:13.3927 [Info] lambda_method33 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:12:13.7170 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-30 15:12:13.7224 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-30 15:12:13.7270 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-30 15:12:13.8383 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-30 15:12:13.8546 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:12:18.4320 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-30 15:12:18.4347 [Info] lambda_method396 Заполнение данных о адресах
+2026-05-30 15:12:18.4347 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-30 15:12:18.4347 [Info] lambda_method396 Заполнение данных о миссиях
+2026-05-30 15:12:18.4347 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:12:18.4347 [Info] lambda_method396 Заполнение данных информации о компании
+2026-05-30 15:12:18.4347 [Info] lambda_method396 Заполнение данных о вопросах
+2026-05-30 15:12:18.4347 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-30 15:12:18.4373 [Info] lambda_method396 Заполнение данных о адресах
+2026-05-30 15:12:18.4373 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:12:18.4373 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-30 15:12:18.4373 [Info] lambda_method396 Заполнение данных о адресах
+2026-05-30 15:12:18.4373 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:12:18.4373 [Warn] lambda_method396 Список сотрудников не получен для страницы информации
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Список адресов не получен для страницы информации
+2026-05-30 15:12:18.4417 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:12:18.4417 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Список адресов не получен для страницы информации
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Текст для блока 'наши задачи' не получен для страницы информации
+2026-05-30 15:12:18.4417 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:12:18.4457 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:12:18.4457 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:12:23.8654 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:12:33.8744 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:12:35.5676 [Info] lambda_method33 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:12:36.0052 [Info] lambda_method33 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:12:44.6783 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:12:54.6889 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-30 15:13:04.7020 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:13:17.3590 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-30 15:13:27.3730 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-30 15:13:37.3837 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-30 15:13:49.6502 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:13:59.6615 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Products уже содержит 195 записей. Пропускаем заполнение.
+2026-05-30 15:14:09.6778 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица WarehousesAddresses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:14:21.8779 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Users уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:14:31.8931 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Orders уже содержит 15 записей. Пропускаем заполнение.
+2026-05-30 15:14:41.9043 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица OrderItems уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:14:54.0000 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица ProductCarApplicability уже содержит 149 записей. Пропускаем заполнение.
+2026-05-30 15:16:46.3643 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-30 15:16:46.3643 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-30 15:16:46.4981 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-30 15:16:47.5053 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-30 15:16:47.5444 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:16:55.3424 [Info] lambda_method50 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:16:57.5540 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:17:09.8169 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:17:19.8278 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:17:29.8346 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-30 15:17:42.1686 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:17:52.1747 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-30 15:18:02.1880 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-30 15:18:52.2881 [Info] lambda_method34 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:18:53.1039 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-30 15:18:53.1039 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-30 15:18:53.1134 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-30 15:18:53.2234 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-30 15:18:53.2395 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:19:03.2526 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:20:31.2035 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-30 15:20:31.2035 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-30 15:20:31.3519 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-30 15:20:32.4984 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-30 15:20:32.5470 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:20:42.5598 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:21:26.0219 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-30 15:21:26.0219 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-30 15:21:26.1502 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-30 15:21:27.2695 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-30 15:21:27.3107 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:21:37.3206 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:21:47.3387 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:21:53.6491 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:21:58.3353 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:21:58.7473 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:21:59.6219 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:22:03.4506 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-30 15:22:03.4506 [Info] lambda_method541 Заполнение данных о адресах
+2026-05-30 15:22:03.4531 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-30 15:22:03.4531 [Info] lambda_method541 Заполнение данных о миссиях
+2026-05-30 15:22:03.4531 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:22:03.4531 [Info] lambda_method541 Заполнение данных информации о компании
+2026-05-30 15:22:03.4531 [Info] lambda_method541 Заполнение данных о вопросах
+2026-05-30 15:22:03.4531 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-30 15:22:03.4565 [Info] lambda_method541 Заполнение данных о адресах
+2026-05-30 15:22:03.4565 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-30 15:22:03.4565 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:22:03.4565 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:22:03.4565 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:22:03.4565 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-30 15:22:03.4565 [Info] lambda_method541 Заполнение данных о адресах
+2026-05-30 15:22:03.4565 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-30 15:22:03.4565 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:22:03.4565 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:22:03.4565 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Список сотрудников не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Список адресов не получен для страницы информации
+2026-05-30 15:22:03.4605 [Info] lambda_method541 Заполнение данных о задачах
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Info] lambda_method541 Заполнение данных о сотруднике
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Список адресов не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'наши задачи' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'о нас' не получен для страницы информации
+2026-05-30 15:22:03.4605 [Warn] lambda_method541 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-30 15:22:09.6265 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-30 15:22:19.6316 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:22:31.9310 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-30 15:22:41.9427 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-30 15:22:51.9551 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-30 15:23:04.2585 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-30 15:23:14.2725 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Products уже содержит 195 записей. Пропускаем заполнение.
+2026-05-30 15:23:24.2840 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица WarehousesAddresses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:23:36.5954 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Users уже содержит 10 записей. Пропускаем заполнение.
+2026-05-30 15:23:46.6073 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Orders уже содержит 15 записей. Пропускаем заполнение.
+2026-05-30 15:23:56.6181 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица OrderItems уже содержит 13 записей. Пропускаем заполнение.
+2026-05-30 15:24:08.9503 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица ProductCarApplicability уже содержит 149 записей. Пропускаем заполнение.
+2026-05-30 15:24:18.9613 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Stocks уже содержит 38 записей. Пропускаем заполнение.
+2026-05-30 15:24:28.9701 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Informations уже содержит 5 записей. Пропускаем заполнение.
+2026-05-30 15:24:52.0282 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:24:53.1218 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:24:53.1327 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:24:53.5234 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:24:55.5173 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:24:55.9172 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:27:41.5006 [Info] lambda_method631 Успешный вход пользователя: rushev.alexey@gmail.com
+2026-05-30 15:27:41.6006 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:41.6892 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:41.8189 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:42.0081 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:27:42.7829 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:42.9321 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:42.9397 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:48.2646 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:48.8543 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:48.8735 [Info] WebApi.Controllers.OrdersController Заполнение коллекции адресов магазинов...
+2026-05-30 15:27:48.8745 [Info] WebApi.Controllers.OrdersController Данные успешно заполнены
+2026-05-30 15:27:49.6829 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:49.7842 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:50.9081 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:51.0325 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:51.0618 [Info] WebApi.Controllers.OrdersController Текущий заказ (43) найден
+2026-05-30 15:27:51.0727 [Info] WebApi.Controllers.OrdersController Заполнение адресов для заказа...
+2026-05-30 15:27:51.0727 [Info] WebApi.Controllers.OrdersController Заполнение прошло успешно
+2026-05-30 15:27:51.1069 [Info] WebApi.Controllers.OrdersController Товары в корзине есть
+2026-05-30 15:27:51.1069 [Info] WebApi.Controllers.OrdersController Сформирован DTO для ответа клиенту
+2026-05-30 15:27:52.8058 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:52.8082 [Info] WebApi.Controllers.OrdersController Заполнение коллекции адресов магазинов...
+2026-05-30 15:27:52.8082 [Info] WebApi.Controllers.OrdersController Данные успешно заполнены
+2026-05-30 15:27:53.6363 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:53.7353 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:53.7353 [Info] WebApi.Controllers.OrdersController Текущий заказ (44) найден
+2026-05-30 15:27:53.7353 [Info] WebApi.Controllers.OrdersController Заполнение прошло успешно
+2026-05-30 15:27:53.7396 [Info] WebApi.Controllers.OrdersController Товары в корзине есть
+2026-05-30 15:27:53.7396 [Info] WebApi.Controllers.OrdersController Сформирован DTO для ответа клиенту
+2026-05-30 15:27:56.6391 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:27:56.6391 [Info] WebApi.Controllers.OrdersController Заполнение коллекции адресов магазинов...
+2026-05-30 15:27:56.6424 [Info] WebApi.Controllers.OrdersController Данные успешно заполнены
+2026-05-30 15:28:10.8308 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:28:10.9677 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:10.1274 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:10.2512 [Info] WebApi.Controllers.OrdersController Заполнение коллекции адресов магазинов...
+2026-05-30 15:30:10.2512 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:10.2512 [Info] WebApi.Controllers.OrdersController Данные успешно заполнены
+2026-05-30 15:30:17.0198 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:17.1340 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:17.1493 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:18.5070 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:18.6214 [Info] WebApi.Controllers.OrderItemsController Товар с id = 64 удален из корзины
+2026-05-30 15:30:18.6609 [Info] WebApi.Controllers.OrderItemsController Все изменения внесены в БД
+2026-05-30 15:30:18.6880 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:18.6880 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:18.9629 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:18.9760 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:19.9390 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:20.0624 [Info] WebApi.Controllers.OrderItemsController Товар с id = 65 удален из корзины
+2026-05-30 15:30:20.0712 [Info] WebApi.Controllers.OrderItemsController Все изменения внесены в БД
+2026-05-30 15:30:20.0855 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:20.0855 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:20.3637 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:20.3780 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:21.0261 [Info] WebApi.Controllers.OrderItemsController Найден заказ пользователя r_alexey
+2026-05-30 15:30:21.1314 [Info] WebApi.Controllers.OrderItemsController Товар с id = 63 удален из корзины
+2026-05-30 15:30:21.1396 [Info] WebApi.Controllers.OrderItemsController Все изменения внесены в БД
+2026-05-30 15:30:21.1396 [Info] WebApi.Controllers.OrderItemsController В корзине нет товаров...
+Удаление заказа...
+2026-05-30 15:30:21.1430 [Info] WebApi.Controllers.OrderItemsController Заказ успешно удален
+2026-05-30 15:30:21.1587 [Info] WebApi.Controllers.OrderItemsController Все изменения внесены в БД
+2026-05-30 15:30:21.1760 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:21.1760 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:21.4573 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:24.0623 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:24.2082 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:25.4775 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:25.6017 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:25.6060 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:30:31.2924 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:17.5737 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:19.3160 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:19.4274 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:19.8559 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:19.9602 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:20.7052 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:20.8504 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:20.8662 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:20.9215 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:21.7262 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:21.8548 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:21.8596 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:24.3229 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:24.8909 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:24.9983 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:24.9997 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:25.0053 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:26.1144 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:26.2361 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:26.2361 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:26.2418 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:26.8011 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:26.9248 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:26.9317 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:28.0178 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:29.3046 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:29.4163 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:30.1780 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:30.3129 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:30.7981 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:30.9062 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:30.9062 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:30.9124 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:31.4521 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:31.5659 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:31.5659 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:31.5705 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:31.8231 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:31.9277 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:31.9277 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:31.9340 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:31.9689 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:32.0690 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:32.0690 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:32.0749 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:32.8592 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:33.0319 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:33.0319 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:34.4530 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:34.4709 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:34.4734 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:32:39.0000 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:39.8941 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:40.0169 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:40.0169 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:40.0233 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:40.4989 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:40.5969 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:40.5969 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:40.6023 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:40.9712 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:41.0764 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:41.0764 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:41.0825 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:42.4039 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:42.4876 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:42.4876 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:42.4931 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:42.5296 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:42.6260 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:42.6260 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:42.6316 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:42.7988 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:42.9189 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:42.9189 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:42.9244 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:43.0982 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:43.2243 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:43.2243 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:43.2291 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:44.4366 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:44.5762 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:47.1775 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:47.2910 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:47.7640 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:47.8689 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:47.8689 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:47.8736 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:48.1733 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:48.2710 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:48.2710 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:48.2760 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:48.3121 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:48.4022 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:32:48.4031 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:32:48.4074 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:32:49.0329 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:49.1510 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:49.1581 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:50.5077 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:50.6358 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:52.8217 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:32:52.8362 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:54.2789 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:54.7186 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:54.7199 [Info] WebApi.Controllers.OrdersController Заполнение коллекции адресов магазинов...
+2026-05-30 15:32:54.7199 [Info] WebApi.Controllers.OrdersController Данные успешно заполнены
+2026-05-30 15:32:56.2472 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:56.3809 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:58.9296 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:32:59.0579 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:00.7523 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:00.8943 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:02.1842 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:02.3332 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:03.3591 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:03.5017 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:04.4123 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:04.5478 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:05.4633 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:05.6042 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:06.5568 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:06.8329 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:06.9403 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:09.9193 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:10.0231 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:10.7842 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:10.9181 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:11.2142 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:11.3389 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:12.1510 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:12.2837 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:12.7794 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:12.8767 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:13.3726 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:13.4908 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:33:13.4917 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:33:13.4956 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:33:13.9163 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:14.0460 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:33:14.0460 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:33:14.0504 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:33:14.4323 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:14.5369 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:33:14.5369 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:33:14.5421 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:33:14.8244 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:14.9528 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:33:14.9528 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:33:14.9619 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:33:15.6025 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:15.7345 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:15.7409 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:17.3100 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:33:17.4424 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:23.0940 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:23.5938 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:24.8205 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:25.3366 [Info] WebApi.Controllers.OrdersController Заполнение коллекции адресов магазинов...
+2026-05-30 15:34:25.3385 [Info] WebApi.Controllers.OrdersController Данные успешно заполнены
+2026-05-30 15:34:25.3385 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:26.0091 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:26.1601 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:27.1188 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:34:42.6933 [Error] lambda_method1208 Внутренняя ошибка сервера: Unable to cast object of type 'System.DateOnly' to type 'System.IConvertible'.
+2026-05-30 15:34:53.5727 [Error] lambda_method1208 Внутренняя ошибка сервера: Unable to cast object of type 'System.DateOnly' to type 'System.IConvertible'.
+2026-05-30 15:35:10.2620 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:35:21.9346 [Info] lambda_method1234 Адрес успешно добавлен
+2026-05-30 15:35:21.9631 [Info] lambda_method1234 Изменения внесены в БД
+2026-05-30 15:35:39.5051 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:35:39.6404 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:35:41.4280 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:35:42.9283 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:36:00.0196 [Info] lambda_method631 Успешный вход пользователя: rushev.alexey@gmail.com
+2026-05-30 15:36:00.0356 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:00.3235 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:00.4944 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены
+2026-05-30 15:36:00.9001 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:01.0031 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:36:01.0031 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:36:01.0083 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:36:01.3976 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:01.4889 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:36:01.4889 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:36:01.4949 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:36:01.7917 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:01.8806 [Info] WebApi.Controllers.OrderItemsController Добавление товара в корзину
+2026-05-30 15:36:01.8806 [Info] WebApi.Controllers.OrderItemsController Товары добавлены в корзину
+2026-05-30 15:36:01.8864 [Error] WebApi.Controllers.OrderItemsController Ошибка базы данных: An error occurred while saving the entity changes. See the inner exception for details.
+2026-05-30 15:36:02.5325 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:02.7789 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:02.9224 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:02.9370 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:03.2448 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:03.3637 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:03.4106 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:03.5177 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:04.1246 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:04.2187 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:06.6227 [Error] WebApi.Controllers.OrderItemsController Заказ пользователя r_alexey не найден
+2026-05-30 15:36:07.8980 [Info] lambda_method53 Данные об адресах магазинов успешно добавлены

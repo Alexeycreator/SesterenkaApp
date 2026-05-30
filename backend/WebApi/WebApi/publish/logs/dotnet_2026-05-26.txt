@@ -405,3 +405,63 @@ BACKUP DATABASE is terminating abnormally.
 2026-05-26 07:15:59.1142 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
 2026-05-26 07:16:08.9743 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
 2026-05-26 07:16:18.9885 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-26 09:44:07.1085 [Info] WebApi.Services.DatabaseInitializerBackgroundService Запуск фоновой задачи для добавления данных по умолчанию в БД
+2026-05-26 09:44:07.1160 [Info] WebApi.Services.DatabaseBackupBackgroundService Запущена фоновая задача для создания резервной копии БД.
+2026-05-26 09:44:07.1659 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД...
+2026-05-26 09:44:08.0142 [Info] WebApi.Services.DatabaseInitializerBackgroundService Подключение к БД прошло упешно.
+2026-05-26 09:44:08.0654 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Addresses уже содержит 13 записей. Пропускаем заполнение.
+2026-05-26 09:44:08.1288 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:12.5375 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:13.0261 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:14.4260 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-26 09:44:14.4290 [Info] lambda_method396 Заполнение данных о адресах
+2026-05-26 09:44:14.4312 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-26 09:44:14.4312 [Info] lambda_method396 Заполнение данных о миссиях
+2026-05-26 09:44:14.4312 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-26 09:44:14.4346 [Info] lambda_method396 Заполнение данных информации о компании
+2026-05-26 09:44:14.4346 [Info] lambda_method396 Заполнение данных о вопросах
+2026-05-26 09:44:14.4346 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-26 09:44:14.4346 [Info] lambda_method396 Заполнение данных о адресах
+2026-05-26 09:44:14.4390 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-26 09:44:14.4390 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-26 09:44:14.4390 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-26 09:44:14.4390 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-26 09:44:14.4431 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-26 09:44:14.4431 [Info] lambda_method396 Заполнение данных о адресах
+2026-05-26 09:44:14.4431 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-26 09:44:14.4466 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-26 09:44:14.4466 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-26 09:44:14.4466 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-26 09:44:14.4466 [Warn] lambda_method396 Список сотрудников не получен для страницы информации
+2026-05-26 09:44:14.4466 [Warn] lambda_method396 Список адресов не получен для страницы информации
+2026-05-26 09:44:14.4466 [Info] lambda_method396 Заполнение данных о задачах
+2026-05-26 09:44:14.4507 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-26 09:44:14.4507 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-26 09:44:14.4507 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-26 09:44:14.4507 [Info] lambda_method396 Заполнение данных о сотруднике
+2026-05-26 09:44:14.4507 [Warn] lambda_method396 Список адресов не получен для страницы информации
+2026-05-26 09:44:14.4549 [Warn] lambda_method396 Текст для блока 'наши задачи' не получен для страницы информации
+2026-05-26 09:44:14.4549 [Warn] lambda_method396 Текст для блока 'наша миссия' не получен для страницы информации
+2026-05-26 09:44:14.4549 [Warn] lambda_method396 Текст для блока 'о нас' не получен для страницы информации
+2026-05-26 09:44:14.4549 [Warn] lambda_method396 Текст для блока 'часто задаваемые вопросы' не получен для страницы информации
+2026-05-26 09:44:17.1474 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarBrands уже содержит 20 записей. Пропускаем заполнение.
+2026-05-26 09:44:20.1206 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:20.4828 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:27.1866 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModifications уже содержит 10 записей. Пропускаем заполнение.
+2026-05-26 09:44:27.4223 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:27.7807 [Info] lambda_method35 Данные об адресах магазинов успешно добавлены
+2026-05-26 09:44:37.2038 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Categories уже содержит 20 записей. Пропускаем заполнение.
+2026-05-26 09:44:46.2881 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Manufacturers уже содержит 42 записей. Пропускаем заполнение.
+2026-05-26 09:44:56.3115 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Warehouses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-26 09:45:06.3275 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица News уже содержит 5 записей. Пропускаем заполнение.
+2026-05-26 09:45:15.4190 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица PrivacyPolicy уже содержит 8 записей. Пропускаем заполнение.
+2026-05-26 09:45:25.4589 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица TermsOfUse уже содержит 9 записей. Пропускаем заполнение.
+2026-05-26 09:45:35.4781 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица CarModels уже содержит 20 записей. Пропускаем заполнение.
+2026-05-26 09:45:44.5582 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Products уже содержит 195 записей. Пропускаем заполнение.
+2026-05-26 09:45:54.5952 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица WarehousesAddresses уже содержит 10 записей. Пропускаем заполнение.
+2026-05-26 09:46:04.6255 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Users уже содержит 10 записей. Пропускаем заполнение.
+2026-05-26 09:46:13.6936 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Orders уже содержит 15 записей. Пропускаем заполнение.
+2026-05-26 09:46:23.7193 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица OrderItems уже содержит 13 записей. Пропускаем заполнение.
+2026-05-26 09:46:33.7863 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица ProductCarApplicability уже содержит 149 записей. Пропускаем заполнение.
+2026-05-26 09:46:42.8609 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Stocks уже содержит 38 записей. Пропускаем заполнение.
+2026-05-26 09:46:52.8784 [Info] WebApi.Services.DatabaseInitializerBackgroundService Таблица Informations уже содержит 5 записей. Пропускаем заполнение.
