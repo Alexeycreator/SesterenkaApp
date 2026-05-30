@@ -134,7 +134,7 @@ public sealed class AddressesController(ServerDbContext dbContext) : ControllerB
                     await dbContext.SaveChangesAsync();
                     loggerAddressesController.Info($"Изменения внесены в БД");
 
-                    return CreatedAtAction(nameof(GetAddressesAsync), new { id = address.Id }, address);
+                    return Ok();
                 }
 
                 errorMessage.Add($"У пользователя {user.Login} недостаточно прав");
