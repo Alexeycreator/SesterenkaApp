@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import { changePassword } from '../../../../service/user//Requests';
+import { changePassword } from '../../../../service/user/Requests';
 
 import styles from './ChangePasswordModal.module.css';
 
@@ -76,8 +76,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Очищаем предыдущие предупреждения
         setWarningMessage(null);
+        setError(null);
 
         if (!validateForm()) {
             return;
@@ -89,7 +89,6 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         }
 
         setLoading(true);
-        setError(null);
 
         try {
             await changePassword(userId, currentPassword, newPassword);
@@ -108,6 +107,12 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             // Обработка разных форматов ошибок
             if (err.response?.data?.message) {
                 errorMessage = err.response.data.message;
+
+                if (errorMessage.toLowerCase().includes('текущий пароль') ||
+                    errorMessage.toLowerCase().includes('current password')) {
+                    errorMessage = '❌ Неверный текущий пароль. Пожалуйста, проверьте правильность ввода.';
+                    setFieldErrors(prev => ({ ...prev, currentPassword: 'Неверный пароль' }));
+                }
             } else if (err.response?.data?.errors) {
                 const errors = Object.values(err.response.data.errors).flat();
                 errorMessage = errors.join(', ');
@@ -168,6 +173,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                                     setCurrentPassword(e.target.value);
                                     setFieldErrors(prev => ({ ...prev, currentPassword: undefined }));
                                     setWarningMessage(null);
+                                    setError(null);
                                 }}
                                 isInvalid={!!fieldErrors.currentPassword}
                                 placeholder="Введите текущий пароль"
@@ -253,7 +259,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                             disabled={loading}
                             className={styles.submitButton}
                         >
-                            {loading ? 'Сохранение...' : 'Сохранить'}
+                            {loading ? 'Проверка и сохранение...' : 'Изменить пароль'}
                         </Button>
                     </div>
                 </Form>
