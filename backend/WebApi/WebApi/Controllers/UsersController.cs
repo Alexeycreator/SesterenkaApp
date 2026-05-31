@@ -387,40 +387,31 @@ public sealed class UsersController(
         try
         {
             var user = await dbContext.Users.FindAsync(userId);
-            if (user != null)
-            {
-                if (user.Password == newPassword)
-                {
-                    loggerUsersController.Error($"Старый и новый пароли совпадают");
-                    return Unauthorized(new { Message = "Старый и новый пароли совпадают" });
-                }
-
-                if (oldPassword != newPassword)
-                {
-                    user.Password = newPassword;
-                    user.PasswordHash = passwordHasher.HashPassword(newPassword);
-                    loggerUsersController.Info($"Пароль изменен");
-                    await dbContext.SaveChangesAsync();
-                    loggerUsersController.Info($"Все изменения внесены в БД");
-                    return Ok();
-                }
-                else
-                {
-                    loggerUsersController.Error($"Старый и новый пароли совпадают");
-                    return Unauthorized(new { Message = "Старый и новый пароли совпадают" });
-                }
-            }
-            else
+            if (user == null)
             {
                 loggerUsersController.Error($"Пользователя не существует!");
-                return NotFound(new
-                {
-                    StatusCode = 404,
-                    Error = "NotFound",
-                    Message = $"Пользователя не существует!",
-                    Timestamp = DateTime.Now,
-                });
+                return NotFound(new { message = $"Пользователя не существует!" });
             }
+
+            if (passwordService.VerifyPassword(newPassword, user.PasswordHash))
+            {
+                loggerUsersController.Error($"Старый и новый пароли совпадают");
+                return BadRequest(new { Message = "Новый пароль не должен совпадать с текущим" });
+            }
+
+            if (!passwordService.VerifyPassword(oldPassword, user.PasswordHash))
+            {
+                loggerUsersController.Error($"Неверный текущий пароль для пользователя {user.Login}");
+                return BadRequest(new { Message = "Неверный текущий пароль" });
+            }
+
+            user.Password = newPassword;
+            user.PasswordHash = passwordService.HashPassword(newPassword);
+
+            await dbContext.SaveChangesAsync();
+            loggerUsersController.Info($"Пароль успешно изменен для пользователя {user.Login}");
+
+            return Ok(new { message = "Пароль успешно изменен" });
         }
         catch (DbUpdateException ex)
         {
