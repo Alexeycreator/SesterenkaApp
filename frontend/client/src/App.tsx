@@ -22,7 +22,6 @@ import ServerUnavailablePage from './components/pages/ServerUnavailable/ServerUn
 import { useServerStatus } from './components/pages/ServerUnavailable/hooks/useServerStatus';
 
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface ScrollToTopProps {
   location: Location;
