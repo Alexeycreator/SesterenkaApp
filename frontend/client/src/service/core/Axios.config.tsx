@@ -34,17 +34,11 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            // Можно добавить логику обновления токена здесь
-            // Например, если есть refresh token
-
             // Если обновить не получилось - очищаем данные и перенаправляем на логин
             console.log('❌ Токен истек или недействителен');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('tokenExpiry');
-            
-            // Перенаправление на страницу логина (если нужно)
-            // window.location.href = '/login';
         }
 
         return Promise.reject(error);

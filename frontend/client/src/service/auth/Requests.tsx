@@ -2,7 +2,7 @@ import api from '../core/Axios.config';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserData } from './Types';
 
 export const authApi = {
-    // Вход в систему - POST /api/Clients/login
+    // Вход в систему - POST /api/Users/login
     login: async (data: LoginRequest): Promise<LoginResponse> => {
         const response = await api.post<LoginResponse>('/Users/login', data);
         
@@ -16,13 +16,13 @@ export const authApi = {
         return response.data;
     },
 
-    // Регистрация - POST /api/Clients/register
+    // Регистрация - POST /api/Users/register
     register: async (data: RegisterRequest): Promise<RegisterResponse> => {
         const response = await api.post<RegisterResponse>('/Users/register', data);
         return response.data;
     },
 
-    // Получение текущего пользователя - GET /api/Clients/me
+    // Получение текущего пользователя - GET /api/Users/me
     getCurrentUser: async (): Promise<UserData> => {
         const response = await api.get<UserData>('/Users/me');
         return response.data;

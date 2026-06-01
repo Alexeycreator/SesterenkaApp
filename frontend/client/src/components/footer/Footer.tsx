@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
 
         isUpdating.current = true;
 
-        // Загружаемデータ
+        // Загружаем данные
         const fetchData = async (): Promise<void> => {
             if (isLoading && !force) return;
             isLoading = true;

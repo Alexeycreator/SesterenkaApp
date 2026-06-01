@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Route, Routes, useLocation, Location, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation, Location } from 'react-router-dom';
 
 import { AuthProvider } from './contexts/AuthContext';
 import {
@@ -41,18 +41,9 @@ const ScrollToTop = ({ location }: ScrollToTopProps) => {
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { isServerAvailable, checking, checkServer } = useServerStatus();
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // useEffect(() => {
-  //   if (!checking && isServerAvailable && !isInitialized) {
-  //     setIsInitialized(true);
-  //     navigate('/', { replace: true });
-  //   }
-  // }, [checking, isServerAvailable, navigate, isInitialized]);
-
-  // Слушаем событие для повторной проверки сервера (например, после обновления данных)
+  // Слушаем событие для повторной проверки сервера
   useEffect(() => {
     const handleRecheckServer = () => {
       checkServer();

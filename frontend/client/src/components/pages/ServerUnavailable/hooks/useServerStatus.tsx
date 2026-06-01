@@ -1,4 +1,3 @@
-// hooks/useServerStatus.ts
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 

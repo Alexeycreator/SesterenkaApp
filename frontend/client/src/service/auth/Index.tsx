@@ -5,14 +5,9 @@ import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, Us
 export { authApi };
 export type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserData };
 
-// Если нужно экспортировать что-то еще
 export * from './Requests';
 export * from './Types';
 
-// Пустой экспорт для преобразования в модуль (если ничего не экспортируется)
-// export {};
-
-// Или можно реэкспортировать конкретные функции
 export const login = authApi.login;
 export const register = authApi.register;
 export const logout = authApi.logout;

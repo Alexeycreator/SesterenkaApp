@@ -1,4 +1,4 @@
-export {MainPage} from './Main/MainPage';
+export { MainPage } from './Main/MainPage';
 export { NewsPage } from './News/NewsPage';
 export { InformationPage } from './Information/InformationPage';
 export { HelpPage } from './Help/HelpPage';

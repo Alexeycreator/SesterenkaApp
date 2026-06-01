@@ -201,12 +201,31 @@ export const EmployeePanel: React.FC<EmployeePanelProps> = ({ currentUser, onRef
                 </div>
 
                 {/* Модальные окна */}
-                <ProductManagement show={showProductModal} onHide={() => setShowProductModal(false)} onRefresh={onRefresh} />
-                <CategoryManagement show={showCategoryModal} onHide={() => setShowCategoryModal(false)} onRefresh={onRefresh} />
-                <ManufacturerManagement show={showManufacturerModal} onHide={() => setShowManufacturerModal(false)} onRefresh={onRefresh} />
-                <StockManagement show={showStockModal} onHide={() => setShowStockModal(false)} onRefresh={onRefresh} />
-                <AddressManagement show={showAddressModal} onHide={() => setShowAddressModal(false)} onRefresh={onRefresh} />
-
+                <ProductManagement
+                    show={showProductModal}
+                    onHide={() => setShowProductModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <CategoryManagement
+                    show={showCategoryModal}
+                    onHide={() => setShowCategoryModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <ManufacturerManagement
+                    show={showManufacturerModal}
+                    onHide={() => setShowManufacturerModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <StockManagement
+                    show={showStockModal}
+                    onHide={() => setShowStockModal(false)}
+                    onRefresh={onRefresh}
+                />
+                <AddressManagement
+                    show={showAddressModal}
+                    onHide={() => setShowAddressModal(false)}
+                    onRefresh={onRefresh}
+                />
                 <UserOrdersModal
                     show={showOrdersModal}
                     onHide={() => setShowOrdersModal(false)}
