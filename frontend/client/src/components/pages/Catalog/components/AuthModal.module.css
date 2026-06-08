@@ -70,7 +70,6 @@
 /* Эффект при наведении на основную кнопку */
 .authModal :global(.btn-primary:hover) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* Кнопка-ссылка для переключения между входом и регистрацией */

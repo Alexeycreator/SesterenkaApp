@@ -47,7 +47,6 @@
 /* Эффект при наведении на кнопку редактирования */
 .editButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* ============================================
@@ -133,7 +132,6 @@
 /* Эффект при наведении на кнопку сохранения */
 .saveButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* ============================================

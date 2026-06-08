@@ -151,7 +151,6 @@
 
 .quantityBtn:hover:not(:disabled) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 .quantityBtn:disabled {
@@ -187,7 +186,6 @@
 
 .removeBtn:hover {
     color: #c0392b;
-    transform: scale(1.1);
 }
 
 /* ============================================
@@ -263,7 +261,6 @@
 
 .primaryButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -281,7 +278,6 @@
 .secondaryButton:hover {
     background: #c49b6b;
     color: white;
-    transform: translateY(-2px);
 }
 
 .checkoutButton {
@@ -299,7 +295,6 @@
 
 .checkoutButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(139, 90, 43, 0.3);
 }
 
@@ -328,7 +323,6 @@
 
 .continueButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* ============================================
@@ -348,7 +342,6 @@
 
 .modalSubmitButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-1px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 

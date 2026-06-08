@@ -39,7 +39,6 @@
 
 /* Эффект при наведении на карточку заказа */
 .orderItem:hover {
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -122,25 +121,13 @@
 /* Эффект при наведении */
 .orderDetailsBtn:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
     color: white !important;
-}
-
-/* Эффект при нажатии */
-.orderDetailsBtn:active {
-    transform: translateY(0);
 }
 
 /* Стрелка справа */
 .orderDetailsBtn::after {
     content: "→";
-    transition: transform 0.3s ease;
-}
-
-/* Эффект при наведении на стрелку */
-.orderDetailsBtn:hover::after {
-    transform: translateX(5px);
 }
 
 /* ============================================
@@ -231,7 +218,6 @@
 
 .shopButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* Кнопка повторной попытки */
@@ -246,7 +232,6 @@
 
 .retryButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* ============================================

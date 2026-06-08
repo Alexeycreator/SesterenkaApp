@@ -177,7 +177,6 @@
 
 .orderItem:hover {
     background: rgba(196, 155, 107, 0.05);
-    transform: translateX(5px);
 }
 
 .itemImage {

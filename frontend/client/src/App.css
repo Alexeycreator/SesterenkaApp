@@ -110,7 +110,6 @@
 
 .btn-primary:hover:not(:disabled) {
   background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -132,7 +131,6 @@
 
 .btn-secondary:hover {
   background: rgba(196, 155, 107, 0.1);
-  transform: translateY(-2px);
 }
 
 .btn-danger {
@@ -149,7 +147,6 @@
 .btn-danger:hover {
   background: #e74c3c;
   color: white;
-  transform: translateY(-2px);
 }
 
 /* ===== КАРТОЧКИ ===== */
@@ -162,7 +159,6 @@
 }
 
 .card:hover {
-  transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   border-color: #c49b6b;
 }
@@ -302,12 +298,6 @@
   border-top-color: #c49b6b;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* ===== АДАПТИВНОСТЬ ===== */

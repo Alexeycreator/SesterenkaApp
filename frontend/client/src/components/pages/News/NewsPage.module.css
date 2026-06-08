@@ -90,7 +90,6 @@
 .resetButton:hover,
 .retryButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
     color: white;
     text-decoration: none;
@@ -115,7 +114,6 @@
 
 .backButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B) !important;
-    transform: translateY(-2px) !important;
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3) !important;
     color: white !important;
     text-decoration: none !important;
@@ -142,7 +140,6 @@
     background: linear-gradient(135deg, #c49b6b, #b38b5b) !important;
     border-color: #8B5A2B !important;
     color: white !important;
-    transform: translateY(-2px) !important;
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3) !important;
     text-decoration: none !important;
 }
@@ -164,7 +161,6 @@
     background: rgba(196, 155, 107, 0.1) !important;
     border-color: #8B5A2B !important;
     color: #5a3e2b !important;
-    transform: translateY(-2px) !important;
 }
 
 /* Активный фильтр - соответствует primary кнопке */
@@ -182,7 +178,6 @@
 .activeFilter:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B) !important;
     color: white !important;
-    transform: translateY(-2px) !important;
 }
 
 .categoryCount {
@@ -219,7 +214,6 @@
 }
 
 .newsCard:hover {
-    transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     border-color: #c49b6b;
 }
@@ -234,11 +228,6 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.newsCard:hover .cardImage {
-    transform: scale(1.1);
 }
 
 .cardBody {
@@ -354,7 +343,6 @@
 
 .resetButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -383,23 +371,7 @@
 
 .retryButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
-}
-
-/* ============================================
-   АНИМАЦИИ
-   ============================================ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .newsCard {

@@ -46,7 +46,6 @@
 
 /* Эффект при наведении на карточку */
 .adminCard:hover {
-    transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(139, 90, 43, 0.15);
     border-color: #c49b6b;
 }
@@ -94,14 +93,8 @@
 /* Эффект при наведении на кнопку */
 .cardLink:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
     color: white !important;
-}
-
-/* Эффект при нажатии на кнопку */
-.cardLink:active {
-    transform: translateY(0);
 }
 
 /* ============================================
@@ -154,7 +147,6 @@
 
 .viewOrdersBtn:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 3px 10px rgba(139, 90, 43, 0.2);
     color: white !important;
 }

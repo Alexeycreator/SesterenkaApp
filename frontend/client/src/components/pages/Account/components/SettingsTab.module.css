@@ -60,7 +60,6 @@
 /* Эффект при наведении на кнопку изменения пароля */
 .changePasswordButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* Кнопка "Удалить аккаунт" */
@@ -78,7 +77,6 @@
 .deleteAccountButton:hover {
     background: #e74c3c;
     color: white;
-    transform: translateY(-2px);
 }
 
 /* ============================================

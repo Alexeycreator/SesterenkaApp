@@ -48,12 +48,10 @@
     overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid transparent;
 }
 
 .categoryCard:hover {
-    transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     border-color: #c49b6b;
 }
@@ -144,7 +142,6 @@
     position: absolute;
     right: 12px;
     top: 50%;
-    transform: translateY(-50%);
     background: none;
     border: none;
     font-size: 1.2rem;
@@ -195,7 +192,6 @@
 
 .backButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -213,13 +209,11 @@
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid transparent;
     cursor: pointer;
 }
 
 .productCard:hover {
-    transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     border-color: #c49b6b;
 }
@@ -235,11 +229,6 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.productCard:hover .productImage {
-    transform: scale(1.1);
 }
 
 /* Тело карточки товара */
@@ -286,7 +275,6 @@
 
 .viewProductButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -352,7 +340,6 @@
 
 .applyPriceButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 .resetFiltersButton {
@@ -397,7 +384,6 @@
 
 .searchButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* ============================================
@@ -490,7 +476,6 @@
 
 .fullProductAddToCartButton:hover:not(:disabled) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 .fullProductBuyButton {
@@ -507,7 +492,6 @@
 
 .fullProductBuyButton:hover:not(:disabled) {
     background: rgba(196, 155, 107, 0.1);
-    transform: translateY(-2px);
 }
 
 /* Бейджи наличия в детальной карточке */
@@ -565,21 +549,6 @@
     border-radius: 10px;
     background: linear-gradient(135deg, #f8d7da, #f5c6cb);
     border: 2px solid #e74c3c;
-}
-
-/* ============================================
-   АНИМАЦИИ
-   ============================================ */
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* ============================================

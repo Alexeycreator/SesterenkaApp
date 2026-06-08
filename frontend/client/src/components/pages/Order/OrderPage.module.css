@@ -236,7 +236,6 @@
 
 .backButton:hover {
     background: rgba(196, 155, 107, 0.1);
-    transform: translateY(-2px);
 }
 
 .submitButton {
@@ -252,7 +251,6 @@
 
 .submitButton:hover:not(:disabled) {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -272,7 +270,6 @@
 
 .continueButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
 }
 
 /* ============================================

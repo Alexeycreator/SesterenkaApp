@@ -101,7 +101,6 @@
 
 .backButton:hover {
     background: rgba(196, 155, 107, 0.1);
-    transform: translateY(-2px);
     border-color: #8B5A2B;
 }
 
@@ -117,7 +116,6 @@
 
 .homeButton:hover {
     background: linear-gradient(135deg, #b38b5b, #8B5A2B);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
 }
 
@@ -152,37 +150,6 @@
 .helpLink:hover {
     color: #8B5A2B;
     background: rgba(196, 155, 107, 0.1);
-    transform: translateX(3px);
-}
-
-/* Анимации */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
 /* Адаптивность */
