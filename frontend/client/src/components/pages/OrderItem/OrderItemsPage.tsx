@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Container, Row, Col, Card, Button, Form, Modal, Alert } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 import LoadingSpinner from '../../LoadingSpinner';
 import { getOrderItemData, OrderItem, OrderItemDto, updateOrderItemQuantity, deleteOrderItem } from '../../servicesApi/OrderItemsApi';
@@ -329,7 +329,12 @@ const OrderItemsPage = () => {
                                             </div>
                                             <div className={styles.itemInfo}>
                                                 <div className={styles.itemCategory}>{item.nameCategories}</div>
-                                                <h3 className={styles.itemName}>{item.nameProducts}</h3>
+                                                <h3 className={styles.itemName}>
+                                                    <Link to={`/catalog?category=${item.nameCategories}&id=${item.productId}`} className={`nav-link ${styles.navLink}`}>
+                                                        {item.nameProducts}
+                                                    </Link>
+                                                </h3>
+
                                                 <div className={styles.itemBrand}>{item.nameManufacturers}</div>
                                                 <div className={styles.itemArticle}>Арт: {item.partNumber}</div>
                                             </div>

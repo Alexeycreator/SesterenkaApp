@@ -255,7 +255,9 @@ const OrderDetailsPage = () => {
                                         </div>
                                         <div className={styles.itemInfo}>
                                             <div className={styles.itemCategory}>{item.categories}</div>
-                                            <h4 className={styles.itemName}>{item.nameProduct}</h4>
+                                            <h4 className={styles.itemName}><Link to={`/catalog?category=${item.categories}&id=${item.id}`} className={`nav-link ${styles.navLink}`}>
+                                                {item.nameProduct}
+                                            </Link></h4>
                                             <div className={styles.itemBrand}>{item.manufacturers}</div>
                                             <div className={styles.itemArticle}>Арт: {item.partNumber}</div>
                                         </div>
