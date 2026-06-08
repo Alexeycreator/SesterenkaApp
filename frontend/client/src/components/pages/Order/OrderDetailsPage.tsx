@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 
 import { CurrentOrder, getCurrentOrderData } from '../../servicesApi/OrderApi';
 import LoadingSpinner from '../../LoadingSpinner';
+import { useAuth } from '../../../contexts/AuthContext';
 
 import styles from './OrderDetailsPage.module.css';
 
@@ -18,14 +19,25 @@ const OrderDetailsPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const orderId = Number(id);
+    const { isAuthenticated, logout } = useAuth();
 
     const [order, setOrder] = useState<CurrentOrder | null>(cachedOrder);
     const [loading, setLoading] = useState(!cachedOrder);
     const [error, setError] = useState<string | null>(null);
     const isMounted = useRef(true);
 
+    useEffect(() => {
+        if (!isAuthenticated) {
+            console.warn("Пользователь не авторизован и не может просматривать детали заказа");
+            navigate('/', { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
+
     // получение данных конкретного заказа
     const fetchCurrentOrder = async (forceRefresh: boolean = false) => {
+        if (!isAuthenticated) {
+            return;
+        }
         // Если данные уже загружены для этого заказа и не принудительное обновление, используем кэш
         if (cachedOrder !== null && currentOrderId === orderId && !forceRefresh) {
             if (isMounted.current) {
@@ -57,6 +69,12 @@ const OrderDetailsPage = () => {
             }
         } catch (err: any) {
             console.error('Ошибка загрузки страницы конкретного заказа:', err);
+            if (err.response?.status === 401) {
+                logout();
+                navigate('/', { replace: true });
+                return;
+            }
+
             if (isMounted.current) {
                 if (err.code === 'ERR_BAD_REQUEST') {
                     if (err.response?.status === 404) {

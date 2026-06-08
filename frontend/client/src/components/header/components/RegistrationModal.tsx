@@ -126,7 +126,7 @@ const RegistrationModal = React.forwardRef<HTMLDivElement, RegistrationModalProp
                         <Form.Group className={styles.formGroup}>
                             <Form.Label className={styles.formLabel}>
                                 <span className={styles.labelIcon}>👤</span>
-                                Отчество
+                                Отчество <span className={styles.requiredStar}>*</span>
                             </Form.Label>
                             <Form.Control
                                 type="text"
